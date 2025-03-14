@@ -6,7 +6,9 @@ import {
   editProduct,
   addProductForUser,
   productsForUser,
+  deleteProductForUser,
 } from "../models/products.js";
+import { deleteReview } from "../models/reviews.js";
 import { getUser } from "../models/user.js";
 
 export const addSingleProduct = async (req, res) => {
@@ -93,6 +95,8 @@ export const deleteSingleProduct = async (req, res) => {
         error: "Product not found",
       });
     }
+    await deleteProductForUser(id);
+    await deleteReview(id, null);
     await deleteProduct(id);
     return res.status(200).json({
       success: true,

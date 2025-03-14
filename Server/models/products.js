@@ -91,6 +91,17 @@ export const addProductForUser = async (userId, productId) => {
   }
 };
 
+// le prossime due funzioni per modificare automaticamente la tabella tra product e user //
+
+export const deleteProductForUser = async (product_id) => {
+  try {
+    const query = "DELETE FROM product_listings WHERE product_id = ?";
+    await connection.query(query, [product_id]);
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const productsForUser = async (id) => {
   try {
     const query =
@@ -98,7 +109,7 @@ export const productsForUser = async (id) => {
 
     const rows = await connection.query(query, [id]);
     console.log(rows[0]);
-    
+
     return rows[0];
   } catch (error) {}
 };
