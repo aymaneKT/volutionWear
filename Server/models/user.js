@@ -41,7 +41,7 @@ export const addUser = async (
 export const getUser = async (id) => {
   try {
     const query =
-      "SELECT nome , cognome , username , email , is_seller FROM users WHERE id = ?";
+      "SELECT id ,nome , cognome , username , email , is_seller FROM users WHERE id = ?";
 
     const [rows] = await connection.query(query, [id]);
     return rows[0];

@@ -4,7 +4,8 @@ import {
   getAllProducts,
   getProduct,
   deleteSingleProduct,
-  updateProduct
+  updateProduct,
+  productsForSingleUser,
 } from "../Controllers/productsController.js";
 export const router = express.Router();
 
@@ -13,3 +14,4 @@ router.get("/products", getAllProducts);
 router.get("/product/:id", getProduct);
 router.delete("/product/:id", deleteSingleProduct);
 router.patch("/product", updateProduct);
+router.get("/products/:userId", productsForSingleUser);

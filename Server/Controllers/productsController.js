@@ -4,12 +4,16 @@ import {
   getProductById,
   deleteProduct,
   editProduct,
+  addProductForUser,
+  productsForUser,
 } from "../models/products.js";
+import { getUser } from "../models/user.js";
 
 export const addSingleProduct = async (req, res) => {
   try {
     const product = req.body;
-    const { name, description, price, stock, category_id, image_url } = product;
+    const { userId, name, description, price, stock, category_id, image_url } =
+      product;
 
     if (
       !name ||
@@ -33,6 +37,13 @@ export const addSingleProduct = async (req, res) => {
     );
 
     const ProductAdded = await getProductById(idOfAddedProduct);
+    const userOwnerOfProduct = await getUser(userId);
+    if (!userOwnerOfProduct) {
+      return res.status(404).json({
+        error: "user not found",
+      });
+    }
+    await addProductForUser(userId, ProductAdded.id);
     return res.status(200).json({
       result: true,
       product: ProductAdded,
@@ -45,7 +56,10 @@ export const addSingleProduct = async (req, res) => {
 export const getAllProducts = async (req, res) => {
   try {
     const products = await getProducts();
-    return res.status(200).json(products);
+    return res.status(200).json({
+      succes: true,
+      data: products,
+    });
   } catch (error) {
     throw error;
   }
@@ -61,7 +75,7 @@ export const getProduct = async (req, res) => {
         error: "Product not found",
       });
     }
-    return res.status(200).json(product);
+    return res.status(200).json({ succes: true, data: product });
   } catch (error) {
     throw error;
   }
@@ -98,6 +112,22 @@ export const updateProduct = async (req, res) => {
       success: true,
       product: productUpdated,
     });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const productsForSingleUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await getUser(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "user not found" });
+    }
+
+    const posts = await productsForUser(userId);
+    return res.status(200).json({ succes: true, data: posts });
   } catch (error) {
     throw error;
   }

@@ -80,3 +80,25 @@ export const editProduct = async ({
     throw error;
   }
 };
+
+export const addProductForUser = async (userId, productId) => {
+  try {
+    const query =
+      "INSERT INTO product_listings (seller_id , product_id) VALUES (?, ?)";
+    await connection.query(query, [userId, productId]);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const productsForUser = async (id) => {
+  try {
+    const query =
+      "SELECT users.id , products.id ,products.name , products.description , products.price , products.stock , products.image_url , products.created_at , categories.name FROM products JOIN categories on categories.id = products.category_id JOIN product_listings on products.id = product_listings.product_id join users on product_listings.seller_id = users.id WHERE users.id = ?";
+
+    const rows = await connection.query(query, [id]);
+    console.log(rows[0]);
+    
+    return rows[0];
+  } catch (error) {}
+};
