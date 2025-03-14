@@ -20,7 +20,7 @@ export const getSingleUser = async (req, res) => {
     const user = await getUser(id);
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         error: "user doesn't exist",
       });
     }
@@ -35,6 +35,7 @@ export const getSingleUser = async (req, res) => {
 export const addSingleUser = async (req, res) => {
   try {
     const user = req.body;
+    
     const { nome, cognome, username, email, password, is_seller } = user;
     if (
       !user.nome ||
@@ -54,7 +55,6 @@ export const addSingleUser = async (req, res) => {
       }
       const userId = await addUser(nome, cognome, username, email, hash, false);
       const userAdded = await getUser(userId);
-      console.log(userAdded);
 
       res.status(200).json({
         user: userAdded,

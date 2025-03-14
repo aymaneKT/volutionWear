@@ -3,8 +3,11 @@ const app = express();
 app.use(express.json());
 
 import { router as userRouter } from "./Routes/userRoutes.js";
+import { router as productRouter } from "./Routes/productRoutes.js";
 
 app.use("/api", userRouter);
+app.use("/api", productRouter);
+
 
 const port = 3000;
 
