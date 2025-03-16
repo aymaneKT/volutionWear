@@ -3,7 +3,7 @@ import { connection } from "../config/DataBase.js";
 export const addOrder = async (userId) => {
   try {
     const query =
-      "INSERT INTO Orders (user_id ,total_amount , status) VALUES (?,?,?)";
+      "INSERT INTO Orders (user_id ,total_amount , status) VALUES (? , ? , ?)";
     const [order] = await connection.query(query, [userId, 0, "pending"]);
     return order.insertId;
   } catch (error) {
@@ -62,4 +62,11 @@ export const addProductToOrder = async (
   } catch (error) {
     throw error;
   }
+};
+
+export const getPendingOrder = async (userId) => {
+  const query =
+    "SELECT * FROM orders WHERE user_id = ? AND status = 'pending' LIMIT 1";
+  const [result] = await connection.query(query, [userId]);
+  return result.length > 0 ? result[0] : null;
 };

@@ -18,11 +18,9 @@ export const PostReview = async (req, res) => {
     }
     const product = await getProductById(product_id);
     if (!product) {
-      if (!user) {
-        return res
-          .status(404)
-          .json({ succes: fale, error: "Product not found" });
-      }
+      return res
+        .status(404)
+        .json({ succes: false, error: "Product not found" });
     }
 
     const idInsertReview = await addReview(
@@ -88,8 +86,6 @@ export const deleteSingleReview = async (req, res) => {
 export const editSingleReview = async (req, res) => {
   try {
     const review = req.body;
-    console.log(review);
-
     const { id, rating, comment } = review;
     const checkReview = await getReview(id);
     if (!checkReview) {

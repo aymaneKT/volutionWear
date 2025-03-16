@@ -4,6 +4,7 @@ import {
   deleteOrder,
   getOrders,
   addProductToOrder,
+  getPendingOrder,
 } from "../models/orders.js";
 import { getUser } from "../models/user.js";
 
@@ -73,20 +74,19 @@ export const getAllOrders = async (req, res) => {
 
 export const addSingleProductToOrder = async (req, res) => {
   try {
-    const { orderId, productId, user , quantity , price } = req.body;
+    const { orderId, productId, user, quantity, price } = req.body;
     const existingUser = await getUser(user);
     if (!existingUser) {
-      
       return res.status(404).json({ success: false, error: "user not found" });
     }
-    const order = await getOrder(orderId);
-    
-    if (!order) {
+    const existingOrder = await getPendingOrder(orderId);
+    if (!existingOrder) {
       const newOrder = await addOrder(user);
-      await addProductToOrder(newOrder, productId , quantity , price);
+      await addProductToOrder(newOrder, productId, quantity, price);
+      return res.status(200).json({ success: true });
     }
-    await addProductToOrder(orderId, productId , quantity , price);
-    return res.status(200).json({ success: true});
+    await addProductToOrder(existingOrder, productId, quantity, price);
+    return res.status(200).json({ success: true });
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
   }
