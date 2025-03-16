@@ -43,11 +43,11 @@ export const PostReview = async (req, res) => {
 
 export const getAllReviews = async (req, res) => {
   const reviews = await getReviews();
-
-  return res.status(200).json({
-    succes: true,
-    data: reviews,
-  });
+  if (!reviews || reviews.length === 0)
+    return res.status(200).json({
+      succes: true,
+      data: reviews,
+    });
 };
 
 export const getSingleReview = async (req, res) => {
