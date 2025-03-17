@@ -4,7 +4,7 @@ import {
   getReview,
   deleteReview,
   editReview,
-  getReviews,
+  // getReviews,
 } from "../models/reviews.js";
 import { getUser } from "../models/user.js";
 
@@ -39,14 +39,14 @@ export const PostReview = async (req, res) => {
   }
 };
 
-export const getAllReviews = async (req, res) => {
-  const reviews = await getReviews();
-  if (!reviews || reviews.length === 0)
-    return res.status(200).json({
-      succes: true,
-      data: reviews,
-    });
-};
+// export const getAllReviews = async (req, res) => {
+//   const reviews = await getReviews();
+//   if (!reviews || reviews.length === 0)
+//     return res.status(200).json({
+//       succes: true,
+//       data: reviews,
+//     });
+// };
 
 export const getSingleReview = async (req, res) => {
   const id = req.params.id;

@@ -16,7 +16,7 @@ export const getOrder = async (id) => {
     const query =
       "SELECT orders.id , nome , cognome , total_amount , status , orders.created_at FROM users join orders on users.id = orders.user_id WHERE orders.id = ?";
 
-    const [result] = await connection.query(query, id);
+    const [result] = await connection.query(query, [id]);
 
     return result[0];
   } catch (error) {
@@ -27,7 +27,7 @@ export const getOrder = async (id) => {
 export const deleteOrder = async (id) => {
   try {
     const query = "DELETE FROM Orders WHERE id = ?";
-    await connection.query(query, id);
+    await connection.query(query, [id]);
     return;
   } catch (error) {
     throw error;
@@ -42,23 +42,6 @@ export const getOrders = async () => {
     `;
     const [orders] = await connection.query(query);
     return orders;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// function to add single product on the order for user
-export const addProductToOrder = async (
-  orderId,
-  productId,
-  quantity,
-  price
-) => {
-  try {
-    const query =
-      "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
-    await connection.query(query, [orderId, productId, quantity, price]);
-    return;
   } catch (error) {
     throw error;
   }

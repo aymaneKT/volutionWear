@@ -8,7 +8,7 @@ import {
   productsForUser,
   deleteProductForUser,
 } from "../models/products.js";
-import { deleteReview } from "../models/reviews.js";
+import { deleteReview, getReviewForProduct } from "../models/reviews.js";
 import { getUser } from "../models/user.js";
 
 export const addSingleProduct = async (req, res) => {
@@ -58,9 +58,17 @@ export const addSingleProduct = async (req, res) => {
 export const getAllProducts = async (req, res) => {
   try {
     const products = await getProducts();
+
+    const productWithReviews = await Promise.all(
+      products.map(async (product) => {
+        const review = await getReviewForProduct(product.id);
+        return { ...product, review };
+      })
+    );
+
     return res.status(200).json({
       succes: true,
-      data: products,
+      data: productWithReviews,
     });
   } catch (error) {
     throw error;

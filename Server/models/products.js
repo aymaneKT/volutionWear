@@ -29,7 +29,8 @@ export const addProduct = async (
 
 export const getProducts = async () => {
   try {
-    const query = "SELECT * FROM Products";
+    const query =
+      "SELECT products.id , products.name ,  products.description , products.price , products.stock , categories.name as category from products JOIN categories on products.category_id = categories.id";
     const [rows] = await connection.query(query);
     return rows;
   } catch (error) {

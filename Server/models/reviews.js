@@ -52,10 +52,21 @@ export const editReview = async (id, rating, comment) => {
   }
 };
 
-export const getReviews = async () => {
+// export const getReviews = async () => {
+//   try {
+//     const query = "SELECT * FROM Reviews";
+//     const [rows] = await connection.query(query);
+//     return rows;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+export const getReviewForProduct = async (productId) => {
   try {
-    const query = "SELECT * FROM Reviews";
-    const [rows] = await connection.query(query);
+    const query =
+      "SELECT users.id , username , nome, cognome , rating , comment  from users join reviews on users.id = reviews.user_id WHERE reviews.product_id = ?";
+    const [rows] = await connection.query(query, [productId]);
     return rows;
   } catch (error) {
     throw error;
