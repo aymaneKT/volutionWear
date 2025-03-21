@@ -39,6 +39,7 @@ export const getSingleOrder = async (req, res) => {
         error: "order not found",
       });
     }
+    
     return res.status(200).json({ succes: true, data: order });
   } catch (error) {
     throw error;

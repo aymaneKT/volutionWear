@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getSingleReview,
+  // getSingleReview,
   PostReview,
   deleteSingleReview,
   editSingleReview,
@@ -10,7 +10,7 @@ import {
 export const router = express.Router();
 
 router.post("/review", PostReview);
-router.get("/review/:id", getSingleReview);
+// router.get("/review/:id", getSingleReview);
 // router.get("/reviews", getAllReviews);
 router.delete("/review/:id", deleteSingleReview);
 router.patch("/review", editSingleReview);

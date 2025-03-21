@@ -1,3 +1,4 @@
+import { getPayload , checkToken } from "../middleware/token.js";
 import {
   addProduct,
   getProducts,
@@ -13,6 +14,10 @@ import { getUser } from "../models/user.js";
 
 export const addSingleProduct = async (req, res) => {
   try {
+    const token = getPayload(
+      req.headers["authorization"].replace("Bearer", "").trim()
+    );
+
     const product = req.body;
     const { userId, name, description, price, stock, category_id, image_url } =
       product;
@@ -39,7 +44,7 @@ export const addSingleProduct = async (req, res) => {
     );
 
     const ProductAdded = await getProductById(idOfAddedProduct);
-    const userOwnerOfProduct = await getUser(userId);
+    const userOwnerOfProduct = await getUser(token.payload.id);
     if (!userOwnerOfProduct) {
       return res.status(404).json({
         error: "user not found",
@@ -85,7 +90,9 @@ export const getProduct = async (req, res) => {
         error: "Product not found",
       });
     }
-    return res.status(200).json({ succes: true, data: product });
+    const reviews = await getReviewForProduct(product.id);
+
+    return res.status(200).json({ succes: true, data: { product, reviews } });
   } catch (error) {
     throw error;
   }
