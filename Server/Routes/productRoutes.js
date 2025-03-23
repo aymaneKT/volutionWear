@@ -13,6 +13,6 @@ export const router = express.Router();
 router.post("/product", [auth], addSingleProduct);
 router.get("/products", getAllProducts);
 router.get("/product/:id", getProduct);
-router.delete("/product/:id", deleteSingleProduct);
-router.patch("/product", updateProduct);
+router.delete("/product/:id", [auth], deleteSingleProduct);
+router.patch("/product", [auth], updateProduct);
 router.get("/products/:userId", productsForSingleUser);

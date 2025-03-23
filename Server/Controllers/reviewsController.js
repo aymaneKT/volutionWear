@@ -11,8 +11,13 @@ import { getUser } from "../models/user.js";
 export const PostReview = async (req, res) => {
   try {
     const reviewInfo = req.body;
-    const { product_id, user_id, rating, comment } = reviewInfo;
-    const user = await getUser(user_id);
+    const { product_id, rating, comment } = reviewInfo;
+    const userParam = req.user;
+    console.log(userParam);
+
+    const user = await getUser(userParam.id);
+    console.log(user);
+
     if (!user) {
       res.status(404).json({ succes: fale, error: "user not found" });
     }
@@ -25,7 +30,7 @@ export const PostReview = async (req, res) => {
 
     const idInsertReview = await addReview(
       product_id,
-      user_id,
+      userParam.id,
       rating,
       comment
     );
@@ -74,6 +79,13 @@ export const deleteSingleReview = async (req, res) => {
         succes: false,
         error: "review not found",
       });
+
+    if (review.user_id !== req.user.id) {
+      return res.status(403).json({
+        succes: false,
+        error: "Unauthorized action",
+      });
+    }
     await deleteReview(null, id);
     return res.status(200).json({
       succes: true,
@@ -92,6 +104,14 @@ export const editSingleReview = async (req, res) => {
       return res.status(404).json({
         succes: false,
         error: "review not found",
+      });
+    }
+
+    // Check if the user is authorized to edit the review
+    if (checkReview.user_id !== req.user.id) {
+      return res.status(403).json({
+        succes: false,
+        error: "Unauthorized action",
       });
     }
     await editReview(id, rating, comment);

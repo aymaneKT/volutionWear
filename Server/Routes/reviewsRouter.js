@@ -6,11 +6,12 @@ import {
   editSingleReview,
   // getAllReviews,
 } from "../Controllers/reviewsController.js";
+import { auth } from "../middleware/auth.js";
 
 export const router = express.Router();
 
-router.post("/review", PostReview);
+router.post("/review", auth, PostReview);
 // router.get("/review/:id", getSingleReview);
 // router.get("/reviews", getAllReviews);
-router.delete("/review/:id", deleteSingleReview);
-router.patch("/review", editSingleReview);
+router.delete("/review/:id", [auth], deleteSingleReview);
+router.patch("/review", [auth], editSingleReview);

@@ -1,4 +1,3 @@
-import { getPayload , checkToken } from "../middleware/token.js";
 import {
   addProduct,
   getProducts,
@@ -14,13 +13,9 @@ import { getUser } from "../models/user.js";
 
 export const addSingleProduct = async (req, res) => {
   try {
-    const token = getPayload(
-      req.headers["authorization"].replace("Bearer", "").trim()
-    );
-
     const product = req.body;
-    const { userId, name, description, price, stock, category_id, image_url } =
-      product;
+
+    const { name, description, price, stock, category_id, image_url } = product;
 
     if (
       !name ||
@@ -44,13 +39,13 @@ export const addSingleProduct = async (req, res) => {
     );
 
     const ProductAdded = await getProductById(idOfAddedProduct);
-    const userOwnerOfProduct = await getUser(token.payload.id);
+    const userOwnerOfProduct = await getUser(req.user.id);
     if (!userOwnerOfProduct) {
       return res.status(404).json({
         error: "user not found",
       });
     }
-    await addProductForUser(userId, ProductAdded.id);
+    await addProductForUser(req.user.id, ProductAdded.id);
     return res.status(200).json({
       result: true,
       product: ProductAdded,
@@ -101,13 +96,21 @@ export const getProduct = async (req, res) => {
 export const deleteSingleProduct = async (req, res) => {
   try {
     const id = req.params.id;
-
     const productToDelete = await getProductById(id);
-
     if (!productToDelete) {
       return res.status(404).json({
         success: false,
         error: "Product not found",
+      });
+    }
+
+    const userProducts = await productsForUser(req.user.id);
+
+    const isUserProduct = userProducts.some((product) => product.id == id);
+    if (!isUserProduct) {
+      return res.status(403).json({
+        success: false,
+        error: "Unauthorized to delete this product",
       });
     }
     await deleteProductForUser(id);
@@ -123,7 +126,19 @@ export const deleteSingleProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
+    const userParams = req.user;
     const product = req.body;
+    const productForUser = await productsForUser(userParams.id);
+    const isUserProduct = productForUser.some(
+      (product) => product.id == req.body.id
+    );
+    if (!isUserProduct) {
+      return res.status(403).json({
+        success: false,
+        error: "Unauthorized to delete this product",
+      });
+    }
+
     await editProduct(product);
     const productUpdated = await getProductById(product.id);
 

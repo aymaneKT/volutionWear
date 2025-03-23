@@ -1,17 +1,31 @@
 import { connection } from "../config/DataBase.js";
 
-export const getAllUsers = async () => {
+export const getUser = async (id) => {
   try {
-    const query = "SELECT * FROM users";
-    const [rows] = await connection.query(query);
-
-    return rows;
+    const [user] = await connection.query(
+      `SELECT id, email , username , nome , cognome , is_seller FROM users WHERE id = ?`,
+      [id]
+    );
+    return user[0];
   } catch (error) {
     throw error;
   }
 };
 
-export const addUser = async (
+export const login = async (email) => {
+  try {
+    const [user] = await connection.query(
+      `SELECT id, email , username , nome , cognome , is_seller , password FROM users WHERE email = ?`,
+      [email]
+    );
+
+    return user[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const register = async (
   nome,
   cognome,
   username,
@@ -20,40 +34,12 @@ export const addUser = async (
   is_seller
 ) => {
   try {
-    const query =
-      "INSERT INTO users (nome , cognome , username , email , password , is_seller) VALUES (? ,? ,? ,? ,? ,?)";
-    const data = await connection.query(query, [
-      nome,
-      cognome,
-      username,
-      email,
-      password,
-      is_seller,
-    ]);
+    const user = await connection.query(
+      `INSERT INTO users (nome, cognome, username, email, password, is_seller) VALUES (?, ?, ?, ?, ?, ?)`,
+      [nome, cognome, username, email, password, is_seller]
+    );
 
-    const insertId = data[0].insertId;
-    return insertId;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getUser = async (id) => {
-  try {
-    const query =
-      "SELECT id ,nome , cognome , username , email , is_seller FROM users WHERE id = ?";
-
-    const [rows] = await connection.query(query, [id]);
-    return rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const deleteUser = async (id) => {
-  try {
-    const query = "DELETE FROM users WHERE id = ?";
-    connection.query(query, [id]);
+    return user[0].insertId;
   } catch (error) {
     throw error;
   }
