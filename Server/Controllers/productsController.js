@@ -10,13 +10,16 @@ import {
 } from "../models/products.js";
 import { deleteReview, getReviewForProduct } from "../models/reviews.js";
 import { getUser } from "../models/user.js";
-
+import { newAction } from "../models/actions.js";
 export const addSingleProduct = async (req, res) => {
   try {
     const product = req.body;
 
     const { name, description, price, stock, category_id, image_url } = product;
 
+    if ((req.user.is_seller == 1)) {
+      console.log("You are  a seller");
+    }
     if (
       !name ||
       !description ||
@@ -45,6 +48,11 @@ export const addSingleProduct = async (req, res) => {
         error: "user not found",
       });
     }
+    await newAction(
+      req.user.id,
+      "Product added",
+      `Product ${ProductAdded.name} added`
+    );
     await addProductForUser(req.user.id, ProductAdded.id);
     return res.status(200).json({
       result: true,
@@ -116,6 +124,11 @@ export const deleteSingleProduct = async (req, res) => {
     await deleteProductForUser(id);
     await deleteReview(id, null);
     await deleteProduct(id);
+    await newAction(
+      req.user.id,
+      "Product deleted",
+      `Product ${productToDelete.name} deleted`
+    );
     return res.status(200).json({
       success: true,
     });
@@ -141,7 +154,11 @@ export const updateProduct = async (req, res) => {
 
     await editProduct(product);
     const productUpdated = await getProductById(product.id);
-
+    await newAction(
+      userParams.id,
+      "Product updated",
+      `Product ${productUpdated.name} updated`
+    );
     return res.status(200).json({
       success: true,
       product: productUpdated,

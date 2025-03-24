@@ -51,7 +51,7 @@ export const Register = async (req, res) => {
         is_seller
       );
       const userAdded = await getUser(userId);
-      const token = generateToken(userId, email);
+      const token = generateToken(userId, email , is_seller);
       res.status(200).json({
         token: token,
         user: userAdded,
@@ -85,7 +85,7 @@ export const Login = async (req, res) => {
         error: "Invalid password",
       });
     }
-    const token = generateToken(user.id, user.email);
+    const token = generateToken(user.id, user.email , user.is_seller);
     const userFound = await getUser(user.id);
     return res.status(200).json({
       token: token,

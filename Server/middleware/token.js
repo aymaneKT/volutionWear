@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 dotenv.config();
 const key = process.env.KEY;
 
-
-
 const option = {
   algorithm: "HS256",
   expiresIn: "1h",
@@ -15,8 +13,8 @@ export const getPayload = (token) => {
   return payload;
 };
 
-export const generateToken = (id, email) => {
-  const payload = { id: id, email: email };
+export const generateToken = (id, email, is_seller) => {
+  const payload = { id: id, email: email, is_seller: is_seller };
   const token = jwt.sign(payload, key, option);
   return token;
 };
