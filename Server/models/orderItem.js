@@ -24,3 +24,30 @@ export const deleteItemOrder = async (orderId) => {
     throw error;
   }
 };
+
+// export const updateItemOrder = async (
+//   orderId,
+//   orderItemId,
+//   quantity,
+//   product_id
+// ) => {
+//   try {
+//     const query =
+//       "UPDATE order_items SET quantity = ? WHERE id = ? AND order_id = ? AND product_id = ?";
+//     await connection.query(query, [quantity, orderItemId, orderId, product_id]);
+
+//     return;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+export const getOrderItem = async (orderId) => {
+  try {
+    const query = "SELECT * FROM order_items WHERE id = ?";
+    const [rows] = await connection.query(query, [orderId]);
+    return rows[0];
+  } catch (error) {
+    throw error;
+  }
+};

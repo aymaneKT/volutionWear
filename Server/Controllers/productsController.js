@@ -17,9 +17,7 @@ export const addSingleProduct = async (req, res) => {
 
     const { name, description, price, stock, category_id, image_url } = product;
 
-    if ((req.user.is_seller == 1)) {
-      console.log("You are  a seller");
-    }
+
     if (
       !name ||
       !description ||

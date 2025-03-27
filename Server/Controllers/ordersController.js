@@ -6,6 +6,7 @@ import {
 } from "../models/orders.js";
 import { getUser } from "../models/user.js";
 import { deleteItemOrder } from "../models/orderItem.js";
+import { getProductForSinglrOrder } from "../models/orders.js";
 
 export const addSingleOrder = async (req, res) => {
   try {
@@ -39,8 +40,12 @@ export const getSingleOrder = async (req, res) => {
         error: "order not found",
       });
     }
-    
-    return res.status(200).json({ succes: true, data: order });
+    const productsForOrder = await getProductForSinglrOrder(id);
+    const data = {
+      order,
+      productsForOrder,
+    };
+    return res.status(200).json({ succes: true, data: data });
   } catch (error) {
     throw error;
   }

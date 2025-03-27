@@ -1,7 +1,7 @@
 import express from "express";
 const app = express();
 app.use(express.json());
-const port = process.env.port || 8080;
+const port = process.env.port;
 
 import { router as userRouter } from "./Routes/userRoutes.js";
 import { router as productRouter } from "./Routes/productRoutes.js";

@@ -53,3 +53,9 @@ export const getPendingOrder = async (userId) => {
   const [result] = await connection.query(query, [userId]);
   return result.length > 0 ? result[0] : null;
 };
+
+export const getProductForSinglrOrder = async (orderId) => {
+  const query = `SELECT products.id, products.name, products.price, order_items.quantity FROM products JOIN order_items ON products.id = order_items.product_id WHERE order_items.order_id = ?`;
+  const [products] = await connection.query(query, [orderId]);
+  return products;
+};
