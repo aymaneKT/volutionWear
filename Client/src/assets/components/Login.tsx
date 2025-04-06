@@ -3,7 +3,7 @@ import img from "../../VolutionWear.png";
 export default function Login() {
   return (
     <div className="flex h-screen">
-      <div className="bg-[#F8F8F8]  flex flex-col justify-center items-center w-[100%]">
+      <div className="bg-[#F8F8F8] grow flex flex-col justify-center items-center ">
         <h1 className="text-4xl font-medium">WELCOME BACK</h1>
         <p className="text-[#A6A6A7] mb-5">
           Welcome back! Please enter your details
@@ -48,7 +48,7 @@ export default function Login() {
           </button>
         </div>
       </div>
-      <img src={img} alt="Logo Image" className=" max-[950px]:hidden" />
+      <img src={img} alt="Logo Image" className=" max-[1110px]:hidden grow" />
     </div>
   );
 }
