@@ -1,10 +1,11 @@
 import "./App.css";
-import Login from "./assets/components/Login";
+import SignUp from "./assets/components/Register";
+
 
 function App() {
   return (
     <>
-      <Login />
+      <SignUp/>
     </>
   );
 }
