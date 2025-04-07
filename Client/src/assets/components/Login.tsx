@@ -1,6 +1,17 @@
 import img from "../../VolutionWear.png";
+import { useState } from "react";
+type UserType = {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
 
 export default function Login() {
+  const [user, setUser] = useState<UserType>({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
   return (
     <div className="flex h-screen">
       <div className="bg-[#F8F8F8] grow flex flex-col justify-center items-center min-[1120px]:w-[25%] ">
@@ -15,6 +26,8 @@ export default function Login() {
               Email
             </label>
             <input
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
+              value={user.email}
               type="email"
               id="email"
               placeholder="Enter your email"
@@ -23,8 +36,12 @@ export default function Login() {
             />
           </div>
           <div className="Password flex flex-col mb-5 gap-1.5">
-            <label htmlFor="password" className="font-medium">Password</label>
+            <label htmlFor="password" className="font-medium">
+              Password
+            </label>
             <input
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
+              value={user.password}
               type="password"
               id="password"
               placeholder="Enter your password"
@@ -38,6 +55,10 @@ export default function Login() {
                 type="checkbox"
                 className="accent-[#EA454C]"
                 id="remember-me"
+                onChange={(e) =>
+                  setUser({ ...user, rememberMe: e.target.checked })
+                }
+                checked={user.rememberMe}
               />
               <label htmlFor="remember-me">Remember me</label>
             </div>
@@ -47,7 +68,10 @@ export default function Login() {
             Sign in
           </button>
           <p className="text-center">
-            Don't have an account ? <span className="text-[#EA454C] cursor-pointer">Sign up for free!</span>
+            Don't have an account ?{" "}
+            <span className="text-[#EA454C] cursor-pointer">
+              Sign up for free!
+            </span>
           </p>
         </div>
       </div>
