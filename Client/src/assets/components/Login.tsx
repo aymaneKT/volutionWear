@@ -65,7 +65,7 @@ export default function Login() {
             </div>
             <span>Forgot password</span>
           </div>
-          <button className="bg-[#EA454C] text-white py-2 rounded-md hover:bg-white hover:text-[#EA454C] hover:border-[#EA454C] hover:border-[2px] hover:cursor-pointer transition-all transition-200">
+          <button className="bg-[#EA454C] text-white py-2 rounded-md hover:bg-white hover:text-[#EA454C] hover:border-[#EA454C] hover:border-[2px] hover:cursor-pointer transition-colors transition-200">
             Sign in
           </button>
           <p className="text-center">

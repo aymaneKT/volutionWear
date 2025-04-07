@@ -1,14 +1,18 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Unna:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 
-/* @font-face {
-    font-family: "futura";
-    src: url("./fonts/futura/futur.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-  }
-   */
 /* 
-
-
 #EA454C PC  
-#F8F8F8 BG-LOGIN */
+#F8F8F8 BG-LOGIN 
+*/
+
+
+.clippath{
+  clip-path: polygon(0 30%, 100% 0, 100% 100%, 0 64%);
+  display: none;
+}
+
+ul li:hover .clippath{
+  display: block;
+}
