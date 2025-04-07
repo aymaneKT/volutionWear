@@ -1,5 +1,6 @@
 import { useState } from "react";
 import img from "../../VolutionWear.png";
+import { Link } from "react-router-dom";
 
 type UserType = {
   username: string;
@@ -31,7 +32,7 @@ export default function Register() {
               Username
             </label>
             <input
-            onChange={(e => setUser({ ...user, username: e.target.value }))}
+              onChange={(e) => setUser({ ...user, username: e.target.value })}
               value={user.username}
               type="text"
               id="username"
@@ -45,7 +46,7 @@ export default function Register() {
               Name
             </label>
             <input
-            onChange={(e => setUser({ ...user, name: e.target.value }))}
+              onChange={(e) => setUser({ ...user, name: e.target.value })}
               value={user.name}
               type="text"
               id="name"
@@ -59,7 +60,7 @@ export default function Register() {
               Surname
             </label>
             <input
-            onChange={(e => setUser({ ...user, surname: e.target.value }))}
+              onChange={(e) => setUser({ ...user, surname: e.target.value })}
               value={user.surname}
               type="text"
               id="surname"
@@ -73,7 +74,7 @@ export default function Register() {
               Password
             </label>
             <input
-            onChange={(e => setUser({ ...user, password: e.target.value }))}
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
               value={user.password}
               type="password"
               id="password"
@@ -83,12 +84,13 @@ export default function Register() {
             />
           </div>
           <div className="ConfirmPassword flex flex-col mb-5 gap-1.5">
-
             <label htmlFor="confirm-password" className="font-medium">
               Confirm Password
             </label>
             <input
-            onChange={(e => setUser({ ...user, confirmPassword: e.target.value }))}
+              onChange={(e) =>
+                setUser({ ...user, confirmPassword: e.target.value })
+              }
               value={user.confirmPassword}
               type="password"
               id="confirm-password"
@@ -114,9 +116,11 @@ export default function Register() {
           <button className="bg-[#EA454C] text-white py-2 rounded-md hover:bg-white hover:text-[#EA454C] hover:border-[#EA454C] hover:border-[2px] hover:cursor-pointer transition-all transition-200">
             Register
           </button>
-          <p className="text-center">
+          <p className="text-center my-2">
             Already have an account?{" "}
-            <span className="text-[#EA454C] cursor-pointer">Log in</span>
+            <Link to="/login">
+              <span className="text-[#EA454C] cursor-pointer">Log in</span>
+            </Link>
           </p>
         </div>
       </div>

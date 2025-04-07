@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import img from "../../VolutionWear.png";
 import { useState } from "react";
 type UserType = {
@@ -69,9 +70,11 @@ export default function Login() {
           </button>
           <p className="text-center">
             Don't have an account ?{" "}
-            <span className="text-[#EA454C] cursor-pointer">
-              Sign up for free!
-            </span>
+            <Link to="/register">
+              <span className="text-[#EA454C] cursor-pointer">
+                Sign up for free!
+              </span>
+            </Link>
           </p>
         </div>
       </div>
