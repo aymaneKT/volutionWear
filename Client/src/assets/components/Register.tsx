@@ -111,13 +111,13 @@ export default function Register() {
               <div className="group peer bg-white rounded-full duration-300 w-16 h-8 ring-2 ring-red-500 after:duration-300 after:bg-red-500 peer-checked:after:bg-green-500 peer-checked:ring-green-500 after:rounded-full after:absolute after:h-6 after:w-6 after:top-1 after:left-1 after:flex after:justify-center after:items-center peer-checked:after:translate-x-8 peer-hover:after:scale-95" />
             </label>
           </div>
-          <button className="bg-[#EA454C] text-white py-2 my-2 rounded-md hover:bg-white hover:text-[#EA454C] hover:border-[#EA454C] hover:border-[2px] hover:cursor-pointer transition-all transition-200">
+          <button className="bg-[#5805E9] text-white py-2 my-2 rounded-md hover:bg-[#EEE6FD] hover:text-[#5805E9] hover:border-[#5805E9] hover:border-[2px] hover:cursor-pointer transition-all transition-200">
             Register
           </button>
           <p className="text-center pb-4 ">
             Already have an account?{" "}
             <Link to="/login">
-              <span className="text-[#EA454C] cursor-pointer">Log in</span>
+              <span className="text-[#5805E9] cursor-pointer">Log in</span>
             </Link>
           </p>
         </div>

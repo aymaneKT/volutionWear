@@ -4,25 +4,32 @@ import { useState } from "react";
 type UserType = {
   email: string;
   password: string;
-  rememberMe: boolean;
 };
 
 export default function Login() {
   const [user, setUser] = useState<UserType>({
     email: "",
     password: "",
-    rememberMe: false,
   });
   return (
-    <div className="flex h-screen">
-      <div className="bg-[#F8F8F8] grow flex flex-col justify-center items-center min-[1120px]:w-[25%] ">
-        <h1 className="text-4xl font-medium">WELCOME BACK</h1>
+    <div className="flex h-screen bg-[#F8F8F8] ">
+      <div className=" grow flex flex-col   justify-center   items-center min-[1120px]:w-[25%] max-[1120px]:mb-[8rem]">
+        <img
+          src={img}
+          className="w-[250px] h-[250px] mix-blend-multiply rounded-3xl absolute max-[480px]:-top-[11%] -top-[5%]  hidden max-[1110px]:block"
+        />
+        <h1
+          style={{ fontSize: "clamp(2rem, 3vw, 0.8rem" }}
+          className=" font-medium"
+        >
+          WELCOME BACK
+        </h1>
         <p className="text-[#A6A6A7] mb-5">
           Welcome back! Please enter your details
         </p>
 
-        <div className=" self-center flex flex-col gap-5 w-[100%] px-4 ">
-          <div className="Email flex flex-col mb-5 gap-1.5">
+        <div className=" self-center flex flex-col gap-2 w-[100%] px-4 ">
+          <div className="Email flex flex-col  gap-1.5">
             <label htmlFor="email" className="font-medium">
               Email
             </label>
@@ -50,7 +57,7 @@ export default function Login() {
               className="border-1 outline-0 pl-2.5 p-2 rounded-[8px] border-[#A6A6A7] mb-2"
             />
           </div>
-          <div className="flex justify-between mb-5">
+          {/* <div className="flex justify-between mb-5">
             <div className="flex gap-2">
               <input
                 type="checkbox"
@@ -64,19 +71,19 @@ export default function Login() {
               <label htmlFor="remember-me">Remember me</label>
             </div>
             <span>Forgot password</span>
-          </div>
-          <button className="bg-[#EA454C] text-white py-2 rounded-md hover:bg-white hover:text-[#EA454C] hover:border-[#EA454C] hover:border-[2px] hover:cursor-pointer transition-colors transition-200">
+          </div> */}
+          <button className="bg-[#5805E9] text-white py-2 rounded-md hover:bg-[#EEE6FD] hover:text-[#5805E9] hover:border-[#5805E9] hover:border-[2px] hover:cursor-pointer transition-colors transition-200">
             Sign in
           </button>
-          <p className="text-center">
-            Don't have an account ?{" "}
-            <Link to="/register">
-              <span className="text-[#EA454C] cursor-pointer">
-                Sign up for free!
-              </span>
-            </Link>
-          </p>
         </div>
+        <p className="text-center absolute bottom-4">
+          Don't have an account ?{" "}
+          <Link to="/register">
+            <span className="text-[#5805E9] cursor-pointer">
+              Sign up for free!
+            </span>
+          </Link>
+        </p>
       </div>
       <img src={img} alt="Logo Image" className=" max-[1110px]:hidden grow" />
     </div>

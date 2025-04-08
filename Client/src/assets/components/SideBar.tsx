@@ -3,8 +3,12 @@ import { FaShoppingCart } from "react-icons/fa";
 import { FaChartBar } from "react-icons/fa";
 import { LuPackage } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
+type SideBarType = {
+  section: string;
+  setSection: (value: string) => void;
+};
 
-export default function SideBar() {
+export default function SideBar(props: SideBarType) {
   const listSideBar = [
     { name: "Dashboard", icon: <MdOutlineDashboard /> },
     { name: "Orders", icon: <FaShoppingCart /> },
@@ -20,10 +24,15 @@ export default function SideBar() {
       </h2>
       <ul className="flex flex-col gap-3 cursor-pointer mt-9 ">
         {listSideBar.map((e) => (
-          <li className="group flex relative font-medium items-center gap-2.5 ml-4 text-[17px] w-[80%] rounded-xl text-[#7C7C7C] hover:bg-[#EEE6FD] hover:text-[#5805E9] transition duration-100 pl-3 py-2">
+          <li style={{
+            background : e.name === props.section ? "#EEE6FD" : "",
+            color : e.name === props.section ? "#5805E9" : ""
+          }} onClick={()=>{props.setSection(e.name)}} className="group flex relative font-medium items-center gap-2.5 ml-4 text-[17px] w-[80%] rounded-xl text-[#7C7C7C] hover:bg-[#EEE6FD] hover:text-[#5805E9] transition duration-100 pl-3 py-2">
             {e.icon}
             <span className="max-[900px]:hidden">{e.name}</span>
-            <div className="absolute w-[4px] h-[100%] -left-[17px] bg-[#5805E9] hidden group-hover:block"></div>
+            <div style={{
+              display : e.name === props.section ? "block" : "none"
+            }} className="absolute w-[4px] h-[100%] -left-[17px] bg-[#5805E9] hidden group-hover:block"></div>
           </li>
         ))}
       </ul>
