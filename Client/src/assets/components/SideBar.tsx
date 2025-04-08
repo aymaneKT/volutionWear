@@ -14,13 +14,16 @@ export default function SideBar() {
   ];
 
   return (
-    <div className="h-screen bg-[#EA454C] absolute left-0 top-0 w-[180px] overflow-hidden max-[900px]:w-[90px] py-2">
-      <h2 className="text-center font-bold text-white font-[Poetsen One]  my-4  uppercase ">Volution Wear</h2>
+    <div className="h-screen border-r-1 fixed left-0 top-0 w-[180px] overflow-hidden max-[900px]:w-[90px] py-2">
+      <h2 className="text-center font- text-[#5805E9]   my-4  uppercase font-[Poppins]">
+        Volution Wear
+      </h2>
       <ul className="flex flex-col gap-3 cursor-pointer mt-9 ">
         {listSideBar.map((e) => (
-          <li  className="flex relative  font-light  items-center gap-2.5 ml-4 text-[17px] w-[100%] rounded-2xl  text-white hover:bg-white  hover:text-[#EA454C] transition duration-100  pl-3 py-2">
-            {e.icon} <span className="max-[900px]:hidden">{e.name}</span>
-            <div className="clippath absolute w-8 h-18 bg-white right-0"></div>
+          <li className="group flex relative font-medium items-center gap-2.5 ml-4 text-[17px] w-[80%] rounded-xl text-[#7C7C7C] hover:bg-[#EEE6FD] hover:text-[#5805E9] transition duration-100 pl-3 py-2">
+            {e.icon}
+            <span className="max-[900px]:hidden">{e.name}</span>
+            <div className="absolute w-[4px] h-[100%] -left-[17px] bg-[#5805E9] hidden group-hover:block"></div>
           </li>
         ))}
       </ul>
