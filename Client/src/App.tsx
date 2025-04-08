@@ -3,11 +3,13 @@ import Login from "./assets/components/Login";
 import Register from "./assets/components/Register";
 import { Routes, Route } from "react-router-dom";
 import SideBar from "./assets/components/SideBar";
+import Order from "./assets/components/Dashboard/Order";
 
 function App() {
   return (
     <>
-    <SideBar/>
+      <SideBar />
+      <Order />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
