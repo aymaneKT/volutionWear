@@ -1,6 +1,6 @@
 import { IoIosSearch } from "react-icons/io";
 import { CiMail } from "react-icons/ci";
-import img from "../../../VolutionWear.png";
+import img from "../../VolutionWear.png";
 type PropsHeadDash = {
   // Define any props you need here
   title: string;

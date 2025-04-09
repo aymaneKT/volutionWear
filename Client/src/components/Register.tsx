@@ -1,5 +1,5 @@
 import { useState } from "react";
-import img from "../../VolutionWear.png";
+import img from "../VolutionWear.png";
 import { Link } from "react-router-dom";
 
 type UserType = {

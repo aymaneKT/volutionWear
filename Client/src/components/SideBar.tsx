@@ -12,9 +12,9 @@ export default function SideBar(props: SideBarType) {
   const listSideBar = [
     { name: "Dashboard", icon: <MdOutlineDashboard /> },
     { name: "Orders", icon: <FaShoppingCart /> },
-    { name: "Statistics", icon: <FaChartBar /> },
+    // { name: "Statistics", icon: <FaChartBar /> },
     { name: "Products", icon: <LuPackage /> },
-    { name: "Offer", icon: <MdOutlineLocalOffer /> },
+    { name: "Offers", icon: <MdOutlineLocalOffer /> },
   ];
 
   return (
@@ -22,7 +22,7 @@ export default function SideBar(props: SideBarType) {
       <h2 className="text-center font- text-[#5805E9]   my-4  uppercase font-[Poppins]">
         Volution Wear
       </h2>
-      <ul className="flex flex-col gap-3 cursor-pointer mt-9 ">
+      <ul className="flex flex-col gap-8 cursor-pointer mt-9 ">
         {listSideBar.map((e) => (
           <li style={{
             background : e.name === props.section ? "#EEE6FD" : "",

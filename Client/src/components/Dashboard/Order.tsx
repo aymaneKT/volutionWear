@@ -4,11 +4,11 @@ import HeadDashbord from "./HeadDashbord";
 export default function Order() {
   return (
     <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px]">
-      <HeadDashbord title={"orders"} subtitle="28 Orders found"/>
-      <div className="flex justify-between items-center flex-wrap ">
+      <HeadDashbord title={"orders"} subtitle="28 Orders found" />
+      <div className="flex  justify-between items-center flex-wrap ">
         <ul
           style={{ fontSize: "clamp(0.4rem, 3vw, 0.8rem)" }}
-          className="flex gap-4 my-4 "
+          className="flex gap-4 my-4 pl-2"
         >
           <li className="font-semibold cursor-pointer underline  decoration-2 decoration-[#5805E9] uppercase">
             All
@@ -26,11 +26,11 @@ export default function Order() {
         <div className="flex gap-4 items-center  p-1 flex-wrap">
           <input
             type="date"
-            className=" grow outline-0 border-0 bg-[#F9F9F8] px-5 py-1 rounded-[6px]            "
+            className=" border-2 grow outline-0  bg-[#F9F9F8] px-5 py-1 rounded-[6px]"
           />
           <input
             type="date"
-            className=" grow outline-0 border-0 bg-[#F9F9F8] px-5 py-1 rounded-[8px]"
+            className=" border-2 grow outline-0  bg-[#F9F9F8] px-5 py-1 rounded-[8px]"
           />
         </div>
       </div>
