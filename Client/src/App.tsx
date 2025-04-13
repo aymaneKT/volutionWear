@@ -8,6 +8,7 @@ import Register from "./components/Register";
 import Products from "./components/Products";
 import Login from "./components/Login";
 import Offers from "./components/Offers";
+import ProductItem from "./components/ProductItem";
 
 function App() {
   const [section, setSection] = useState<string>("Dashboard");
@@ -27,8 +28,9 @@ function App() {
   };
   return (
     <>
-      {/* <SideBar section={section} setSection={setSection} />
-      {sectionHandler()} */}
+      <SideBar section={section} setSection={setSection} />
+      {sectionHandler()}
+      <ProductItem />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
