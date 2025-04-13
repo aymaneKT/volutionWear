@@ -27,8 +27,8 @@ function App() {
   };
   return (
     <>
-      <SideBar section={section} setSection={setSection} />
-      {sectionHandler()}
+      {/* <SideBar section={section} setSection={setSection} />
+      {sectionHandler()} */}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
