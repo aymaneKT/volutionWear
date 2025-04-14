@@ -3,7 +3,7 @@ import Checkbox from "./CheckBox";
 import InputImage from "./InputImage";
 export default function ProductItem() {
   return (
-    <div className="absolute   top-0 bottom-0 right-0 left-0  max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center ">
+    <div className="absolute   top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center ">
       <div className="flex  justify-between items-end  border-2 rounded-[8px] bg-white p-9 w-[90%] max-[992px]:w-screen m-5  flex-wrap gap-5">
         {/* left part */}
         <div className=" flex flex-col  gap-2.5 grow  ">

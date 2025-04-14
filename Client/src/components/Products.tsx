@@ -10,7 +10,7 @@ export default function Products() {
         <FaPlus />
         Add Product
       </button>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto font-[Poppins]">
         <table
           style={{ fontSize: "clamp(0.4rem, 3vw, 0.8rem)" }}
           className="w-full table-auto border-separate my-4 border-spacing-y-2"

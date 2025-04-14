@@ -23,7 +23,9 @@ export default function StatusTag(props: statusType) {
 
   return (
     <span
-      className={`rounded-[4px] w-fit py-1 px-2 font-medium ${styles[props.status].bg} ${styles[props.status].text}`}
+      className={`rounded-[4px] w-fit py-1 px-2 font-medium ${
+        styles[props.status].bg
+      } ${styles[props.status].text}`}
     >
       {props.status}
     </span>

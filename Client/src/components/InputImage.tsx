@@ -23,7 +23,7 @@ const InputImage = () => {
           </svg>
         </div>
         <div className="text">
-          <span>Click to upload image</span>
+          <span> upload image</span>
         </div>
         <input id="file" type="file" />
       </label>

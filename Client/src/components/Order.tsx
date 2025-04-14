@@ -1,5 +1,5 @@
-import BasicMenu from "./BasicMenu";
-import HeadDashbord from "./HeadDashbord";
+import BasicMenu from "./Dashboard/BasicMenu";
+import HeadDashbord from "./Dashboard/HeadDashbord";
 
 export default function Order() {
   return (
@@ -8,7 +8,7 @@ export default function Order() {
       <div className="flex  justify-between items-center flex-wrap ">
         <ul
           style={{ fontSize: "clamp(0.4rem, 3vw, 0.8rem)" }}
-          className="flex gap-4 my-4 pl-2"
+          className="flex gap-4 my-4 pl-2 font-[Poppins]"
         >
           <li className="font-semibold cursor-pointer underline  decoration-2 decoration-[#5805E9] uppercase">
             All
@@ -35,7 +35,7 @@ export default function Order() {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto font-[Poppins]">
         <table
           style={{ fontSize: "clamp(0.4rem, 3vw, 0.8rem" }}
           className="w-full table-auto border-separate my-4 border-spacing-y-2 "

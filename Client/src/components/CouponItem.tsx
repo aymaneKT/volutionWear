@@ -1,8 +1,6 @@
-import Checkbox from "./CheckBox";
-
 export default function CouponItem() {
   return (
-    <div className="absolute top-0 bottom-0 right-0 left-0 max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center items-center">
+    <div className="absolute font-[Poppins] top-0 bottom-0 right-0 left-0 max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center items-center">
       <div className="flex flex-col border-2 rounded-[8px] bg-white p-9 w-[90%] max-[992px]:w-screen m-5 gap-5">
         <div>
           <label className="block text-sm font-medium text-gray-700">

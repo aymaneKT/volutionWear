@@ -15,7 +15,7 @@ export default function Login() {
   });
   const [isPasswordVisible, setPasswordVisibility] = useState<boolean>(false);
   return (
-    <div className="flex h-screen bg-[#F8F8F8] ">
+    <div className="flex h-screen bg-[#F8F8F8] font-[Inter]">
       <div className=" flex flex-col   justify-center grow-2   items-center w-[800px]  max-[992px]:px-12 max-[480px]:px-0">
         <h1
           style={{ fontSize: "clamp(2rem, 3vw, 0.8rem" }}
@@ -102,7 +102,7 @@ export default function Login() {
           thousands | Zero fees | Always in style
         </h1>
         <PiCoatHangerBold className="text-white text-[20rem] rotate-12" />
-        <p className="text-white text-5xl mt-2.5">Volution Wear</p>
+        <p className="text-white text-5xl mt-2.5 ">Volution Wear</p>
       </div>
     </div>
   );

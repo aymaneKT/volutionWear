@@ -15,21 +15,21 @@ export default function OrderItemInfo({
         {icon}
       </div>
       {isEditable ? (
-        <div>
+        <div className="grow">
           <h2 className="font-bold">{title}</h2>
           <textarea rows={4} className=" resize-none w-full border border-gray-300 rounded-md p-2" />
         </div>
       ) : (
         <div>
           <h2 className="font-bold">{title}</h2>
-          <p className="text-gray-400">
-            {first}: <span className="text-black">Aymane Kabti</span>
+          <p className="text-gray-400 font-medium">
+            {first}: <span className="text-black font-normal">Aymane Kabti</span>
           </p>
-          <p className="text-gray-400">
-            {second}: <span className="text-black">aymanekabti@gmail.com</span>
+          <p className="text-gray-400 font-medium">
+            {second}: <span className="text-black font-normal">aymanekabti@gmail.com</span>
           </p>
-          <p className="text-gray-400">
-            {third}: <span className="text-black">+39 351 868 6699</span>
+          <p className="text-gray-400 font-medium">
+            {third}: <span className="text-black font-normal">+39 351 868 6699</span>
           </p>
         </div>
       )}

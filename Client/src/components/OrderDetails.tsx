@@ -51,7 +51,7 @@ export default function OrderDetails() {
     },
   ];
   return (
-    <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px] ">
+    <div className="w-[calc(100% - 180px)] font-[Poppins] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px] ">
       <HeadDashbord title="Order Details" subtitle="" />
       <div className="flex justify-between py-4 items-center my-4">
         <div className="flex flex-col gap-1">

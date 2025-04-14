@@ -24,9 +24,9 @@ export default function Register() {
     isSeller: false,
   });
   return (
-    <div className="flex bg-[#F8F8F8]">
+    <div className="flex bg-[#F8F8F8] ">
       {/* COLONNA SINISTRA - FORM */}
-      <div className=" flex flex-col h-screen max-[480px]:h-auto max-[480px]:py-4   justify-center grow-2  items-center max-w-[100%]  max-[992px]:w-[100%]  max-[992px]:px-12 max-[480px]:px-0">
+      <div className=" flex flex-col h-screen font-[Inter] max-[480px]:h-auto max-[480px]:py-4   justify-center grow-2  items-center max-w-[100%]  max-[992px]:w-[100%]  max-[992px]:px-12 max-[480px]:px-0">
         <h1
           style={{ fontSize: "clamp(2rem, 3vw, 0.8rem" }}
           className="font-medium"
