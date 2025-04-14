@@ -34,12 +34,12 @@ export default function ProductItem() {
         {/* right part */}
         <div className="grow-5 flex flex-col gap-2 item-s">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block  text-sm font-medium text-gray-700">
               Product Name
             </label>
             <input
               type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              className="mt-1 focus:bg-[#b348ff0e]  block w-full border-b-1 border-gray-500 outline-none p-2"
               placeholder="Enter product name"
             />
           </div>
@@ -49,7 +49,7 @@ export default function ProductItem() {
               Description
             </label>
             <textarea
-              className="mt-1 resize-none block w-full border border-gray-300 rounded-md p-2"
+              className="mt-1 focus:bg-[#b348ff0e] resize-none block w-full border border-gray-300 rounded-md p-2"
               rows={3}
               placeholder="Enter product description"
             ></textarea>
@@ -62,18 +62,18 @@ export default function ProductItem() {
             <input
               type="number"
               step="0.01"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              className="mt-1 focus:bg-[#b348ff0e]  block w-full border-b-1 border-gray-500 outline-none p-2"
               placeholder="0.00"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block focus:bg-[#b348ff0e]text-sm font-medium text-gray-700">
               Stock
             </label>
             <input
               type="number"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              className="mt-1 block focus:bg-[#b348ff0e] w-full border-b-1 border-gray-500 outline-none p-2"
               placeholder="Enter quantity in stock"
             />
           </div>
@@ -84,7 +84,7 @@ export default function ProductItem() {
             </label>
             <input
               type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              className="mt-1 focus:bg-[#b348ff0e]  block w-full border-b-1 border-gray-500 outline-none p-2"
               placeholder="Enter product category"
             />
           </div>

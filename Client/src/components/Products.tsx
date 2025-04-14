@@ -34,7 +34,7 @@ export default function Products() {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-[10px] cursor-pointer hover:text-white hover:bg-[#cbc0e0] rounded-tl-[10px] rounded-bl-[10px] border-[#f3f0f0] mt-4">
+            <tr className="border-[10px]  cursor-pointer hover:text-white hover:bg-[#cbc0e0] rounded-tl-[10px] rounded-bl-[10px] border-[#f3f0f0] mt-4">
               <td className="py-2 px-3 border-r-0 border-3 border-[#f3f0f0] rounded-tl-[10px] rounded-bl-[10px]">
                 #1
               </td>
@@ -42,26 +42,26 @@ export default function Products() {
                 <img
                   src={img}
                   alt="Product Img"
-                  className="w-[60px] h-[60px] mix-blend-multiply rounded-full"
+                  className="w-[60px]   h-[60px] mix-blend-multiply rounded-full"
                 />{" "}
                 Wireless Mouse
               </td>
-              <td className="py-2 border-[#f3f0f0] border-t-3 border-b-3 px-3">
+              <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
                 Electronics
               </td>
-              <td className="py-2 border-[#f3f0f0] border-t-3 border-b-3 px-3">
+              <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
                 150
               </td>
-              <td className="py-2 border-[#f3f0f0] border-t-3 border-b-3 px-3">
+              <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
                 85
               </td>
-              <td className="py-2 border-[#f3f0f0] border-t-3 border-b-3 px-3">
+              <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
                 $25.99
               </td>
-              <td className="py-2 border-[#f3f0f0] border-t-3 border-b-3 px-3">
+              <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
                 In Stock
               </td>
-              <td className="py-2 border-[#f3f0f0] border-3 border-l-0 px-3 rounded-tr-[10px] rounded-br-[10px]">
+              <td className="py-2 truncate border-[#f3f0f0] border-3 border-l-0 px-3 rounded-tr-[10px] rounded-br-[10px]">
                 <BasicMenu />
               </td>
             </tr>

@@ -9,9 +9,11 @@ import Products from "./components/Products";
 import Login from "./components/Login";
 import Offers from "./components/Offers";
 import ProductItem from "./components/ProductItem";
+import CouponItem from "./components/CouponItem";
+import OrderDetails from "./components/OrderDetails";
 
 function App() {
-  const [section, setSection] = useState<string>("Dashboard");
+  const [section, setSection] = useState<string>("Products");
   const sectionHandler = () => {
     switch (section) {
       case "Dashboard":
@@ -29,8 +31,11 @@ function App() {
   return (
     <>
       <SideBar section={section} setSection={setSection} />
-      {sectionHandler()}
-      <ProductItem />
+      {/* {sectionHandler()} */}
+      {/* 
+      {/* <ProductItem />   */}
+      {/* <CouponItem/> */}
+      <OrderDetails />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
