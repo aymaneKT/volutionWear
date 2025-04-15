@@ -20,12 +20,13 @@ export default function SideBar(props: SideBarType) {
 
   return (
     <div className="h-screen border-r-1 fixed left-0 top-0 w-[180px] overflow-hidden max-[900px]:w-[90px] py-2">
-      <p className="text-center font-[Poppins] text-[#5805E9] font-bold   my-4  uppercase font-[Poppins]">
+      <p className="text-center text-[#5805E9] font-bold   my-4  uppercase font-[Poppins]">
         Volution Wear
       </p>
       <ul className="flex flex-col gap-8 cursor-pointer mt-9 ">
-        {listSideBar.map((e) => (
+        {listSideBar.map((e,i) => (
           <li
+          key={i}
             style={{
               background: e.name === props.section ? "#EEE6FD" : "",
               color: e.name === props.section ? "#5805E9" : "",

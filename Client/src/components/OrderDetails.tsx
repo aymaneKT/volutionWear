@@ -32,7 +32,7 @@ export default function OrderDetails() {
       title: "Order Info",
       icon: <IoCartOutline />,
       first: "Shipping",
-      second: "Shipping",
+      second: "Payement method",
       third: "Status",
       isEditable: false,
     },

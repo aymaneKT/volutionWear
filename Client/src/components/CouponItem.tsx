@@ -1,7 +1,28 @@
-export default function CouponItem() {
+type couponItemType = {
+  isOpenCouponMenu: boolean,
+  setIsOpenCouponMenu: (value: boolean) => void;
+};
+export default function CouponItem(props: couponItemType) {
+  const { isOpenCouponMenu, setIsOpenCouponMenu } = props;
   return (
-    <div className="absolute font-[Poppins] top-0 bottom-0 right-0 left-0 max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center items-center">
-      <div className="flex flex-col border-2 rounded-[8px] bg-white p-9 w-[90%] max-[992px]:w-screen m-5 gap-5">
+    <div
+      style={{
+        opacity: isOpenCouponMenu ? "1" : "0",
+        pointerEvents: isOpenCouponMenu ? "auto" : "none",
+      }}
+      onClick={() => {
+        setIsOpenCouponMenu(false);
+      }}
+      className="absolute z-10 transition duration-300 font-[Poppins] top-0 bottom-0 right-0 left-0 max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center items-center"
+    >
+      <div
+        style={{
+          transform: isOpenCouponMenu ? "translateX(0)" : "translateX(-20px)",
+          opacity: isOpenCouponMenu ? "1" : "0",
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="flex flex-col  border-2 rounded-[8px] bg-white p-9 w-[90%] max-[992px]:w-screen m-5 gap-5"
+      >
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Coupon Name
@@ -65,7 +86,9 @@ export default function CouponItem() {
         </div> */}
 
         <div className="flex gap-2 self-end my-4">
-          <button className="cursor-pointer bg-[#7E7E7E] text-white rounded-[7px] px-4 py-1.5">
+          <button onClick={()=>{
+            setIsOpenCouponMenu(false)
+          }} className="cursor-pointer bg-[#7E7E7E] text-white rounded-[7px] px-4 py-1.5">
             Cancel
           </button>
           <button className="cursor-pointer text-white rounded-[7px] bg-purple-600 px-4 py-1.5">

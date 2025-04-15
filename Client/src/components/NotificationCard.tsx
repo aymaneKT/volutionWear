@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 type NotificationCardType = {
   isNotificationOpen: boolean;
