@@ -1,4 +1,11 @@
-import { saveImage, HowManyImages } from "../models/images.js";
+import {
+  saveImage,
+  HowManyImages,
+  getImages,
+  getImage,
+  deleteimage,
+  setMainImage,
+} from "../models/images.js";
 import { getproduct } from "../models/products.js";
 
 export const setImage = async (req, res) => {
@@ -6,40 +13,91 @@ export const setImage = async (req, res) => {
     const { product_id } = req.params;
     const product = await getproduct(product_id);
     if (!product)
-      return res.status(400).json({
-        succes: false,
-        message: "Product not found",
-      });
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No files uploaded",
-      });
-    }
+      return res
+        .status(400)
+        .json({ succes: false, message: "Product not found" });
+    if (!req.files || req.files.length === 0)
+      return res
+        .status(400)
+        .json({ success: false, message: "No files uploaded" });
+
     const imagesQuantity = await HowManyImages(product_id);
     let mainPictureExist = false;
-    if(imagesQuantity >= 1)
-      mainPictureExist = true;
+    if (imagesQuantity >= 1) mainPictureExist = true;
 
-    
-    if (imagesQuantity >= 5 || imagesQuantity  + req.files.length >5) {
+    if (imagesQuantity + req.files.length > 5)
       return res.status(400).json({
         success: false,
         message: "You cannot upload more than 5 images",
       });
-    }
 
-    const images = await Promise.all(
+    await Promise.all(
       req.files.map(async (image, i) => {
-      const isMain = mainPictureExist ? false : i === 0;
-      return await saveImage(product_id, image.buffer, isMain);
+        const isMain = mainPictureExist ? false : i === 0;
+        return await saveImage(product_id, image.filename, isMain);
       })
     );
-    return res
-      .status(200)
-      .json({ message: "Image uploaded and saved", imageId: images });
+
+    return res.status(200).json({
+      message: "Image uploaded and saved",
+      images: await getImages(product_id),
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).send("Error saving images");
+  }
+};
+
+export const deleteImage = async (req, res) => {
+  try {
+    const { image_id } = req.params;
+    const img = await getImage(image_id);
+
+    if (!img)
+      return res.status(404).json({
+        success: false,
+        message: "img not found",
+      });
+    await deleteimage(image_id);
+    return res.status(403).json({
+      success: true,
+      message: "Image deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+export const updateMainImage = async (req, res) => {
+  try {
+    const { image_id } = req.params;
+    const img = await getImage(image_id);
+
+
+    if (!img)
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+
+    if (img.is_main == 1) {
+      return res.status(200).json({
+        message: "The image is already set as the main image",
+      });
+    }
+    await setMainImage( img.product_id , image_id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Main image updated",
+      images: await getImages(img.product_id),
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 };

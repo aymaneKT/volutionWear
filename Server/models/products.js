@@ -84,7 +84,7 @@ export const getproduct = async (id) => {
 export const productsForUser = async (id) => {
   try {
     const query =
-      "SELECT  users.id , products.id ,products.name , products.description , products.price , products.stock  , products.created_at , categories.name FROM products JOIN categories on categories.id = products.category_id JOIN product_listings on products.id = product_listings.product_id join users on product_listings.seller_id = users.id WHERE users.id = ?";
+      "SELECT products.id ,products.name , products.description , products.price , products.stock  , products.created_at , categories.name FROM products JOIN categories on categories.id = products.category_id JOIN product_listings on products.id = product_listings.product_id join users on product_listings.seller_id = users.id WHERE users.id = ?";
 
     const rows = await connection.query(query, [id]);
     return rows[0];

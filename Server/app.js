@@ -5,6 +5,7 @@ const port = process.env.port;
 import cors from "cors";
 
 app.use(cors());
+app.use("/uploads", express.static("uploads"));
 
 import { router as userRouter } from "./Routes/userRoutes.js";
 import { router as productRouter } from "./Routes/productsRoutes.js";

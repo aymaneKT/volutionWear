@@ -1,3 +1,4 @@
+import { getImages } from "../models/images.js";
 import {
   addproduct,
   getproduct,
@@ -145,11 +146,17 @@ export const getProductsForAdmin = async (req, res) => {
         error: "User not found",
       });
     }
+    const productsWimage = await productsForUser(userId);
+    const products = await Promise.all(
+      productsWimage.map(async (e) => {
+        const imgs = await getImages(e.id);
+        return { ...e, imgs };
+      })
+    );
 
-    const products = await productsForUser(userId);
     return res.status(201).json({
       success: true,
-      products: products,
+      products,
     });
   } catch (error) {
     console.log(error.message);
