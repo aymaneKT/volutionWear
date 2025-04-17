@@ -1,33 +1,28 @@
 import { connection } from "../config/DataBase.js";
 
-export const addProduct = async (
+export const addproduct = async (
   name,
   description,
   price,
   stock,
-  categoryId,
-  image_url
+  categoryId
 ) => {
   try {
     const query =
-      "INSERT INTO Products (name , description , price , stock , category_id , image_url) VALUES (?,?,?,?,?,?)";
-
+      "INSERT INTO products (name, description, price, stock, category_id) VALUES (?, ?, ?, ?, ?)";
     const [product] = await connection.query(query, [
       name,
       description,
       price,
       stock,
       categoryId,
-      image_url,
     ]);
-
     return product.insertId;
   } catch (error) {
     throw error;
   }
 };
-
-export const getProducts = async () => {
+export const getproducts = async () => {
   try {
     const query =
       "SELECT products.id , products.name ,  products.description , products.price , products.stock , categories.name as category from products JOIN categories on products.category_id = categories.id";
@@ -38,17 +33,7 @@ export const getProducts = async () => {
   }
 };
 
-export const getProductById = async (id) => {
-  try {
-    const query = "SELECT * FROM Products WHERE id = ?";
-    const [rows] = await connection.query(query, [id]);
-    return rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const deleteProduct = async (id) => {
+export const deleteproduct = async (id) => {
   try {
     const query = "DELETE FROM Products WHERE id = ?";
     await connection.query(query, [id]);
@@ -58,23 +43,26 @@ export const deleteProduct = async (id) => {
   }
 };
 
-export const editProduct = async ({
+export const editproduct = async (
   id,
+  name,
   description,
   price,
   stock,
-  category_id,
-  image_url,
-}) => {
+  category_id
+) => {
   try {
-    const query =
-      "UPDATE Products SET description = ?, price = ?,stock = ? ,category_id = ? , image_url = ?  WHERE id = ?";
+    const query = `
+    UPDATE products 
+    SET name = ?, description = ?, price = ?, stock = ?, category_id = ? 
+    WHERE id = ?
+  `;
     await connection.query(query, [
+      name,
       description,
       price,
       stock,
       category_id,
-      image_url,
       id,
     ]);
   } catch (error) {
@@ -82,34 +70,42 @@ export const editProduct = async ({
   }
 };
 
-export const addProductForUser = async (userId, productId) => {
+export const getproduct = async (id) => {
   try {
     const query =
-      "INSERT INTO product_listings (seller_id , product_id) VALUES (?, ?)";
-    await connection.query(query, [userId, productId]);
+      "SELECT products.id , products.name , products.description , products.price , products.stock , categories.name as category from products JOIN categories on products.category_id = categories.id WHERE products.id = ?";
+    const [rows] = await connection.query(query, [id]);
+
+    return rows[0];
   } catch (error) {
     throw error;
   }
 };
-
-// le prossime due funzioni per modificare automaticamente la tabella tra product e user //
-
-export const deleteProductForUser = async (product_id) => {
-  try {
-    const query = "DELETE FROM product_listings WHERE product_id = ?";
-    await connection.query(query, [product_id]);
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const productsForUser = async (id) => {
   try {
     const query =
-      "SELECT  users.id , products.id ,products.name , products.description , products.price , products.stock , products.image_url , products.created_at , categories.name FROM products JOIN categories on categories.id = products.category_id JOIN product_listings on products.id = product_listings.product_id join users on product_listings.seller_id = users.id WHERE users.id = ?";
+      "SELECT  users.id , products.id ,products.name , products.description , products.price , products.stock  , products.created_at , categories.name FROM products JOIN categories on categories.id = products.category_id JOIN product_listings on products.id = product_listings.product_id join users on product_listings.seller_id = users.id WHERE users.id = ?";
 
     const rows = await connection.query(query, [id]);
     return rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+export const addListingProduct = async (product_id, seller_id) => {
+  try {
+    const query =
+      "INSERT INTO product_listings (product_id , seller_id) VALUES ( ? , ? )";
+    await connection.query(query, [product_id, seller_id]);
+  } catch (error) {
+    throw error;
+  }
+};
+export const deleteListingProduct = async (product_id, seller_id) => {
+  try {
+    const query =
+      "DELETE FROM product_listings WHERE product_id = ? AND seller_id = ?";
+    await connection.query(query, [product_id, seller_id]);
   } catch (error) {
     throw error;
   }
