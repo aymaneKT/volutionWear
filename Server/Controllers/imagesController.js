@@ -21,6 +21,16 @@ export const setImage = async (req, res) => {
         .status(400)
         .json({ success: false, message: "No files uploaded" });
 
+    const invalidFile = req.files.find(
+      (file) => !file.mimetype.startsWith("image/")
+    );
+    if (invalidFile) {
+      return res.status(403).json({
+        success: false,
+        message: "One or more files are not valid images",
+      });
+    }
+
     const imagesQuantity = await HowManyImages(product_id);
     let mainPictureExist = false;
     if (imagesQuantity >= 1) mainPictureExist = true;
@@ -75,7 +85,6 @@ export const updateMainImage = async (req, res) => {
     const { image_id } = req.params;
     const img = await getImage(image_id);
 
-
     if (!img)
       return res.status(404).json({
         success: false,
@@ -87,7 +96,7 @@ export const updateMainImage = async (req, res) => {
         message: "The image is already set as the main image",
       });
     }
-    await setMainImage( img.product_id , image_id);
+    await setMainImage(img.product_id, image_id);
 
     return res.status(200).json({
       success: true,

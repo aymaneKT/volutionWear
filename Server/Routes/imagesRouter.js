@@ -7,8 +7,18 @@ const storage = multer.diskStorage({
     cb(null, filename);
   },
 });
-
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    cb(new Error("One or more files are not valid images"), false);
+  }
+};
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 import {
   deleteImage,
   setImage,
