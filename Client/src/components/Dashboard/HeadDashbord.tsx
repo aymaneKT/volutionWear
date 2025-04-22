@@ -17,8 +17,8 @@ export default function HeadDashbord(props: PropsHeadDash) {
         setNotificationOpen={setNotificationOpen}
       />
       <div className="flex items-center  justify-between bg  py-2">
-        <div className="mt-4 flex flex-col">
-          <h2 className="font-bold font-[Poppins] text-[18px] uppercase">
+        <div className="mt-4 flex  flex-col">
+          <h2 className="font-bold font-[Poppins] text-[17px] uppercase">
             {props.title}
           </h2>
           <span className="text-[12px] font-[Poppins] my-0">
@@ -26,7 +26,7 @@ export default function HeadDashbord(props: PropsHeadDash) {
             {props.subtitle}{" "}
           </span>
         </div>
-        <div className="flex items-center  gap-2">
+        <div className="flex items-center gap-1">
           <div
             className="relative"
             onClick={() => {
@@ -42,7 +42,7 @@ export default function HeadDashbord(props: PropsHeadDash) {
           <img
             src={img}
             className="h-[30px]
-          border-2
+         
           w-[30px] rounded-full cursor-pointer"
           />
         </div>

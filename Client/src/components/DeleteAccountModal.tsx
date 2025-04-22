@@ -7,7 +7,6 @@ export default function DeleteAccountModal({
   isOpen,
   setIsOpen,
 }: DeleteAccountModalProps) {
-
   return (
     <div
       style={{

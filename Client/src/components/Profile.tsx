@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState} from "react";
 import HeadDashbord from "./Dashboard/HeadDashbord";
 import img from "../VolutionWear.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -11,6 +11,7 @@ type passwordVisibleType = {
 };
 
 export default function Profile() {
+  const [section, setSection] = useState("Profile");
   const [passwordVisible, setPasswordVisible] = useState<passwordVisibleType>({
     current: false,
     new: false,
@@ -18,16 +19,49 @@ export default function Profile() {
   });
   const [time, setTime] = useState<string>("");
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState<boolean>(false);
-  
+  const profileRef = useRef(null);
+  const passwordRef = useRef(null);
   useEffect(() => {
     setInterval(() => {
       setTime(new Date().toLocaleString() + "");
     }, 1000);
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (entry.target === profileRef.current) {
+              setSection("Profile");
+            } else if (entry.target === passwordRef.current) {
+              setSection("Password");
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.1, // 50% visibile
+      }
+    );
+
+    if (profileRef.current) observer.observe(profileRef.current);
+    if (passwordRef.current) observer.observe(passwordRef.current);
+
+    return () => {
+      if (profileRef.current) observer.unobserve(profileRef.current);
+      if (passwordRef.current) observer.unobserve(passwordRef.current);
+    };
+  }, []);
+  
+
+
   return (
     <>
-      <DeleteAccountModal isOpen={isOpenDeleteModel} setIsOpen={setIsOpenDeleteModel}/>
+      <DeleteAccountModal
+        isOpen={isOpenDeleteModel}
+        setIsOpen={setIsOpenDeleteModel}
+      />
       <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px]">
         <HeadDashbord title="Welcome, Aymane" subtitle={time} />
 
@@ -35,16 +69,36 @@ export default function Profile() {
           <div className="border-1 p-2 rounded-[8px] grow max-w-[200px] max-[900px]:max-w-full">
             <h2 className="font-bold uppercase px-2">Settings</h2>
             <ul className="my-3 text-[#BEBFBE]">
-              <li className="p-2 hover:bg-[#9810FA] rounded-[8px] hover:text-white cursor-pointer">
+              <li
+                onClick={() => {
+                  
+                  setSection("Profile");
+                }}
+                style={{
+                  backgroundColor: section === "Profile" ? "#9810FA" : "#fff",
+                  color: section === "Profile" ? "#fff" : "#BEBFBE",
+                }}
+                className="p-2   rounded-[8px] hover:text-white cursor-pointer"
+              >
                 Profile
               </li>
-              <li className="p-2 hover:bg-[#9810FA] rounded-[8px] hover:text-white cursor-pointer">
+              <li
+                onClick={() => {
+                  scrollTo(0 , document.body.scrollHeight)
+                  setSection("Password");
+                }}
+                style={{
+                  backgroundColor: section === "Password" ? "#9810FA" : "#fff",
+                  color: section === "Password" ? "#fff" : "#BEBFBE",
+                }}
+                className="p-2   rounded-[8px] hover:text-white cursor-pointer"
+              >
                 Password
               </li>
             </ul>
           </div>
 
-          <div className="rounded-[8px]   grow border-1 flex gap-5 items-end justify-between flex-wrap p-4 max-[480px]:justify-center">
+          <div ref={profileRef} className="rounded-[8px]   grow border-1 flex gap-5 items-end justify-between flex-wrap p-4 max-[480px]:justify-center">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <img src={img} className="  w-[120px] rounded-[8px]" />
               <div>
@@ -127,7 +181,7 @@ export default function Profile() {
           </div>
         </div>
         {/* Passwords */}
-        <div className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4">
+        <div ref={passwordRef} className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4">
           <h2 className="text-[18px] font-bold">Change Password</h2>
           {/* current */}
           <div className="Password flex flex-col mb-5 gap-1.5 relative">
@@ -156,7 +210,7 @@ export default function Profile() {
             </div>
           </div>
           {/* new */}
-          <div className="Password flex flex-col mb-5 gap-1.5 relative">
+          <div  className="Password flex flex-col mb-5 gap-1.5 relative">
             <label htmlFor="password" className="font-medium">
               New password
             </label>
@@ -208,13 +262,16 @@ export default function Profile() {
             </div>
           </div>
         </div>
-        <button onClick={()=>{
-             scrollTo({
-                top : 0,
-                behavior : "smooth"
-              })
-            setIsOpenDeleteModel(true)
-        }} className="cursor-pointer px-4 py-2 my-4 transition duration-150 hover:bg-red-400 bg-red-500 text-white rounded-[4px]">
+        <button
+          onClick={() => {
+            scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+            setIsOpenDeleteModel(true);
+          }}
+          className="cursor-pointer px-4 py-2 my-4 transition duration-150 hover:bg-red-400 bg-red-500 text-white rounded-[4px]"
+        >
           Delete Account
         </button>
       </div>
