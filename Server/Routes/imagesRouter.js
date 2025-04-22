@@ -19,6 +19,7 @@ const upload = multer({
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 },
 });
+import {auth} from "../middleware/auth.js";
 import {
   deleteImage,
   setImage,
@@ -26,6 +27,6 @@ import {
 } from "../Controllers/imagesController.js";
 export const router = express.Router();
 
-router.post("/image/:product_id", upload.array("photos", 5), setImage);
-router.delete("/image/:image_id", deleteImage);
-router.put("/image/:image_id", updateMainImage);
+router.post("/image/:product_id", [auth], upload.array("photos", 5), setImage);
+router.delete("/image", [auth], deleteImage);
+router.put("/image/:image_id", [auth], updateMainImage);

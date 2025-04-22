@@ -5,6 +5,7 @@ import {
   getImage,
   deleteimage,
   setMainImage,
+  isOwnerImage,
 } from "../models/images.js";
 import { getproduct } from "../models/products.js";
 
@@ -20,6 +21,14 @@ export const setImage = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "No files uploaded" });
+
+    const userIsOwner = await isOwnerImage(req.user.id, product_id);
+
+    if (!userIsOwner) {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to modify this product." });
+    }
 
     const invalidFile = req.files.find(
       (file) => !file.mimetype.startsWith("image/")
@@ -60,15 +69,26 @@ export const setImage = async (req, res) => {
 
 export const deleteImage = async (req, res) => {
   try {
-    const { image_id } = req.params;
+    const { image_id, product_id } = req.body;
     const img = await getImage(image_id);
-
+    const userIsOwner = await isOwnerImage(req.user.id, product_id);
+    if (!userIsOwner) {
+      return res.status(403).json({
+        error: "You are not authorized to Delete images in this product.",
+      });
+    }
     if (!img)
       return res.status(404).json({
         success: false,
         message: "img not found",
       });
-    await deleteimage(image_id);
+    const isDeletedImage = await deleteimage(image_id, product_id);
+    if (!isDeletedImage) {
+      return res.status(403).json({
+        success: false,
+        message: "image not deleted",
+      });
+    }
     return res.status(403).json({
       success: true,
       message: "Image deleted",
@@ -82,9 +102,14 @@ export const deleteImage = async (req, res) => {
 };
 export const updateMainImage = async (req, res) => {
   try {
-    const { image_id } = req.params;
+    const { image_id, product_id } = req.body;
     const img = await getImage(image_id);
-
+    const userIsOwner = await isOwnerImage(req.user.id, product_id);
+    if (!userIsOwner) {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to modify this product." });
+    }
     if (!img)
       return res.status(404).json({
         success: false,
