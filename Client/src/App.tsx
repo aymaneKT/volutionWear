@@ -8,11 +8,10 @@ import Register from "./components/Register";
 import Products from "./components/Products";
 import Login from "./components/Login";
 import Offers from "./components/Offers";
-import axios from "axios";
-import { log } from "console";
+import Profile from "./components/Profile";
 
 function App() {
-  const [section, setSection] = useState<string>("Products");
+  const [section, setSection] = useState<string>("");
   const sectionHandler = () => {
     switch (section) {
       case "Dashboard":
@@ -23,22 +22,21 @@ function App() {
         return <Products />;
       case "Offers":
         return <Offers />;
-      default:
-        return <Dashbord />;
+      // default:
+      //   return <Dashbord />;
     }
   };
-  const [img, setImg] = useState<File | null>(null);
-  const [response , setResponse] = useState<string | undefined>("")
-  return (
-  <>
-    <SideBar section={section} setSection={setSection} />
-    {sectionHandler()}
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-    </Routes>
-  </>
 
+  return (
+    <>
+      <SideBar section={section} setSection={setSection} />
+      {sectionHandler()}
+      <Routes>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </>
   );
 }
 
