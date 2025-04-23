@@ -11,6 +11,7 @@ type UserType = {
   email: string;
   password: string;
   isSeller: boolean;
+  imageProfile: string;
 };
 
 export default function Register() {
@@ -22,20 +23,21 @@ export default function Register() {
     email: "",
     password: "",
     isSeller: false,
+    imageProfile: "",
   });
   return (
     <div className="flex bg-[#F8F8F8] ">
       {/* COLONNA SINISTRA - FORM */}
-      <div className=" flex flex-col h-screen font-[Inter] max-[480px]:h-auto max-[480px]:py-4   justify-center grow-2  items-center max-w-[100%]  max-[992px]:w-[100%]  max-[992px]:px-12 max-[480px]:px-0">
+      <div className=" flex   flex-col h-screen font-[Inter] min-[993px]:min-w-[500px] max-[480px]:h-auto max-[480px]:py-4   justify-center grow-1  items-center max-w-[100%]  max-[992px]:w-[100%]  max-[992px]:px-12 max-[480px]:px-0">
         <h1
-          style={{ fontSize: "clamp(2rem, 3vw, 0.8rem" }}
+          style={{ fontSize: "clamp(1.8rem, 3vw, 2rem" }}
           className="font-medium"
         >
           CREATE ACCOUNT
         </h1>
         <p className="text-[#A6A6A7] mb-5">Sign up and start your journey</p>
 
-        <div className="self-center flex flex-col gap-2 w-[100%] px-4">
+        <div className="self-center flex flex-col gap-1 w-[100%] px-4">
           {/* Username */}
           <div className="flex flex-col gap-1">
             <label htmlFor="username" className="font-medium">
@@ -145,7 +147,7 @@ export default function Register() {
         </div>
 
         {/* Bottom */}
-        <p className="text-center absolute bottom-1 max-[992px]:relative max-[992px]:my-2">
+        <p className="text-center absolute -bottom-5  max-[992px]:relative max-[992px]:my-2">
           Already have an account?{" "}
           <Link to="/login">
             <span className="text-[#5805E9] cursor-pointer">Log in</span>
@@ -154,8 +156,11 @@ export default function Register() {
       </div>
 
       {/* COLONNA DESTRA */}
-      <div className="max-[992px]:hidden bg-[#B074F3]  grow flex flex-col py-8 items-center">
-        <h1 className="text-center text-white text-[1rem] p-6 font-bold uppercase">
+      <div className="max-[992px]:hidden bg-[#B074F3]  grow flex flex-col justify-around py-8 items-center">
+        <h1
+          style={{ fontSize: "clamp(1rem, vw, 2rem)" }}
+          className="text-center text-white text-[1rem] p-6 font-bold uppercase"
+        >
           #withVolutionwear
           <br />
           Buy, sell, and discover unique fashion - sustainably. <br />

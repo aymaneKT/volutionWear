@@ -18,7 +18,7 @@ export default function Login() {
     <div className="flex h-screen bg-[#F8F8F8] font-[Inter]">
       <div className=" flex flex-col   justify-center grow-2   items-center w-[800px]  max-[992px]:px-12 max-[480px]:px-0">
         <h1
-          style={{ fontSize: "clamp(2rem, 3vw, 0.8rem" }}
+          style={{ fontSize: "clamp(1.8rem, 3vw, 2rem" }}
           className=" font-medium"
         >
           WELCOME BACK
@@ -66,21 +66,7 @@ export default function Login() {
               </div>
             </div>
           </div>
-          {/* <div className="flex justify-between mb-5">
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                className="accent-[#EA454C]"
-                id="remember-me"
-                onChange={(e) =>
-                  setUser({ ...user, rememberMe: e.target.checked })
-                }
-                checked={user.rememberMe}
-              />
-              <label htmlFor="remember-me">Remember me</label>
-            </div>
-            <span>Forgot password</span>
-          </div> */}
+          
           <button className="bg-gradient-to-r from-purple-300 to-purple-700  text-white py-3 rounded-[8px]   cursor-pointer transition-colors transition-200">
             Sign in
           </button>
@@ -94,8 +80,13 @@ export default function Login() {
           </Link>
         </p>
       </div>
-      <div className="max-[992px]:hidden bg-[#B074F3]   flex flex-col py-8 items-center">
-        <h1 className="text-center text-white text text-[1rem] p-6 font-bold uppercase">
+      <div className="max-[992px]:hidden bg-[#B074F3]   flex flex-col justify-around py-8 items-center">
+        <h1
+          // style={{
+          //   fontSize: "clamp(2rem, 4vw, 5rem)",
+          // }}
+          className="text-center text-white text text-[1rem] p-6 font-bold uppercase"
+        >
           #withVolutionwear
           <br /> Buy, sell, and discover unique fashion - sustainably. Join the
           movement and refresh your wardrobe, one piece at a time. Trusted by

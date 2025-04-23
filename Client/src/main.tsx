@@ -10,3 +10,20 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </StrictMode>
 );
+
+
+{/* <div className="flex justify-between mb-5">
+            <div className="flex gap-2">
+              <input
+                type="checkbox"
+                className="accent-[#EA454C]"
+                id="remember-me"
+                onChange={(e) =>
+                  setUser({ ...user, rememberMe: e.target.checked })
+                }
+                checked={user.rememberMe}
+              />
+              <label htmlFor="remember-me">Remember me</label>
+            </div>
+            <span>Forgot password</span>
+          </div> */}

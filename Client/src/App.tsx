@@ -9,6 +9,8 @@ import Products from "./components/Products";
 import Login from "./components/Login";
 import Offers from "./components/Offers";
 import Profile from "./components/Profile";
+import Header from "./components/Header";
+import Home from "./components/Home";
 
 function App() {
   const [section, setSection] = useState<string>("");
@@ -29,8 +31,9 @@ function App() {
 
   return (
     <>
-      <SideBar section={section} setSection={setSection} />
-      {sectionHandler()}
+      {/* <SideBar section={section} setSection={setSection} />
+      {sectionHandler()}  */}
+     <Home/>
       <Routes>
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
