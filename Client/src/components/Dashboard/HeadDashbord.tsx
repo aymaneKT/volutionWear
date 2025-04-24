@@ -1,6 +1,6 @@
 import { IoIosSearch } from "react-icons/io";
 import { CiMail } from "react-icons/ci";
-import img from "../../VolutionWear.png";
+import img from "../../VID-IMG/VolutionWear.png";
 import { useState } from "react";
 import NotificationCard from "../NotificationCard";
 type PropsHeadDash = {

@@ -1,4 +1,4 @@
-import img from "../VolutionWear.png";
+import img from "../VID-IMG/VolutionWear.png";
 import Checkbox from "./CheckBox";
 import InputImage from "./InputImage";
 type ProductItemType = {

@@ -1,7 +1,7 @@
 import BasicMenu from "./Dashboard/BasicMenu";
 import HeadDashbord from "./Dashboard/HeadDashbord";
 import { FaPlus } from "react-icons/fa";
-import img from "../VolutionWear.png";
+import img from "../VID-IMG/VolutionWear.png";
 import { useState } from "react";
 import ProductItem from "./ProductItem";
 

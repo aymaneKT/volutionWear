@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState} from "react";
 import HeadDashbord from "./Dashboard/HeadDashbord";
-import img from "../VolutionWear.png";
+import img from "../VID-IMG/VolutionWear.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import DeleteAccountModal from "./DeleteAccountModal";
 
