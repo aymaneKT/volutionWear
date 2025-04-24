@@ -1,5 +1,7 @@
+import AppComingSoonSection from "./AppComingSoonSection";
 import Header from "./Header";
 import HeroSection from "./HeroSection";
+import Reviews from "./Reviews";
 import ValueProposition from "./ValueProposition";
 
 export default function Home() {
@@ -8,6 +10,8 @@ export default function Home() {
       <Header />
       <HeroSection />
       <ValueProposition />
+      <AppComingSoonSection />
+      <Reviews />
     </>
   );
 }
