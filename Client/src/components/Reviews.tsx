@@ -8,7 +8,6 @@ export default function Reviews() {
     dots: true,
     infinite: true,
     speed: 500,
-    
     slidesToShow: 4,
     slidesToScroll: 4,
     responsive: [
@@ -24,8 +23,8 @@ export default function Reviews() {
       {
         breakpoint: 600,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
+          slidesToShow: 1,
+          slidesToScroll: 1,
           initialSlide: 2
         }
       },

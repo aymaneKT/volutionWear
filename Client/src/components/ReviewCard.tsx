@@ -9,7 +9,7 @@ export default function ReviewCard({
   text: string;
 }) {
   return (
-    <article className="bg-white  text-center px-8 py-6 rounded-md shadow-md hover:shadow-lg transition-all duration-300 max-w-md mx-auto">
+    <article className="bg-white border-1 overflow-hidden  text-center px-8 py-6 rounded-md shadow-md hover:shadow-lg transition-all duration-300 max-w-md mx-auto">
       <div className="relative w-36 h-36 rounded-full mx-auto mb-6 before:content-[''] before:absolute before:w-full before:h-full before:bg-[#DAC9B4] before:-top-1 before:-right-2 before:rounded-full">
         <img
           src={image}
@@ -20,8 +20,8 @@ export default function ReviewCard({
           <FaQuoteRight />
         </span>
       </div>
-      <h4 className="text-lg font-semibold mb-1">{name}</h4>
-      <p className="text-gray-500 text-sm">{text}</p>
+      <h4 className="text-lg font-semibold mb-1 whitespace-nowrap">{name}</h4>
+      <p className="text-gray-500 text-sm line-clamp-4">{text}</p>
     </article>
   );
 }

@@ -3,6 +3,7 @@ import { FaTshirt } from "react-icons/fa";
 import { MdCheckroom } from "react-icons/md";
 import { RiShirtLine } from "react-icons/ri";
 import { GiAmpleDress } from "react-icons/gi";
+import { Slide } from "react-awesome-reveal";
 
 export default function ValueProposition() {
   const Values = [
@@ -29,12 +30,22 @@ export default function ValueProposition() {
   ].map((e, i) => (
     <div key={i} className="flex flex-col gap-3  items-center p-2">
       <e.icon className="text-6xl p-4 border-[#c6ab8ba5 ] border-1 border-[#79443B] rounded-full text-[#79443B]" />
-      <h3  style={{
+      <h3
+        style={{
           fontSize: "clamp(1rem, 0.8vw, 2rem)",
-        }} className="font-bold">{e.title}</h3>
-      <p style={{
+        }}
+        className="font-bold"
+      >
+        {e.title}
+      </h3>
+      <p
+        style={{
           fontSize: "clamp(1rem, 0.8vw, 2rem)",
-        }} className="font-[Josefin_Sans] text-center">{e.description}</p>
+        }}
+        className="font-[Josefin_Sans] text-center"
+      >
+        {e.description}
+      </p>
     </div>
   ));
 
@@ -50,13 +61,15 @@ export default function ValueProposition() {
         Made with Heart, Worn with Style
       </h1>
       <div className="flex  flex-wrap-reverse justify-evenly items-center gap-y-20 gap-x-8">
-          {/* left part */}
+        {/* left part */}
         <div>
-          <img
-            src={img}
-            className="w-[550px] max-w-[100%]   object-center object-cover shadow-[20px_-20px_0px_10px_#c6ab8ba5]"
-            loading="lazy"
-          />
+          <Slide triggerOnce duration={1000} direction="left">
+            <img
+              src={img}
+              className="w-[550px] max-w-[100%]   object-center object-cover shadow-[20px_-20px_0px_10px_#c6ab8ba5]"
+              loading="lazy"
+            />
+          </Slide>
         </div>
 
         {/* right part */}
@@ -68,7 +81,9 @@ export default function ValueProposition() {
             that can't be found anywhere else.
           </p>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,auto))] gap-4">
-            {Values}
+            <Slide direction="right" triggerOnce cascade>
+              {Values}
+            </Slide>
           </div>
         </div>
       </div>
