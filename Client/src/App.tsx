@@ -12,6 +12,7 @@ import Profile from "./components/Profile";
 import Header from "./components/Header";
 import Home from "./components/Home";
 
+
 function App() {
   const [section, setSection] = useState<string>("");
   const sectionHandler = () => {

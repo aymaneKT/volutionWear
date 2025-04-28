@@ -27,7 +27,7 @@ export default function HomeFooter() {
               href="/"
               src={logo}
               alt="Volution Wear"
-              className="bg-[#0000003e] p-4"
+              className=" p-4"
             />
           </div>
           <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">

@@ -13,6 +13,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.1",
     "@tailwindcss/vite": "^4.1.4",
     "@uidotdev/usehooks": "^2.4.1",
@@ -23,6 +24,7 @@
     "hamburger-react": "^2.5.2",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.487.0",
+    "magicmouse.ts": "^1.0.5",
     "primereact": "^10.9.4",
     "react": "^19.0.0",
     "react-awesome-reveal": "^4.3.1",
@@ -31,6 +33,7 @@
     "react-router-dom": "^7.5.0",
     "react-slick": "^0.30.3",
     "recharts": "^2.15.2",
+    "rsuite": "^5.80.1",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.17",
     "swiper": "^11.2.6",
