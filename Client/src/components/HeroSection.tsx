@@ -9,7 +9,7 @@ export default function HeroSection() {
         autoPlay
         muted
         loop
-        className="w-[100%] h-[100%] overflow-hidden object-cover object-center"
+        className="w-[100%] h-[100%] overflow-hidden object-cover object-top"
       >
         <source src={video} type="video/mp4" />
         Your browser does not support the video tag...

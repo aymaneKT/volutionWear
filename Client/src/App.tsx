@@ -11,7 +11,7 @@ import Offers from "./components/Offers";
 import Profile from "./components/Profile";
 import Header from "./components/Header";
 import Home from "./components/Home";
-
+import Shop from "./components/Shop";
 
 function App() {
   const [section, setSection] = useState<string>("");
@@ -34,8 +34,11 @@ function App() {
     <>
       {/* <SideBar section={section} setSection={setSection} />
       {sectionHandler()}  */}
-     <Home/>
+
       <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/Shop" element={<Shop />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
