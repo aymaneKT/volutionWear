@@ -8,15 +8,15 @@ export default function Header() {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isOpenCartMenu, setIsOpenCartMenu] = useState<boolean>(false);
   const location = useLocation();
-  const isBlackTextHeader = location.pathname
-    .toLocaleLowerCase()
-    .includes("shop");
+  const isBlackTextHeader =
+    location.pathname.toLocaleLowerCase().includes("shop") || isOpen;
   const navLinks = [
     { label: "Shop", href: "/shop" },
     { label: "Categories", href: "/categories" },
     { label: "About", href: "/about" },
   ];
   const img = isBlackTextHeader ? logo2 : logo;
+  const isRelative = location.pathname.toLocaleLowerCase().includes("shop");
 
   return (
     <>
@@ -29,13 +29,18 @@ export default function Header() {
           fontSize: "clamp(1rem, 1vw, 2rem)",
         }}
         className={` z-2 flex ${
-          isBlackTextHeader ? "relative" : "absolute"
+          isRelative ? "relative" : "absolute"
         }  w-[100%] font-['Josefin_Sans'] max-[992px]:p-4  items-center justify-between p-7 px-11 ${
           isBlackTextHeader ? "text-black" : "text-white"
         }`}
       >
         <Link to="/">
-          <img src={img} alt="Logo Volution Wear" loading="lazy" className="max-w-[200px]" />
+          <img
+            src={img}
+            alt="Logo Volution Wear"
+            loading="lazy"
+            className="max-w-[200px]"
+          />
         </Link>
         <div
           className={`flex duration-500  items-center ${
@@ -90,7 +95,9 @@ export default function Header() {
             }}
             className="hidden max-[992px]:block"
           >
-            <Hamburger color={`${isOpen || isBlackTextHeader ? "#000" : "#fff"}`} />
+            <Hamburger
+              color={`${isOpen || isBlackTextHeader ? "#000" : "#fff"}`}
+            />
           </div>
         </div>
       </div>
