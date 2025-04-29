@@ -25,12 +25,13 @@ export default function Register() {
     isSeller: false,
     imageProfile: "",
   });
+
   return (
-    <div className="flex bg-[#F8F8F8] ">
+    <div className="flex bg-[#F8F8F8]">
       {/* COLONNA SINISTRA - FORM */}
-      <div className=" flex   flex-col h-screen font-[Inter] min-[993px]:min-w-[500px] max-[480px]:h-auto max-[480px]:py-4   justify-center grow-1  items-center max-w-[100%]  max-[992px]:w-[100%]  max-[992px]:px-12 max-[480px]:px-0">
+      <div className="flex flex-col h-screen font-['Josefin_Sans'] min-[993px]:min-w-[500px] max-[480px]:h-auto max-[480px]:py-4 justify-center grow-1 items-center max-w-[100%] max-[992px]:w-[100%] max-[992px]:px-12 max-[480px]:px-0">
         <h1
-          style={{ fontSize: "clamp(1.8rem, 3vw, 2rem" }}
+          style={{ fontSize: "clamp(1.8rem, 3vw, 2rem)" }}
           className="font-medium"
         >
           CREATE ACCOUNT
@@ -102,7 +103,7 @@ export default function Register() {
             />
           </div>
 
-          {/* Password con occhio */}
+          {/* Password con toggle visibilità */}
           <div className="flex flex-col mb-5 gap-1.5 relative">
             <label htmlFor="password" className="font-medium">
               Password
@@ -125,7 +126,9 @@ export default function Register() {
               </div>
             </div>
           </div>
+
           <Input />
+
           {/* Seller toggle */}
           <div className="flex items-center gap-2 my-1">
             <p>Register as a seller?</p>
@@ -136,29 +139,31 @@ export default function Register() {
                 onChange={() => setUser({ ...user, isSeller: !user.isSeller })}
                 className="sr-only peer"
               />
-              <div className="group peer bg-white rounded-full duration-300 w-16 h-8 ring-2 ring-red-500 after:duration-300 after:bg-red-500 peer-checked:after:bg-green-500 peer-checked:ring-green-500 after:rounded-full after:absolute after:h-6 after:w-6 after:top-1 after:left-1 peer-checked:after:translate-x-8 peer-hover:after:scale-95" />
+              <div className="group peer bg-white rounded-full duration-300 w-16 h-8 ring-2 ring-[#C3A686] after:duration-300 after:bg-[#C3A686] peer-checked:after:bg-green-500 peer-checked:ring-green-500 after:rounded-full after:absolute after:h-6 after:w-6 after:top-1 after:left-1 peer-checked:after:translate-x-8 peer-hover:after:scale-95" />
             </label>
           </div>
 
-          {/* Register Button */}
-          <button className="bg-gradient-to-r from-purple-300 to-purple-700 text-white py-3 rounded-[8px] cursor-pointer transition-colors transition-200">
+          
+          <button className="bg-gradient-to-r from-[#E3DAC9] to-[#C3A686] hover:from-[#d6cdbd] hover:to-[#b89e7c] text-white py-3 rounded-[8px] cursor-pointer transition-colors duration-300">
             Register
           </button>
         </div>
 
-        {/* Bottom */}
-        <p className="text-center absolute -bottom-5  max-[992px]:relative max-[992px]:my-2">
+        {/* Bottom link */}
+        <p className="text-center absolute bottom-0 max-[992px]:relative max-[992px]:my-2">
           Already have an account?{" "}
           <Link to="/login">
-            <span className="text-[#5805E9] cursor-pointer">Log in</span>
+            <span className="text-[#C3A686] font-medium cursor-pointer">
+              Log in
+            </span>
           </Link>
         </p>
       </div>
 
       {/* COLONNA DESTRA */}
-      <div className="max-[992px]:hidden bg-[#B074F3]  grow flex flex-col justify-around py-8 items-center">
+      <div className="max-[992px]:hidden bg-[#A68B71] grow flex flex-col justify-around py-8 items-center">
         <h1
-          style={{ fontSize: "clamp(1rem, vw, 2rem)" }}
+          style={{ fontSize: "clamp(1rem, 2vw, 2rem)" }}
           className="text-center text-white text-[1rem] p-6 font-bold uppercase"
         >
           #withVolutionwear

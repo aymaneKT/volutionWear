@@ -3,19 +3,20 @@ import Image from "../VID-IMG/Shop-Section_Img-min.jpg";
 import Header from "./Header";
 import { LuLayoutGrid } from "react-icons/lu";
 import { TfiLayoutColumn2 } from "react-icons/tfi";
-import pr from "../VID-IMG/pexels-blitzboy-1040945.jpg";
 import { FiSearch } from "react-icons/fi";
 import HomeFooter from "./Footer";
 import { IoFilterSharp } from "react-icons/io5";
 import { FaSort } from "react-icons/fa";
 import FilterModal from "./FilterModal";
 
+import ProductCard from "./ProductCard";
 export default function Shop() {
   const [layout, setLayout] = useState<string>("viewLayout4");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [isOpenSortList, setIsOpenSortList] = useState<boolean>(false);
   const [selectedSort, setSelectedSort] = useState<string>("priceAsc");
+  
   const sortOptions = [
     { value: "priceAsc", label: "Price: Low to High" },
     { value: "priceDesc", label: "Price: High to Low" },
@@ -30,7 +31,7 @@ export default function Shop() {
   ];
   return (
     <>
-      <div >
+      <div>
         <Header />
         <div className="relative min-[992px]:px-11 h-[400px]">
           <img
@@ -68,17 +69,17 @@ export default function Shop() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setSearchTerm(e.target.value);
               }}
-              className="w-full py-2 pl-4 pr-10 border-2 border-black focus:outline-none"
+              className="w-full py-2 pl-4 pr-10 border-2 border-[black] focus:outline-none"
             />
             <button className="absolute right-3 cursor-pointer top-1/2 transform -translate-y-1/2">
               <FiSearch className="text-xl" />
             </button>
           </div>
         </div>
-        <div className="px-11 my-8 flex justify-between items-center">
+        <div className="px-11 my-8 flex justify-between items-center ">
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="border-2 border-[#000000] flex items-center gap-2 px-6 py-2 cursor-pointer font-semibold "
+            className="border-2 border-[#c0bcbc45] flex items-center gap-2 px-6 py-2 cursor-pointer font-semibold "
           >
             <IoFilterSharp />
             Filter
@@ -105,14 +106,14 @@ export default function Shop() {
             onClick={() => {
               setIsOpenSortList(!isOpenSortList);
             }}
-            className="border-2 relative flex items-center gap-2 border-[#000000] px-6 py-2 cursor-pointer font-semibold "
+            className="border-2 relative flex items-center gap-2 border-[#c0bcbc45] px-6 py-2 cursor-pointer font-semibold "
           >
             <FaSort />
             Sort
             <ul
-              className={`absolute w-[150px] transition-all duration-450  ${
+              className={`absolute w-[150px] transition-all   ${isOpenSortList  ? "border-1":"border-0"}   duration-450  ${
                 isOpenSortList ? "max-h-[500px]" : "max-h-0"
-              }  overflow-hidden  flex flex-col gap-2 bg-white top-[110%]  left-[-50%]`}
+              }  overflow-hidden  flex flex-col gap-2 bg-white top-[101%]  left-[-30%]`}
             >
               {sortOptions.map((option) => (
                 <li
@@ -136,90 +137,16 @@ export default function Shop() {
         />
         {/* Products */}
         <div
-          className={`grid   ${
+          className={`grid  ${
             layout === "viewLayout4"
               ? "grid-cols-[repeat(auto-fill,minmax(300px,auto))]"
               : "grid-cols-2"
-          } justify-around px-11 my-10 gap-x-6 font-['Josefin_Sans'] gap-y-5`}
+          }  px-11 my-10 gap-x-6 font-['Josefin_Sans'] gap-y-5`}
         >
-          <div className="cursor-pointer ">
-            <img src={pr} alt="Product" />
-            <span
-              style={{
-                fontSize: "clamp(0.8rem, 0.8vw, 1.8rem)",
-              }}
-              className="font-semibold"
-            >
-              SHOES AIR FORCE 1
-            </span>
-            <p className="text-[#54545498]">Lorem ipsum dolor sit amet.</p>
-            <span>289 EUR</span>
-          </div>
-          <div>
-            <img src={pr} alt="Product" />
-            <span
-              style={{
-                fontSize: "clamp(0.8rem, 0.8vw, 1.8rem)",
-              }}
-              className="font-semibold"
-            >
-              SHOES AIR FORCE 1
-            </span>
-            <p className="text-[#54545498]">Lorem ipsum dolor sit amet.</p>
-            <span>289 EUR</span>
-          </div>
-          <div>
-            <img src={pr} alt="Product" />
-            <span
-              style={{
-                fontSize: "clamp(0.8rem, 0.8vw, 1.8rem)",
-              }}
-              className="font-semibold"
-            >
-              SHOES AIR FORCE 1
-            </span>
-            <p className="text-[#54545498]">Lorem ipsum dolor sit amet.</p>
-            <span>289 EUR</span>
-          </div>
-          <div>
-            <img src={pr} alt="Product" />
-            <span
-              style={{
-                fontSize: "clamp(0.8rem, 0.8vw, 1.8rem)",
-              }}
-              className="font-semibold"
-            >
-              SHOES AIR FORCE 1
-            </span>
-            <p className="text-[#54545498]">Lorem ipsum dolor sit amet.</p>
-            <span>289 EUR</span>
-          </div>
-          <div>
-            <img src={pr} alt="Product" />
-            <span
-              style={{
-                fontSize: "clamp(0.8rem, 0.8vw, 1.8rem)",
-              }}
-              className="font-semibold"
-            >
-              SHOES AIR FORCE 1
-            </span>
-            <p className="text-[#54545498]">Lorem ipsum dolor sit amet.</p>
-            <span>289 EUR</span>
-          </div>
-          <div>
-            <img src={pr} alt="Product" />
-            <span
-              style={{
-                fontSize: "clamp(0.8rem, 0.8vw, 1.8rem)",
-              }}
-              className="font-semibold"
-            >
-              SHOES AIR FORCE 1
-            </span>
-            <p className="text-[#54545498]">Lorem ipsum dolor sit amet.</p>
-            <span>289 EUR</span>
-          </div>
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
         </div>
         <HomeFooter />
       </div>

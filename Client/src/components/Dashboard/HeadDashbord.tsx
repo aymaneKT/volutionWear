@@ -1,8 +1,9 @@
 import { IoIosSearch } from "react-icons/io";
 import { CiMail } from "react-icons/ci";
 import img from "../../VID-IMG/VolutionWear.png";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import NotificationCard from "../NotificationCard";
+import { SectionContext } from "@/Contexts/SectionContext";
 type PropsHeadDash = {
   title: string;
   subtitle: string;
@@ -10,6 +11,7 @@ type PropsHeadDash = {
 
 export default function HeadDashbord(props: PropsHeadDash) {
   const [isNotificationOpen, setNotificationOpen] = useState<boolean>(false);
+    const { section, setSection } = useContext(SectionContext);
   return (
     <>
       <NotificationCard
@@ -40,9 +42,9 @@ export default function HeadDashbord(props: PropsHeadDash) {
           </div>
           <IoIosSearch className="cursor-pointer bg-[#e9e4e45d] rounded-[4px] h-[35px] w-[40px] p-[5px]" />
           <img
+          onClick={()=>{setSection("Profile")}}
             src={img}
             className="h-[30px]
-         
           w-[30px] rounded-full cursor-pointer"
           />
         </div>

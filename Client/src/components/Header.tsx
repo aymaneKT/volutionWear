@@ -60,20 +60,24 @@ export default function Header() {
             ))}
           </ul>
           <div className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
-            <button
-              className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
-                isBlackTextHeader ? "text-black" : "text-white"
-              }`}
-            >
-              Register
-            </button>
-            <button
-              className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
-                isBlackTextHeader ? "text-black" : "text-white"
-              }`}
-            >
-              Login
-            </button>
+            <Link to="/Register">
+              <button
+                className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
+                  isBlackTextHeader ? "text-black" : "text-white"
+                }`}
+              >
+                Register
+              </button>
+            </Link>
+            <Link to="/login">
+              <button
+                className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
+                  isBlackTextHeader ? "text-black" : "text-white"
+                }`}
+              >
+                Login
+              </button>
+            </Link>
           </div>
         </div>
         <div className="flex items-center gap-4 ml-2">

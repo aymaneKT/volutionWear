@@ -1,15 +1,15 @@
 import { MdOutlineDashboard } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { FaChartBar } from "react-icons/fa";
+import { useContext } from "react";
 import { MdOutlineLogin } from "react-icons/md";
 import { LuPackage } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
-type SideBarType = {
-  section: string;
-  setSection: (value: string) => void;
-};
+import { SectionContext } from "@/Contexts/SectionContext";
 
-export default function SideBar(props: SideBarType) {
+export default function SideBar() {
+  const { section, setSection } = useContext(SectionContext);
+
   const listSideBar = [
     { name: "Dashboard", icon: <MdOutlineDashboard /> },
     { name: "Orders", icon: <FaShoppingCart /> },
@@ -24,15 +24,15 @@ export default function SideBar(props: SideBarType) {
         Volution Wear
       </p>
       <ul className="flex flex-col gap-8 cursor-pointer mt-9 ">
-        {listSideBar.map((e,i) => (
+        {listSideBar.map((e, i) => (
           <li
-          key={i}
+            key={i}
             style={{
-              background: e.name === props.section ? "#EEE6FD" : "",
-              color: e.name === props.section ? "#5805E9" : "",
+              background: e.name === section ? "#EEE6FD" : "",
+              color: e.name === section ? "#5805E9" : "",
             }}
             onClick={() => {
-              props.setSection(e.name);
+              setSection(e.name);
             }}
             className="group flex relative font-medium items-center gap-2.5 ml-4 text-[17px] w-[80%] rounded-xl text-[#7C7C7C] hover:bg-[#EEE6FD] hover:text-[#5805E9] transition duration-100 pl-3 py-2"
           >
@@ -40,7 +40,7 @@ export default function SideBar(props: SideBarType) {
             <span className="max-[900px]:hidden font-[Poppins]">{e.name}</span>
             <div
               style={{
-                display: e.name === props.section ? "block" : "none",
+                display: e.name === section ? "block" : "none",
               }}
               className="absolute w-[4px] h-[100%] -left-[17px] bg-[#5805E9] hidden group-hover:block"
             ></div>
