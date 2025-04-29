@@ -9,14 +9,14 @@ export default function Header() {
   const [isOpenCartMenu, setIsOpenCartMenu] = useState<boolean>(false);
   const location = useLocation();
   const isBlackTextHeader =
-    location.pathname.toLocaleLowerCase().includes("shop") || isOpen;
+    location.pathname.toLocaleLowerCase().includes("shop") || isOpen || location.pathname.toLocaleLowerCase().includes("product")
   const navLinks = [
     { label: "Shop", href: "/shop" },
     { label: "Categories", href: "/categories" },
     { label: "About", href: "/about" },
   ];
   const img = isBlackTextHeader ? logo2 : logo;
-  const isRelative = location.pathname.toLocaleLowerCase().includes("shop");
+  const isRelative = location.pathname.toLocaleLowerCase().includes("shop") || location.pathname.toLocaleLowerCase().includes("product") ;
 
   return (
     <>
