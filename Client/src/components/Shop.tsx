@@ -111,7 +111,7 @@ export default function Shop() {
             <FaSort />
             Sort
             <ul
-              className={`absolute w-[150px] transition-all   ${isOpenSortList  ? "border-1":"border-0"}   duration-450  ${
+              className={`absolute w-[150px] transition-all z-5   ${isOpenSortList  ? "border-1":"border-0"}   duration-450  ${
                 isOpenSortList ? "max-h-[500px]" : "max-h-0"
               }  overflow-hidden  flex flex-col gap-2 bg-white top-[101%]  left-[-30%]`}
             >
