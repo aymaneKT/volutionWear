@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import HeadDashbord from "./Dashboard/HeadDashbord";
 import img from "../VID-IMG/VolutionWear.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import DeleteAccountModal from "./DeleteAccountModal";
+import { SectionContext } from "@/Contexts/SectionContext";
 
 type passwordVisibleType = {
   current: boolean;
@@ -11,7 +12,8 @@ type passwordVisibleType = {
 };
 
 export default function Profile() {
-  const [section, setSection] = useState("Profile");
+  const { section, setSection } = useContext(SectionContext);
+  const [sectionPage, setSectionPage] = useState<string>("Profile");
   const [passwordVisible, setPasswordVisible] = useState<passwordVisibleType>({
     current: false,
     new: false,
@@ -33,9 +35,9 @@ export default function Profile() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             if (entry.target === profileRef.current) {
-              setSection("Profile");
+              setSectionPage("Profile");
             } else if (entry.target === passwordRef.current) {
-              setSection("Password");
+              setSectionPage("Password");
             }
           }
         });
@@ -53,8 +55,6 @@ export default function Profile() {
       if (passwordRef.current) observer.unobserve(passwordRef.current);
     };
   }, []);
-  
-
 
   return (
     <>
@@ -71,8 +71,7 @@ export default function Profile() {
             <ul className="my-3 text-[#BEBFBE]">
               <li
                 onClick={() => {
-                  
-                  setSection("Profile");
+                  setSectionPage("Profile");
                 }}
                 style={{
                   backgroundColor: section === "Profile" ? "#9810FA" : "#fff",
@@ -84,8 +83,8 @@ export default function Profile() {
               </li>
               <li
                 onClick={() => {
-                  scrollTo(0 , document.body.scrollHeight)
-                  setSection("Password");
+                  scrollTo(0, document.body.scrollHeight);
+                  setSectionPage("Password");
                 }}
                 style={{
                   backgroundColor: section === "Password" ? "#9810FA" : "#fff",
@@ -98,7 +97,10 @@ export default function Profile() {
             </ul>
           </div>
 
-          <div ref={profileRef} className="rounded-[8px]   grow border-1 flex gap-5 items-end justify-between flex-wrap p-4 max-[480px]:justify-center">
+          <div
+            ref={profileRef}
+            className="rounded-[8px]   grow border-1 flex gap-5 items-end justify-between flex-wrap p-4 max-[480px]:justify-center"
+          >
             <div className="flex flex-wrap items-end justify-between gap-3">
               <img src={img} className="  w-[120px] rounded-[8px]" />
               <div>
@@ -113,7 +115,12 @@ export default function Profile() {
               </div>
             </div>
             <div className="flex gap-2 self-end mr-4 ">
-              <button className="cursor-pointer bg-[#7E7E7E] text-white rounded-[7px] px-4 py-1.5">
+              <button
+                onClick={() => {
+                  setSection("Dashboard");
+                }}
+                className="cursor-pointer bg-[#7E7E7E] text-white rounded-[7px] px-4 py-1.5"
+              >
                 Cancel
               </button>
               <button className="cursor-pointer text-white rounded-[7px] bg-purple-600 px-4 py-1.5">
@@ -181,7 +188,10 @@ export default function Profile() {
           </div>
         </div>
         {/* Passwords */}
-        <div ref={passwordRef} className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4">
+        <div
+          ref={passwordRef}
+          className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4"
+        >
           <h2 className="text-[18px] font-bold">Change Password</h2>
           {/* current */}
           <div className="Password flex flex-col mb-5 gap-1.5 relative">
@@ -210,7 +220,7 @@ export default function Profile() {
             </div>
           </div>
           {/* new */}
-          <div  className="Password flex flex-col mb-5 gap-1.5 relative">
+          <div className="Password flex flex-col mb-5 gap-1.5 relative">
             <label htmlFor="password" className="font-medium">
               New password
             </label>

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import img from "../VID-IMG/VolutionWear.png";
 import Checkbox from "./CheckBox";
 import InputImage from "./InputImage";
@@ -7,7 +8,11 @@ type ProductItemType = {
 };
 export default function ProductItem(props: ProductItemType) {
   const { isOpenProductInfo, setIsOpenMenuInfo } = props;
-
+  useEffect(() => {
+    isOpenProductInfo
+      ? (document.body.style.overflow = "hidden")
+      : (document.body.style.overflow = "visible");
+  }, [isOpenProductInfo]);
   return (
     <div
       style={{
@@ -17,7 +22,7 @@ export default function ProductItem(props: ProductItemType) {
       onClick={() => {
         setIsOpenMenuInfo(false);
       }}
-      className="absolute  z-10 transition duration-200  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
+      className="absolute items-center  z-10 transition duration-200  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
     >
       <div
         style={{

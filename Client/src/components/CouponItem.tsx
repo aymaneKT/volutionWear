@@ -1,9 +1,16 @@
+import { useEffect } from "react";
+
 type couponItemType = {
-  isOpenCouponMenu: boolean,
+  isOpenCouponMenu: boolean;
   setIsOpenCouponMenu: (value: boolean) => void;
 };
 export default function CouponItem(props: couponItemType) {
   const { isOpenCouponMenu, setIsOpenCouponMenu } = props;
+  useEffect(() => {
+    isOpenCouponMenu
+      ? (document.body.style.overflow = "hidden")
+      : (document.body.style.overflow = "visible");
+  }, [isOpenCouponMenu]);
   return (
     <div
       style={{
@@ -86,9 +93,12 @@ export default function CouponItem(props: couponItemType) {
         </div> */}
 
         <div className="flex gap-2 self-end my-4">
-          <button onClick={()=>{
-            setIsOpenCouponMenu(false)
-          }} className="cursor-pointer bg-[#7E7E7E] text-white rounded-[7px] px-4 py-1.5">
+          <button
+            onClick={() => {
+              setIsOpenCouponMenu(false);
+            }}
+            className="cursor-pointer bg-[#7E7E7E] text-white rounded-[7px] px-4 py-1.5"
+          >
             Cancel
           </button>
           <button className="cursor-pointer text-white rounded-[7px] bg-purple-600 px-4 py-1.5">

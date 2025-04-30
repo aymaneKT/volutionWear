@@ -20,7 +20,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/product" element={<ProductPage />} />
+        <Route path="/shop/product" element={<ProductPage />} />
         <Route path="*" element={<NotFoundPage />}/>
       </Routes>
     </>

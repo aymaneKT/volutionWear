@@ -1,18 +1,17 @@
 import { useState } from "react";
 import Header from "./Header";
 import img from "../VID-IMG/pexels-blitzboy-1040945.jpg";
-import {
-  Heart,
-  ShoppingCart,
-  Star,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { ShoppingCart, Star, ChevronDown, ChevronUp } from "lucide-react";
+import Rating from "@mui/material/Rating";
+import ReviewModal from "./ReviewModal";
+import { Link } from "react-router-dom";
 
 export default function ProductPage() {
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedColor, setSelectedColor] = useState<string>("Nero");
   const [activeTab, setActiveTab] = useState<string>("description");
+  const [rating, setRating] = useState<number | null>(2);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   // Colori disponibili
   const colors = ["Nero", "Bianco", "Blu", "Rosso"];
@@ -28,10 +27,14 @@ export default function ProductPage() {
   return (
     <div className="px-4 md:px-8 lg:px-11 pb-16 bg-gray-50">
       <Header />
+      <ReviewModal
+        showReviewModal={showReviewModal}
+        setShowReviewModal={setShowReviewModal}
+      />
 
       {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-6 mt-4">
-        Home / Collezione /{" "}
+        <Link to="/">Home</Link> /<Link to="/shop">Products</Link> /{" "}
         <span className="font-medium text-gray-800">Prodotto</span>
       </div>
 
@@ -68,17 +71,7 @@ export default function ProductPage() {
         <div className="flex flex-col gap-6 flex-1 min-w-[300px]">
           {/* Reviews */}
           <div className="flex items-center gap-2">
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={18}
-                  className={
-                    i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-                  }
-                />
-              ))}
-            </div>
+            <Rating name="read-only" value={rating} readOnly />
             <span className="text-sm text-gray-600">(126 recensioni)</span>
           </div>
 
@@ -169,20 +162,19 @@ export default function ProductPage() {
 
           {/* Action Buttons */}
           <div className="flex gap-4 mt-2">
-            <button className="bg-black text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors">
+            <button className="bg-black cursor-pointer text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors">
               <ShoppingCart size={18} />
               <span>AGGIUNGI AL CARRELLO</span>
             </button>
-          
           </div>
 
           {/* Shipping Info */}
           <div className="border-t border-gray-200 pt-4 mt-2 text-sm text-gray-600">
             <p className="flex items-center gap-2">
-              <span>✓</span> Spedizione gratuita per ordini superiori a 100€
+              <span>✓</span> Free shipping on orders over €100
             </p>
             <p className="flex items-center gap-2">
-              <span>✓</span> Consegna stimata: 3-5 giorni lavorativi
+              <span>✓</span> Estimated delivery: 3–5 business days
             </p>
           </div>
         </div>
@@ -191,11 +183,11 @@ export default function ProductPage() {
       {/* Product Tabs */}
       <div className="mt-12 bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="flex border-b border-gray-200">
-          {["description", "details", "reviews"].map((tab) => (
+          {["description", "reviews"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-4 font-medium capitalize transition-colors ${
+              className={`px-6 py-4 font-medium cursor-pointer capitalize transition-colors ${
                 activeTab === tab
                   ? "border-b-2 border-black text-black"
                   : "text-gray-500 hover:text-gray-800"
@@ -230,7 +222,7 @@ export default function ProductPage() {
             </div>
           )}
 
-          {activeTab === "details" && (
+          {/* {activeTab === "details" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h3 className="font-medium text-lg mb-3">Specifiche</h3>
@@ -292,24 +284,14 @@ export default function ProductPage() {
                 </table>
               </div>
             </div>
-          )}
+          )} */}
 
           {activeTab === "reviews" && (
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <div>
                   <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={24}
-                        className={
-                          i < 4
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "text-gray-300"
-                        }
-                      />
-                    ))}
+                    <Rating name="read-only" value={rating} readOnly />
                   </div>
                   <p className="mt-1 text-sm text-gray-600">
                     Basato su 126 recensioni
@@ -355,7 +337,12 @@ export default function ProductPage() {
                 </div>
               </div>
 
-              <button className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-50">
+              <button
+                onClick={() => {
+                  setShowReviewModal(true);
+                }}
+                className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-50"
+              >
                 Scrivi una recensione
               </button>
 
@@ -389,17 +376,11 @@ export default function ProductPage() {
                       <div>
                         <p className="font-medium">{review.name}</p>
                         <div className="flex mt-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={
-                                i < review.rating
-                                  ? "fill-yellow-400 text-yellow-400"
-                                  : "text-gray-300"
-                              }
-                            />
-                          ))}
+                          <Rating
+                            name="read-only"
+                            value={review.rating}
+                            readOnly
+                          />
                         </div>
                       </div>
                       <span className="text-sm text-gray-500">
