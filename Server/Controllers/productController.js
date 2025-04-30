@@ -7,6 +7,7 @@ import {
   deleteListingProduct,
   productsForUser,
   editproduct,
+  getproducts,
 } from "../models/products.js";
 
 import { getUser } from "../models/user.js";
@@ -157,6 +158,28 @@ export const getProductsForAdmin = async (req, res) => {
     return res.status(201).json({
       success: true,
       products,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: error.message,
+    });
+  }
+};
+
+export const getAllProducts = async (req, res) => {
+  try {
+    const products = await getproducts();
+    const productsWimages = await Promise.all(
+      products.map(async (e) => {
+        const Images = await getImages(e.ProductId);
+        return { ...e, Images };
+      })
+    );
+    return res.status(201).json({
+      success: true,
+      productsWimages,
     });
   } catch (error) {
     console.log(error.message);

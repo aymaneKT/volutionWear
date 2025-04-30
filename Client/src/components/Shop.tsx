@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "../VID-IMG/Shop-Section_Img-min.jpg";
 import Header from "./Header";
 import { LuLayoutGrid } from "react-icons/lu";
@@ -10,13 +10,17 @@ import { FaSort } from "react-icons/fa";
 import FilterModal from "./FilterModal";
 
 import ProductCard from "./ProductCard";
+import axios from "axios";
+import Loader from "./Loader";
 export default function Shop() {
   const [layout, setLayout] = useState<string>("viewLayout4");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [isOpenSortList, setIsOpenSortList] = useState<boolean>(false);
   const [selectedSort, setSelectedSort] = useState<string>("priceAsc");
-  
+  const [products, setProducts] = useState([]);
+
   const sortOptions = [
     { value: "priceAsc", label: "Price: Low to High" },
     { value: "priceDesc", label: "Price: High to Low" },
@@ -29,8 +33,23 @@ export default function Shop() {
     { value: "popularityDesc", label: "Most Popular" },
     { value: "popularityAsc", label: "Least Popular" },
   ];
+  useEffect(() => {
+    setIsLoading(true);
+    axios
+      .get("http://localhost:3000/api/products")
+      .then((res) => {
+        console.log(res.data.productsWimages);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
   return (
     <>
+      <Loader isLoading={isLoading} />
       <div>
         <Header />
         <div className="relative min-[992px]:px-11 h-[400px]">
@@ -111,7 +130,9 @@ export default function Shop() {
             <FaSort />
             Sort
             <ul
-              className={`absolute w-[150px] transition-all z-5   ${isOpenSortList  ? "border-1":"border-0"}   duration-450  ${
+              className={`absolute w-[150px] transition-all z-5   ${
+                isOpenSortList ? "border-1" : "border-0"
+              }   duration-450  ${
                 isOpenSortList ? "max-h-[500px]" : "max-h-0"
               }  overflow-hidden  flex flex-col gap-2 bg-white top-[101%]  left-[-30%]`}
             >

@@ -13,7 +13,7 @@ export default function ProductCard() {
     },
   });
   return (
-    <div className=" h-auto    mb-2 relative">
+    <div className=" h-auto cursor-pointer   mb-2 relative">
       <div
         ref={sliderRef}
         className="keen-slider"

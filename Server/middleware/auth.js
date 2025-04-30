@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { checkToken } from "./token.js";
 dotenv.config({ path: "../.env" });
 
+
 export const auth = (req, res, next) => {
   const header = req.header("Authorization");
   if (!header) {

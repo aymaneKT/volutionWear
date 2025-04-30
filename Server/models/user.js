@@ -11,6 +11,28 @@ export const getUser = async (id) => {
     throw error;
   }
 };
+export const getUsernameCredential = async (username) => {
+  try {
+    const [user] = await connection.query(
+      `SELECT id FROM users WHERE username = ?`,
+      [username]
+    );
+    return user.length > 0;
+  } catch (error) {
+    throw error;
+  }
+};
+export const getUserEmailCredential = async (email) => {
+  try {
+    const [user] = await connection.query(
+      `SELECT id FROM users WHERE email = ?`,
+      [email]
+    );
+    return user.length > 0;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const login = async (email) => {
   try {
@@ -31,12 +53,13 @@ export const register = async (
   username,
   email,
   password,
-  is_seller
+  is_seller,
+  image
 ) => {
   try {
     const user = await connection.query(
-      `INSERT INTO users (nome, cognome, username, email, password, is_seller) VALUES (?, ?, ?, ?, ?, ?)`,
-      [nome, cognome, username, email, password, is_seller]
+      `INSERT INTO users (nome, cognome, username, email, password, is_seller , image) VALUES (?, ?, ?, ?, ?, ? , ?)`,
+      [nome, cognome, username, email, password, is_seller, image]
     );
 
     return user[0].insertId;

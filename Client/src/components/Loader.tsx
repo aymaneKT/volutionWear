@@ -1,8 +1,10 @@
 import Lottie from "lottie-react";
 import animation from "../VID-IMG/Animation - 1745533424700.json";
-import { useEffect, useState } from "react";
-export default function Loader() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+import { useEffect } from "react";
+type LoaderType = {
+  isLoading: boolean;
+};
+export default function Loader({ isLoading }: LoaderType) {
   useEffect(() => {
     isLoading
       ? (document.body.style.overflow = "hidden")
@@ -11,7 +13,7 @@ export default function Loader() {
 
   return (
     <div
-      className={`bg-[#ffffffca] ${
+      className={`bg-[#ffffff] ${
         isLoading ? "block" : "hidden"
       } transition duration-600  flex justify-center items-center flex-col rounded-[4px] p-7 h-screen absolute left-0 right-0 z-5 bottom-0 top-0`}
     >

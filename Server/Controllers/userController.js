@@ -1,5 +1,11 @@
 import { generateToken } from "../middleware/token.js";
-import { getUser, login, register } from "../models/user.js";
+import {
+  getUser,
+  login,
+  register,
+  getUsernameCredential,
+  getUserEmailCredential,
+} from "../models/user.js";
 import bcrypt from "bcrypt";
 const saltRounds = 10;
 
@@ -32,22 +38,57 @@ export const Register = async (req, res) => {
       !password ||
       is_seller == undefined
     ) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: "Not all required fields are filled in",
       });
     }
+
+    const isUserDuplicated = await getUsernameCredential(username);
+    if (isUserDuplicated) {
+      return res.status(400).json({
+        error: "Username is already taken",
+      });
+    }
+    if (await getUserEmailCredential(email)) {
+      return res.status(400).json({
+        error: "Email is already taken",
+      });
+    }
+
     bcrypt.hash(password, saltRounds, async (err, hash) => {
       if (err) {
         return res.status(500).json({ error: "Error hashing password." });
       }
-      const userId = await register(
-        nome,
-        cognome,
-        username,
-        email,
-        hash,
-        is_seller
-      );
+
+      let userId;
+      if (req.file) {
+        const invalidFile = !req.file.mimetype.startsWith("image/");
+        if (invalidFile) {
+          return res.status(403).json({
+            success: false,
+            message: "file is not a valid image",
+          });
+        }
+        userId = await register(
+          nome,
+          cognome,
+          username,
+          email,
+          hash,
+          is_seller,
+          req.file.filename
+        );
+      } else
+        userId = await register(
+          nome,
+          cognome,
+          username,
+          email,
+          hash,
+          is_seller,
+          null
+        );
+
       const userAdded = await getUser(userId);
       const token = generateToken(userId, email, is_seller);
       res.status(200).json({
