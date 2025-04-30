@@ -20,8 +20,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/shop/product" element={<ProductPage />} />
-        <Route path="*" element={<NotFoundPage />}/>
+        <Route path="/shop/product/:id" element={<ProductPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

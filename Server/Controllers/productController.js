@@ -9,6 +9,7 @@ import {
   editproduct,
   getproducts,
 } from "../models/products.js";
+import { getReviewsForProduct } from "../models/Reviews.js";
 
 import { getUser } from "../models/user.js";
 
@@ -183,6 +184,33 @@ export const getAllProducts = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: error.message,
+    });
+  }
+};
+
+export const getProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const product = await getproduct(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: "Product not found",
+      });
+    }
+
+    const images = await getImages(id);
+    const reviews = await getReviewsForProduct(id);
+    return res.status(200).json({
+      success: true,
+      product: { ...product, images, reviews },
+    });
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({
       error: "Internal Server Error",
       message: error.message,

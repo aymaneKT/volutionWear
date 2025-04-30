@@ -25,7 +25,7 @@ export const addproduct = async (
 export const getproducts = async () => {
   try {
     const query =
-      "SELECT users.username as Seller , products.id as ProductId, products.name ,  products.description , products.price , products.stock , categories.name as category from users JOIN product_listings on users.id = product_listings.id JOIN products on product_listings.product_id = products.id join categories on products.category_id = categories.id ";
+      "SELECT users.id as sellerId , users.username as username , products.id as ProductId, products.name , products.description , products.price , products.stock , categories.name as category from users JOIN product_listings on users.id = product_listings.seller_id JOIN products on products.id = product_listings.product_id join categories on products.category_id = categories.id ";
     const [rows] = await connection.query(query);
 
     return rows;

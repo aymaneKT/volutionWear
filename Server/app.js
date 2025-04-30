@@ -11,7 +11,7 @@ import { router as userRouter } from "./Routes/userRoutes.js";
 import { router as productRouter } from "./Routes/productsRoutes.js";
 import { router as imageRouter } from "./Routes/imagesRouter.js";
 import { router as couponRouter } from "./Routes/couponRouter.js";
-// import { router as reviewsRouter } from "./Routes/reviewsRouter.js";
+import { router as reviewsRouter } from "./Routes/reviewRouter.js";
 // import { router as orderRouter } from "./Routes/ordersRouter.js";
 // import { router as orderItemRouter } from "./Routes/orderItemRouter.js";
 // import {router as userAuthRouter} from "./Routes/userRoutes.js";

@@ -1,25 +1,42 @@
 import Rating from "@mui/material/Rating";
+import axios from "axios";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type ReviewModalProps = {
   showReviewModal: boolean;
   setShowReviewModal: (value: boolean) => void;
+  productId: number;
 };
 
+type reviewModel = {
+  rating: number;
+  comment: string;
+};
 export default function ReviewModal({
   showReviewModal,
   setShowReviewModal,
 }: ReviewModalProps) {
-  const [userRating, setUserRating] = useState<number | null>(0);
-  const [reviewText, setReviewText] = useState<string>("");
+  const [userRating, setUserRating] = useState<reviewModel>({
+    rating: 0,
+    comment: "",
+  });
 
   useEffect(() => {
     showReviewModal
       ? (document.body.style.overflow = "hidden")
       : (document.body.style.overflow = "visible");
   }, [showReviewModal]);
+  const postReviwe = () => {
+    const cpnfig = {
+      headers : {
+        "Authorization" : `Bearer ${localStorage.getItem("token")}`
+      }
+    }
+    axios.post("http://localhost:3000/api/review",{
 
+    });
+  };
   return (
     <div
       style={{
@@ -51,9 +68,9 @@ export default function ReviewModal({
           <p className="mb-2 font-medium">Your Rating</p>
           <Rating
             name="simple-controlled"
-            value={userRating}
+            value={userRating.rating}
             onChange={(event, newValue) => {
-              setUserRating(newValue);
+              setUserRating({ ...userRating, rating: newValue ?? 0 });
             }}
           />
         </div>
@@ -67,8 +84,8 @@ export default function ReviewModal({
             rows={4}
             className="w-full border border-gray-300 rounded p-2"
             placeholder="Share your experience with this product..."
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
+            value={userRating.comment}
+            onChange={(e) => ({ ...userRating, comment: e.target.value })}
           ></textarea>
         </div>
 
@@ -82,10 +99,11 @@ export default function ReviewModal({
           </button>
           <button
             className={`bg-black text-white py-2 px-4 ${
-              userRating === 0 ? "opacity-50 cursor-not-allowed" : ""
+              userRating.rating === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             type="button"
-            disabled={userRating === 0}
+            disabled={userRating.rating === 0}
+            onClick={postReviwe}
           >
             Submit Review
           </button>

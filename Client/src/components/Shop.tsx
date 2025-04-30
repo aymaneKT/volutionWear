@@ -12,14 +12,25 @@ import FilterModal from "./FilterModal";
 import ProductCard from "./ProductCard";
 import axios from "axios";
 import Loader from "./Loader";
+type productType = {
+  Seller: string;
+  ProductId: number;
+  name: string;
+  description: string;
+  price: string;
+  stock: string;
+  category: string;
+  Images: [];
+};
+
 export default function Shop() {
   const [layout, setLayout] = useState<string>("viewLayout4");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [isOpenSortList, setIsOpenSortList] = useState<boolean>(false);
   const [selectedSort, setSelectedSort] = useState<string>("priceAsc");
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<productType[] | undefined>();
 
   const sortOptions = [
     { value: "priceAsc", label: "Price: Low to High" },
@@ -38,6 +49,7 @@ export default function Shop() {
     axios
       .get("http://localhost:3000/api/products")
       .then((res) => {
+        setProducts(res.data.productsWimages);
         console.log(res.data.productsWimages);
       })
       .catch((err) => {
@@ -49,7 +61,7 @@ export default function Shop() {
   }, []);
   return (
     <>
-      <Loader isLoading={isLoading} />
+      <Loader isLoading={isLoading} /> 
       <div>
         <Header />
         <div className="relative min-[992px]:px-11 h-[400px]">
@@ -164,10 +176,10 @@ export default function Shop() {
               : "grid-cols-2"
           }  px-11 my-10 gap-x-6 font-['Josefin_Sans'] gap-y-5`}
         >
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
+          {products &&
+            products.map((product: productType, i: number) => (
+              <ProductCard key={i} product={product} />
+            ))}
         </div>
         <HomeFooter />
       </div>
