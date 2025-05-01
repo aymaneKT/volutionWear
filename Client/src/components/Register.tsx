@@ -40,7 +40,7 @@ export default function Register() {
       is_seller: user.isSeller,
     })
       .then((res) => {
-        localStorage.setItem("token", JSON.stringify(res.data.token));
+        localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         toast.update(id, {
           render: "Registration successful!",

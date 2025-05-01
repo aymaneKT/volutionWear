@@ -19,7 +19,7 @@ app.use("/api", userRouter);
 app.use("/api", productRouter);
 app.use("/api", imageRouter);
 app.use("/api", couponRouter);
-// app.use("/api", reviewsRouter);
+app.use("/api", reviewsRouter);
 // app.use("/api", orderRouter);
 // app.use("/api", orderItemRouter);
 // app.use("/api", userAuthRouter);

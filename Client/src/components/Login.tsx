@@ -25,7 +25,7 @@ export default function Login() {
         password: user.password,
       })
       .then((res) => {
-        localStorage.setItem("token", JSON.stringify(res.data.token));
+        localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         toast.update(id, {
           render: "Signin successful!",

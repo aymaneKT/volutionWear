@@ -9,14 +9,7 @@ export const postReview = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const review = {
-      productId,
-      userId,
-      rating,
-      comment,
-    };
-
-    const savedReview = await addReview(review);
+    const savedReview = await addReview(productId, userId, rating, comment);
 
     res
       .status(201)

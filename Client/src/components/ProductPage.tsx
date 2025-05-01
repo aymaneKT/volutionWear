@@ -37,29 +37,18 @@ type Product = {
 
 export default function ProductPage() {
   const [quantity, setQuantity] = useState<number>(1);
-  // const [selectedColor, setSelectedColor] = useState<string>("Nero");
   const [activeTab, setActiveTab] = useState<string>("description");
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [productDetails, setProductDetails] = useState<Product | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Colori disponibili
-  // const colors = ["Nero", "Bianco", "Blu", "Rosso"];
-
-  // Caratteristiche del prodotto
-  // const productFeatures = [
-  //   "Materiale premium",
-  //   "Design ergonomico",
-  //   "Resistente all'acqua",
-  //   "Garanzia di 2 anni",
-  // ];
-  // Placeholder for additional logic or components
-  const productId = useParams().id;
-  useEffect(() => {
+  const productId = Number(useParams().id);
+  const getReviews = (productId: Number) => {
     axios
       .get(`http://localhost:3000/api/product/${productId}`)
       .then((res) => {
         setProductDetails(res.data.product);
+        console.log(res.data.product);
       })
       .catch((err) => {
         console.log(err);
@@ -67,6 +56,9 @@ export default function ProductPage() {
       .finally(() => {
         setIsLoading(false);
       });
+  };
+  useEffect(() => {
+    getReviews(productId);
   }, []);
   const averageRating = productDetails?.reviews.length
     ? productDetails.reviews.reduce((sum, review) => sum + review.rating, 0) /
@@ -82,6 +74,7 @@ export default function ProductPage() {
           showReviewModal={showReviewModal}
           setShowReviewModal={setShowReviewModal}
           productId={productId}
+          getReviews={getReviews}
         />
 
         {/* Breadcrumb */}
