@@ -2,13 +2,20 @@ import { useEffect, useState } from "react";
 import Header from "./Header";
 import img from "../VID-IMG/pexels-blitzboy-1040945.jpg";
 import pp from "../VID-IMG/No_picture_available.png";
-import { ShoppingCart, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  ShoppingCart,
+  ChevronDown,
+  ChevronUp,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import Rating from "@mui/material/Rating";
 import ReviewModal from "./ReviewModal";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Products from "./Products";
 import Loader from "./Loader";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 type ImageType = {
   image_id: number;
   image_url: string;
@@ -17,6 +24,8 @@ type ImageType = {
 };
 
 type ReviewType = {
+  UserId: number;
+  reviewId: number;
   username: string;
   comment: string;
   image: string;
@@ -35,20 +44,32 @@ type Product = {
   reviews: ReviewType[];
 };
 
+type reviewToEditType = {
+  id: number | null;
+  rating: number;
+  comment: string;
+};
 export default function ProductPage() {
   const [quantity, setQuantity] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<string>("description");
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [productDetails, setProductDetails] = useState<Product | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedReview, setSelectedReview] = useState<reviewToEditType>(
+    {
+      id: 0,
+      rating: 0,
+      comment: "",
+    }
+  );
   const productId = Number(useParams().id);
   const getReviews = (productId: Number) => {
     axios
       .get(`http://localhost:3000/api/product/${productId}`)
       .then((res) => {
         setProductDetails(res.data.product);
-        console.log(res.data.product);
       })
       .catch((err) => {
         console.log(err);
@@ -58,6 +79,12 @@ export default function ProductPage() {
       });
   };
   useEffect(() => {
+    if (!showReviewModal) {
+      setSelectedReview({ id: null, rating: 0, comment: "" });
+    }
+  }, [showReviewModal]);
+
+  useEffect(() => {
     getReviews(productId);
   }, []);
   const averageRating = productDetails?.reviews.length
@@ -65,17 +92,30 @@ export default function ProductPage() {
       productDetails.reviews.length
     : 0;
 
+  const getUserLocalStorage = () => {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  };
+
   return (
     <>
+      <DeleteConfirmationModal
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
+        selectedId={selectedId}
+        getReviews={getReviews}
+        productId={productId}
+      />
       <Loader isLoading={isLoading} />
+      <ReviewModal
+        showReviewModal={showReviewModal}
+        setShowReviewModal={setShowReviewModal}
+        productId={productId}
+        getReviews={getReviews}
+        reviewToEdit={selectedReview || { id: null, rating: 0, comment: "" }}
+      />
       <div className="px-4 md:px-8 lg:px-11 pb-16 bg-gray-50">
         <Header />
-        <ReviewModal
-          showReviewModal={showReviewModal}
-          setShowReviewModal={setShowReviewModal}
-          productId={productId}
-          getReviews={getReviews}
-        />
 
         {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-6 mt-4">
@@ -144,48 +184,6 @@ export default function ProductPage() {
             <p className="text-gray-600 leading-relaxed">
               {productDetails?.description}
             </p>
-
-            {/* Features */}
-            {/* <div className="flex flex-col gap-2">
-            <span className="font-medium">Caratteristiche:</span>
-            <ul className="grid grid-cols-2 gap-2">
-              {productFeatures.map((feature, index) => (
-                <li key={index} className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
-                  <span className="text-sm">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-
-            {/* Color Selection */}
-            {/* <div className="flex flex-col gap-3">
-            <span className="font-medium">Colore: {selectedColor}</span>
-            <div className="flex gap-3">
-              {colors.map((color) => (
-                <button
-                  key={color}
-                  onClick={() => setSelectedColor(color)}
-                  className={`w-8 h-8 rounded-full border-2 ${
-                    selectedColor === color
-                      ? "border-black ring-2 ring-gray-300"
-                      : "border-gray-300"
-                  }`}
-                  style={{
-                    backgroundColor:
-                      color === "Nero"
-                        ? "#000"
-                        : color === "Bianco"
-                        ? "#fff"
-                        : color === "Blu"
-                        ? "#2563eb"
-                        : "#dc2626",
-                  }}
-                  aria-label={`Colore ${color}`}
-                />
-              ))}
-            </div>
-          </div> */}
 
             {/* Quantity */}
             <div className="flex items-center gap-3">
@@ -256,70 +254,6 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* {activeTab === "details" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="font-medium text-lg mb-3">Specifiche</h3>
-                <ul className="space-y-2 text-gray-700">
-                  <li>
-                    <span className="font-medium">Materiale:</span> 100% vera
-                    pelle
-                  </li>
-                  <li>
-                    <span className="font-medium">Fodera:</span> 100% poliestere
-                  </li>
-                  <li>
-                    <span className="font-medium">Chiusura:</span> Zip frontale
-                  </li>
-                  <li>
-                    <span className="font-medium">Tasche:</span> 4 esterne, 2
-                    interne
-                  </li>
-                  <li>
-                    <span className="font-medium">Manutenzione:</span> Pulizia
-                    professionale
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-medium text-lg mb-3">Dimensioni</h3>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-2 font-medium">Taglia</th>
-                      <th className="text-left py-2 font-medium">Petto (cm)</th>
-                      <th className="text-left py-2 font-medium">
-                        Lunghezza (cm)
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    <tr>
-                      <td className="py-2">S</td>
-                      <td className="py-2">94-98</td>
-                      <td className="py-2">68</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2">M</td>
-                      <td className="py-2">98-104</td>
-                      <td className="py-2">70</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2">L</td>
-                      <td className="py-2">104-110</td>
-                      <td className="py-2">72</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2">XL</td>
-                      <td className="py-2">110-116</td>
-                      <td className="py-2">74</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )} */}
-
             {activeTab === "reviews" && (
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
@@ -380,7 +314,7 @@ export default function ProductPage() {
                   Add a review
                 </button>
 
-                {/* Sample Reviews */}
+                {/* Reviews with Edit & Delete buttons */}
                 <div className="divide-y divide-gray-100">
                   {productDetails?.reviews.map((review, index) => (
                     <div key={index} className="py-4">
@@ -395,7 +329,7 @@ export default function ProductPage() {
                           ) : (
                             <img
                               src={`http://localhost:3000/uploads/${review.image}`}
-                              className="h-[70px] w-[50px]"
+                              className="h-[50px] w-[50px] rounded-full"
                               alt={`${review.username} picture`}
                             />
                           )}
@@ -410,11 +344,44 @@ export default function ProductPage() {
                             </div>
                           </div>
                         </div>
-                        <span className="text-sm text-gray-500">
-                          {new Date(`${review.created_at}`).toLocaleDateString(
-                            "it-IT"
+                        <div className="flex items-center mr-4   flex-wrap-reverse justify-end">
+                          {getUserLocalStorage().id == review.UserId ? (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  setSelectedReview({
+                                    ...selectedReview,
+                                    id: review.reviewId,
+                                    comment: review.comment,
+                                    rating: review.rating,
+                                  });
+                                  setShowReviewModal(true);
+                                }}
+                                className="cursor-pointer p-1 text-gray-600 hover:text-blue-600 transition-colors"
+                                title="Edit Review"
+                              >
+                                <Edit size={18} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedId(review.reviewId);
+                                  setShowDeleteModal(true);
+                                }}
+                                className="cursor-pointer p-1 text-gray-600 hover:text-red-600 transition-colors"
+                                title="Delete Review"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          ) : (
+                            ""
                           )}
-                        </span>
+                          <span className="text-sm text-gray-500 ">
+                            {new Date(
+                              `${review.created_at}`
+                            ).toLocaleDateString("it-IT")}
+                          </span>
+                        </div>
                       </div>
                       <p className="mt-2 text-gray-700">{review.comment}</p>
                     </div>

@@ -9,17 +9,20 @@ type ReviewModalProps = {
   setShowReviewModal: (value: boolean) => void;
   productId: number;
   getReviews: (id: number) => void;
+  reviewToEdit: { id: number | null ; rating: number; comment: string } ;
 };
 
 type reviewModel = {
   rating: number;
   comment: string;
 };
+
 export default function ReviewModal({
   showReviewModal,
   setShowReviewModal,
   productId,
   getReviews,
+  reviewToEdit,
 }: ReviewModalProps) {
   const [userRating, setUserRating] = useState<reviewModel>({
     rating: 0,
@@ -27,26 +30,48 @@ export default function ReviewModal({
   });
 
   useEffect(() => {
-    showReviewModal
-      ? (document.body.style.overflow = "hidden")
-      : (document.body.style.overflow = "visible");
-  }, [showReviewModal]);
+    if (reviewToEdit?.id != null) {
+      setUserRating({
+        rating: reviewToEdit.rating,
+        comment: reviewToEdit.comment,
+      });
+    } else {
+      setUserRating({ rating: 0, comment: "" });
+    }
+
+    document.body.style.overflow = showReviewModal ? "hidden" : "visible";
+  }, [showReviewModal, reviewToEdit]);
+
   const postReview = () => {
     const config = {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     };
-    axios
-      .post(
-        "http://localhost:3000/api/review",
-        {
-          productId: productId,
-          rating: userRating.rating,
-          comment: userRating.comment,
-        },
-        config
-      )
+
+    // Se esiste reviewToEdit, effettua una PUT, altrimenti una POST
+    const request = reviewToEdit.id != null
+      ? axios.put(
+          `http://localhost:3000/api/review`,
+          {
+            productId: productId,
+            rating: userRating.rating,
+            comment: userRating.comment,
+            reviewId: reviewToEdit.id,
+          },
+          config
+        )
+      : axios.post(
+          "http://localhost:3000/api/review",
+          {
+            productId: productId,
+            rating: userRating.rating,
+            comment: userRating.comment,
+          },
+          config
+        );
+
+    request
       .then((res) => {
         toast.success(res.data.message, {
           position: "top-right",
@@ -58,13 +83,29 @@ export default function ReviewModal({
           progress: undefined,
           theme: "light",
         });
+        // Chiude il modal e resetta i dati
         setShowReviewModal(false);
         getReviews(productId);
+        setUserRating({ rating: 0, comment: "" }); // Reset data dopo invio
       })
-      .then((err) => {
+      .catch((err) => {
         console.log(err);
+        toast.error("Failed to submit review. Please try again.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      })
+      .finally(() => {
+        console.log("reviewToEdit: ", reviewToEdit);
       });
   };
+
   return (
     <>
       <ToastContainer />
@@ -74,7 +115,7 @@ export default function ReviewModal({
           pointerEvents: showReviewModal ? "auto" : "none",
         }}
         onClick={() => setShowReviewModal(false)}
-        className="fixed  z-10 transition duration-300 font-[Poppins] top-0 bottom-0 right-0 left-0 max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center items-center"
+        className="fixed z-10 transition duration-300 font-[Poppins] top-0 bottom-0 right-0 left-0 bg-[#ffffffdc] h-screen flex justify-center items-center"
       >
         <div
           style={{
@@ -85,7 +126,9 @@ export default function ReviewModal({
           className="bg-white border-1 rounded-lg p-6 max-w-md w-full m-5"
         >
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold">Write a Review</h3>
+            <h3 className="text-xl font-bold">
+              {reviewToEdit ? "Edit Review" : "Write a Review"}
+            </h3>
             <button
               onClick={() => setShowReviewModal(false)}
               className="text-gray-500 hover:text-gray-700"

@@ -29,7 +29,7 @@ export const GetUser = async (req, res) => {
 
 export const Register = async (req, res) => {
   try {
-    const { nome, cognome, username, email, password, is_seller } = req.body;
+    const { nome, cognome, username, email, password, is_seller  } = req.body;
     if (
       !nome ||
       !cognome ||

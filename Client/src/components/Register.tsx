@@ -7,14 +7,14 @@ import { ToastContainer, toast } from "react-toastify";
 
 import Axios from "axios";
 
-type UserType = {
+export type UserType = {
   username: string;
   name: string;
   surname: string;
   email: string;
   password: string;
   isSeller: boolean;
-  imageProfile: string;
+  imageProfile: File | null;
 };
 
 export default function Register() {
@@ -26,18 +26,27 @@ export default function Register() {
     email: "",
     password: "",
     isSeller: false,
-    imageProfile: "",
+    imageProfile: null,
   });
 
   const register = () => {
     const id = toast.loading("Please wait...");
-    Axios.post("http://localhost:3000/api/register", {
-      nome: user.name,
-      cognome: user.surname,
-      username: user.username,
-      email: user.email,
-      password: user.password,
-      is_seller: user.isSeller,
+    const formData = new FormData();
+  
+    formData.append("nome", user.name);
+    formData.append("cognome", user.surname);
+    formData.append("username", user.username);
+    formData.append("email", user.email);
+    formData.append("password", user.password);
+    formData.append("is_seller", user.isSeller.toString());
+    if (user.imageProfile) {
+      formData.append("avatar", user.imageProfile); 
+    }
+  
+    Axios.post("http://localhost:3000/api/register", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     })
       .then((res) => {
         localStorage.setItem("token", res.data.token);
@@ -51,15 +60,15 @@ export default function Register() {
       })
       .catch((err) => {
         console.log(err);
-
         toast.update(id, {
-          render: err.response.data.error,
+          render: err.response?.data?.error || "Registration failed",
           type: "error",
           isLoading: false,
           autoClose: 2000,
         });
       });
   };
+  
 
   return (
     <>
@@ -167,7 +176,7 @@ export default function Register() {
               </div>
             </div>
 
-            <FileInputButton />
+            <FileInputButton user={user} setUser={setUser} />
 
             {/* Seller toggle */}
             <div className="flex items-center gap-2 my-1">

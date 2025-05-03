@@ -1,4 +1,10 @@
-const FileInputButton = () => {
+import { UserType } from "./Register";
+
+type FileInputButtonType = {
+  user: UserType;
+  setUser: (value: UserType) => void;
+};
+const FileInputButton = ({ user, setUser }: FileInputButtonType) => {
   return (
     <div className="flex items-center">
       <label
@@ -31,7 +37,17 @@ const FileInputButton = () => {
         </svg>
         ADD IMAGE
       </label>
-      <input type="file" id="fileInput" className="hidden" accept="image/*" />
+      <input
+        type="file"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          if (e.target.files && e.target.files[0]) {
+            setUser({ ...user, imageProfile: e.target.files[0] });
+          }
+        }}
+        id="fileInput"
+        className="hidden"
+        accept="image/*"
+      />
     </div>
   );
 };
