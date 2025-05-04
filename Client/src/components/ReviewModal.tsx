@@ -9,7 +9,7 @@ type ReviewModalProps = {
   setShowReviewModal: (value: boolean) => void;
   productId: number;
   getReviews: (id: number) => void;
-  reviewToEdit: { id: number | null ; rating: number; comment: string } ;
+  reviewToEdit: { id: number | null; rating: number; comment: string };
 };
 
 type reviewModel = {
@@ -50,26 +50,27 @@ export default function ReviewModal({
     };
 
     // Se esiste reviewToEdit, effettua una PUT, altrimenti una POST
-    const request = reviewToEdit.id != null
-      ? axios.put(
-          `http://localhost:3000/api/review`,
-          {
-            productId: productId,
-            rating: userRating.rating,
-            comment: userRating.comment,
-            reviewId: reviewToEdit.id,
-          },
-          config
-        )
-      : axios.post(
-          "http://localhost:3000/api/review",
-          {
-            productId: productId,
-            rating: userRating.rating,
-            comment: userRating.comment,
-          },
-          config
-        );
+    const request =
+      reviewToEdit.id != null
+        ? axios.put(
+            `http://localhost:3000/api/review`,
+            {
+              productId: productId,
+              rating: userRating.rating,
+              comment: userRating.comment,
+              reviewId: reviewToEdit.id,
+            },
+            config
+          )
+        : axios.post(
+            "http://localhost:3000/api/review",
+            {
+              productId: productId,
+              rating: userRating.rating,
+              comment: userRating.comment,
+            },
+            config
+          );
 
     request
       .then((res) => {
@@ -83,14 +84,15 @@ export default function ReviewModal({
           progress: undefined,
           theme: "light",
         });
-        // Chiude il modal e resetta i dati
-        setShowReviewModal(false);
+
         getReviews(productId);
-        setUserRating({ rating: 0, comment: "" }); // Reset data dopo invio
       })
       .catch((err) => {
-        console.log(err);
-        toast.error("Failed to submit review. Please try again.", {
+        let message =
+          err.response.data.message == "jwt expired"
+            ? "You are not logged in. Please log in to submit a review."
+            : "Failed to submit review. Please try again.";
+        toast.error(message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -102,7 +104,7 @@ export default function ReviewModal({
         });
       })
       .finally(() => {
-        console.log("reviewToEdit: ", reviewToEdit);
+        setShowReviewModal(false);
       });
   };
 

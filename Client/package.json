@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "flowbite-react": "^0.11.7",
     "hamburger-react": "^2.5.2",
+    "jwt-decode": "^4.0.0",
     "keen-slider": "^6.8.6",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.503.0",

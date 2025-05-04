@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
-import img from "../VID-IMG/pexels-blitzboy-1040945.jpg";
 import pp from "../VID-IMG/No_picture_available.png";
 import {
   ShoppingCart,
@@ -13,7 +12,6 @@ import Rating from "@mui/material/Rating";
 import ReviewModal from "./ReviewModal";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import Products from "./Products";
 import Loader from "./Loader";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 type ImageType = {
@@ -57,14 +55,22 @@ export default function ProductPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [selectedReview, setSelectedReview] = useState<reviewToEditType>(
-    {
-      id: 0,
-      rating: 0,
-      comment: "",
-    }
-  );
+  const [selectedReview, setSelectedReview] = useState<reviewToEditType>({
+    id: 0,
+    rating: 0,
+    comment: "",
+  });
   const productId = Number(useParams().id);
+
+  const handleImageClick = (imageId: number) => {
+    if (!productDetails || !productDetails.images) return;
+    const updatedImages: ImageType[] = productDetails?.images.map((image) => ({
+      ...image,
+      is_main: image.image_id == imageId ? 1 : 0,
+    }));
+
+    setProductDetails({ ...productDetails, images: updatedImages });
+  };
   const getReviews = (productId: Number) => {
     axios
       .get(`http://localhost:3000/api/product/${productId}`)
@@ -137,20 +143,25 @@ export default function ProductPage() {
 
             {/* Thumbnails */}
             <div className="flex gap-2 mt-4">
-              {[...Array(4)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-16 h-16 border-2 rounded-md overflow-hidden cursor-pointer ${
-                    i === 0 ? "border-black" : "border-gray-200"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`Thumbnail ${i + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
+              {productDetails?.images
+                .filter((i) => i.is_main == 0)
+                .map((e, i) => (
+                  <div
+                    onClick={() => {
+                      handleImageClick(e.image_id);
+                    }}
+                    key={i}
+                    className={`w-16 h-16 border-2 rounded-md overflow-hidden cursor-pointer ${
+                      i === 0 ? "border-black" : "border-gray-200"
+                    }`}
+                  >
+                    <img
+                      src={`http://localhost:3000/uploads/${e.image_url}`}
+                      alt={`Thumbnail ${i + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
             </div>
           </div>
 
