@@ -11,7 +11,8 @@ export default function Header() {
   const isBlackTextHeader =
     location.pathname.toLocaleLowerCase().includes("shop") ||
     isOpen ||
-    location.pathname.toLocaleLowerCase().includes("product");
+    location.pathname.toLocaleLowerCase().includes("product") ||
+    location.pathname.toLocaleLowerCase().includes("profile");
   const navLinks = [
     { label: "Shop", href: "/shop" },
     { label: "Categories", href: "/categories" },
@@ -20,7 +21,8 @@ export default function Header() {
   const img = isBlackTextHeader ? logo2 : logo;
   const isRelative =
     location.pathname.toLocaleLowerCase().includes("shop") ||
-    location.pathname.toLocaleLowerCase().includes("product");
+    location.pathname.toLocaleLowerCase().includes("product") ||
+    location.pathname.toLocaleLowerCase().includes("profile");
 
   return (
     <>
