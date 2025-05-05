@@ -111,3 +111,24 @@ export const deleteListingProduct = async (product_id, seller_id) => {
     throw error;
   }
 };
+
+export const getProductsPaginated = async (limit, offset) => {
+  try {
+    const query =
+      "SELECT users.id as sellerId , users.username as username , products.id as ProductId, products.name , products.description , products.price , products.stock , products.created_at, categories.name as category from users JOIN product_listings on users.id = product_listings.seller_id JOIN products on products.id = product_listings.product_id join categories on products.category_id = categories.id LIMIT ? OFFSET ? ";
+    const [rows] = await connection.query(query, [limit, offset]);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getTotalProducts = async () => {
+  try {
+    const query = "SELECT COUNT(*) as total FROM products";
+    const [rows] = await connection.query(query);
+    return rows[0].total;
+  } catch (error) {
+    throw error;
+  }
+};

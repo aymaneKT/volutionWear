@@ -8,16 +8,20 @@ import HomeFooter from "./Footer";
 import { IoFilterSharp } from "react-icons/io5";
 import { FaSort } from "react-icons/fa";
 import FilterModal from "./FilterModal";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import ProductCard from "./ProductCard";
 import axios from "axios";
 import Loader from "./Loader";
 type productType = {
-  Seller: string;
+  username: string;
+  rating: number;
   ProductId: number;
   name: string;
   description: string;
+  created_at: string;
   price: string;
+  avgReview: number;
   stock: string;
   category: string;
   Images: [];
@@ -29,8 +33,58 @@ export default function Shop() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [isOpenSortList, setIsOpenSortList] = useState<boolean>(false);
-  const [selectedSort, setSelectedSort] = useState<string>("priceAsc");
-  const [products, setProducts] = useState<productType[] | undefined>();
+  const [selectedSort, setSelectedSort] = useState<string>("");
+  const [products, setProducts] = useState<productType[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, sethasMore] = useState<boolean>(true);
+
+  const selectSort = () => {
+    const sorted = [...products];
+
+    switch (selectedSort) {
+      case "priceAsc":
+        sorted.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        break;
+      case "priceDesc":
+        sorted.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        break;
+      case "nameAsc":
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "nameDesc":
+        sorted.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "ratingDesc":
+        sorted.sort((a, b) => (b.avgReview ?? 0) - (a.avgReview ?? 0));
+        break;
+      case "ratingAsc":
+        sorted.sort(
+          (a: any, b: any) =>
+            (b.avgReview.toFixed(2) ?? 0) - (b.b.avgReview.toFixed(2) ?? 0)
+        );
+        break;
+      case "newest":
+        sorted.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        break;
+      case "oldest":
+        sorted.sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    setProducts(sorted);
+  };
+  useEffect(() => {
+    selectSort();
+  }, [selectedSort]);
 
   const sortOptions = [
     { value: "priceAsc", label: "Price: Low to High" },
@@ -41,27 +95,31 @@ export default function Shop() {
     { value: "ratingAsc", label: "Rating: Low to High" },
     { value: "newest", label: "Newest Arrivals" },
     { value: "oldest", label: "Oldest Arrivals" },
-    { value: "popularityDesc", label: "Most Popular" },
-    { value: "popularityAsc", label: "Least Popular" },
   ];
-  useEffect(() => {
-    setIsLoading(true);
+  const loadMore = () => {
     axios
-      .get("http://localhost:3000/api/products")
+      .get(`http://localhost:3000/api/products?page=${page}`)
       .then((res) => {
-        setProducts(res.data.productsWimages);
-        console.log(res.data.productsWimages);
+        setPage((prev) => prev + 1);
+        console.log(res);
+        setProducts((prevProducts) => [...prevProducts, ...res.data.data]);
+        sethasMore(res.data.currentPage < res.data.totalPages);
+
+        console.log(res.data.currentPage <= res.data.totalPages);
       })
       .catch((err) => {
         console.log(err);
+        sethasMore(false);
       })
       .finally(() => {
         setIsLoading(false);
       });
+  };
+  useEffect(() => {
+    loadMore(); // carica la prima pagina
   }, []);
   return (
     <>
-      <Loader isLoading={isLoading} /> 
       <div>
         <Header />
         <div className="relative min-[992px]:px-11 h-[400px]">
@@ -151,7 +209,11 @@ export default function Shop() {
               {sortOptions.map((option) => (
                 <li
                   key={option.value}
-                  onClick={() => setSelectedSort(option.value)}
+                  onClick={() => {
+                    setSelectedSort(option.value);
+                    selectSort();
+                    setIsOpenSortList(false);
+                  }}
                   className={`cursor-pointer flex items-center justify-center  text-[12px] border-t-2 py-2 font-normal hover:underline ${
                     selectedSort === option.value
                       ? " text-blue-500 font-semibold"
@@ -169,18 +231,29 @@ export default function Shop() {
           setIsFilterOpen={setIsFilterOpen}
         />
         {/* Products */}
-        <div
-          className={`grid  ${
-            layout === "viewLayout4"
-              ? "grid-cols-[repeat(auto-fill,minmax(300px,auto))]"
-              : "grid-cols-2"
-          }  px-11 my-10 gap-x-6 font-['Josefin_Sans'] gap-y-5`}
+        <InfiniteScroll
+          dataLength={products.length}
+          next={loadMore}
+          hasMore={hasMore}
+          loader={<Loader isLoading={isLoading} />}
         >
-          {products &&
-            products.map((product: productType, i: number) => (
-              <ProductCard key={i} product={product} />
-            ))}
-        </div>
+          <div
+            style={{ minHeight: "100vh" }}
+            className={`grid  ${
+              layout === "viewLayout4"
+                ? "grid-cols-[repeat(auto-fill,minmax(300px,auto))]"
+                : "grid-cols-2"
+            }  px-11 my-10 gap-x-6 font-['Josefin_Sans'] gap-y-5`}
+          >
+            {products
+              .filter((product) =>
+                product.name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((product: productType, i: number) => (
+                <ProductCard key={i} product={product} />
+              ))}
+          </div>
+        </InfiniteScroll>
         <HomeFooter />
       </div>
     </>

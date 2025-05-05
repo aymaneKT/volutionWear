@@ -88,8 +88,11 @@ export default function ReviewModal({
         getReviews(productId);
       })
       .catch((err) => {
+        console.log(err);
+
         let message =
-          err.response.data.message == "jwt expired"
+          err.response.data.message == "jwt expired" ||
+          err.response.data.message == "jwt malformed"
             ? "You are not logged in. Please log in to submit a review."
             : "Failed to submit review. Please try again.";
         toast.error(message, {

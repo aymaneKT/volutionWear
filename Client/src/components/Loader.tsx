@@ -6,16 +6,14 @@ type LoaderType = {
 };
 export default function Loader({ isLoading }: LoaderType) {
   useEffect(() => {
-    isLoading
-      ? (document.body.style.overflow = "hidden")
-      : (document.body.style.overflow = "visible");
+    document.body.style.overflow = isLoading ? "hidden" : "visible";
   }, [isLoading]);
 
   return (
     <div
       className={`bg-[#ffffff] ${
-        isLoading ? "block" : "hidden"
-      } transition duration-600  flex justify-center items-center flex-col rounded-[4px] p-7 h-screen absolute left-0 right-0 z-5 bottom-0 top-0`}
+        isLoading ? "fixed" : "hidden"
+      } transition duration-600  flex justify-center items-center flex-col rounded-[4px] p-7 h-screen fixed  left-0 right-0 z-5 bottom-0 top-0`}
     >
       <Lottie animationData={animation} loop autoplay className="w-[150px]" />
       <h1 className="text-center font-[Josefin_Sans] text-2xl text-black">

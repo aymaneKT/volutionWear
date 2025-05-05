@@ -8,8 +8,13 @@ import {
   productsForUser,
   editproduct,
   getproducts,
+  getProductsPaginated,
+  getTotalProducts,
 } from "../models/products.js";
-import { getReviewsForProduct } from "../models/Reviews.js";
+import {
+  getReviewsForProduct,
+  averageRatingForProduct,
+} from "../models/Reviews.js";
 
 import { getUser } from "../models/user.js";
 
@@ -172,7 +177,7 @@ export const getProductsForAdmin = async (req, res) => {
 export const getAllProducts = async (req, res) => {
   try {
     const products = await getproducts();
-    const productsWimages = await Promise.all(
+    const finalProducts = await Promise.all(
       products.map(async (e) => {
         const Images = await getImages(e.ProductId);
         return { ...e, Images };
@@ -180,7 +185,7 @@ export const getAllProducts = async (req, res) => {
     );
     return res.status(201).json({
       success: true,
-      productsWimages,
+      finalProducts,
     });
   } catch (error) {
     console.log(error.message);
@@ -208,6 +213,35 @@ export const getProduct = async (req, res) => {
     return res.status(200).json({
       success: true,
       product: { ...product, images, reviews },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: error.message,
+    });
+  }
+};
+
+export const PaginatedListProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  try {
+    const allProductsPaginated = await getProductsPaginated(limit, offset);
+    const productsWimages = await Promise.all(
+      allProductsPaginated.map(async (e) => {
+        const avgReview = await averageRatingForProduct(e.ProductId);
+        const Images = await getImages(e.ProductId);
+        return { ...e, avgReview, Images };
+      })
+    );
+    const totalProducts = await getTotalProducts();
+    const totalPages = Math.ceil(totalProducts / limit);
+    res.json({
+      currentPage: page,
+      totalPages,
+      data: productsWimages,
     });
   } catch (error) {
     console.error(error);

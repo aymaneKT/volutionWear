@@ -9,14 +9,18 @@ export default function Header() {
   const [isOpenCartMenu, setIsOpenCartMenu] = useState<boolean>(false);
   const location = useLocation();
   const isBlackTextHeader =
-    location.pathname.toLocaleLowerCase().includes("shop") || isOpen || location.pathname.toLocaleLowerCase().includes("product")
+    location.pathname.toLocaleLowerCase().includes("shop") ||
+    isOpen ||
+    location.pathname.toLocaleLowerCase().includes("product");
   const navLinks = [
     { label: "Shop", href: "/shop" },
     { label: "Categories", href: "/categories" },
     { label: "About", href: "/about" },
   ];
   const img = isBlackTextHeader ? logo2 : logo;
-  const isRelative = location.pathname.toLocaleLowerCase().includes("shop") || location.pathname.toLocaleLowerCase().includes("product") ;
+  const isRelative =
+    location.pathname.toLocaleLowerCase().includes("shop") ||
+    location.pathname.toLocaleLowerCase().includes("product");
 
   return (
     <>
@@ -44,7 +48,7 @@ export default function Header() {
         </Link>
         <div
           className={`flex duration-500  items-center ${
-            isOpen ? "max-[992px]:right-0" : "max-[992px]:right-[100%]"
+            isOpen ? "max-[992px]:right-0" : "max-[992px]:right-[110%]"
           } text-white max-[992px]:text-black grow-1 max-[992px]:items-center max-[992px]:justify-normal i  justify-between max-[992px]:absolute max-[992px]:w-[100%] max-[992px]:right-0  max-[992px]:flex-col max-[992px]:top-0 max-[992px]:h-[100vh]  max-[992px]:bg-amber-50`}
         >
           <ul className=" flex  gap-5 relative left-1/2 max-[992px]:top-1/10 items-center -translate-x-[80%] max-[992px]:translate-x-0 max-[992px]:left-0 max-[992px]:flex-col">

@@ -37,11 +37,27 @@ export const deleteReview = async (userId, reviewId) => {
 };
 export const updateReview = async (userId, reviewId, rating, comment) => {
   try {
-    const query = "UPDATE reviews SET rating = ?, comment = ? WHERE user_id = ? AND id = ?";
-    const [result] = await connection.query(query, [rating, comment, userId, reviewId]);
+    const query =
+      "UPDATE reviews SET rating = ?, comment = ? WHERE user_id = ? AND id = ?";
+    const [result] = await connection.query(query, [
+      rating,
+      comment,
+      userId,
+      reviewId,
+    ]);
     return result.affectedRows > 0;
   } catch (error) {
     console.error("Error updating review:", error);
+    throw error;
+  }
+};
+
+export const averageRatingForProduct = async (product_id) => {
+  try {
+    const query = "SELECT AVG(rating) FROM reviews WHERE product_id = ?";
+    const [rows] = await connection.query(query, [product_id]);
+    return rows[0]["AVG(rating)"];
+  } catch (error) {
     throw error;
   }
 };

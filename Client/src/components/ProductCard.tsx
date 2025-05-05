@@ -3,6 +3,8 @@ import { useKeenSlider } from "keen-slider/react";
 import pr from "../VID-IMG/No_picture_available.png";
 import { HiArrowSmallRight, HiArrowSmallLeft } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import { Rating } from "@mui/material";
+
 type ImageType = {
   image_id: number;
   image_url: string;
@@ -12,7 +14,8 @@ type ImageType = {
 
 type ProductCardProps = {
   product: {
-    Seller: string;
+    username: string;
+    avgReview: number;
     ProductId: number;
     name: string;
     description: string;
@@ -35,14 +38,14 @@ export default function ProductCard({ product }: ProductCardProps) {
   const navigate = useNavigate();
   return (
     <div
-      className=" h-auto cursor-pointer   mb-2 relative"
+      className="h-auto cursor-pointer mb-2 relative"
       onClick={() => {
         navigate(`/shop/product/${product.ProductId}`);
       }}
     >
       <div ref={sliderRef} className="keen-slider">
-        {product.Images?.length ? (
-          product.Images?.map((image, i) => (
+        {product.Images.length ? (
+          product.Images.map((image, i) => (
             <img
               key={i}
               className="keen-slider__slide aspect-[3/4]"
@@ -54,9 +57,34 @@ export default function ProductCard({ product }: ProductCardProps) {
           <img
             src={pr}
             alt="Fallback image"
-            className="border-1  aspect-[3/4]"
+            className="border-1 aspect-[3/4]"
           />
         )}
+      </div>
+
+      {/* Username */}
+      <div className="flex items-center justify-between mt-1">
+        <span
+          style={{
+            fontSize: "clamp(0.8rem, 0.8vw, 1.7rem)",
+          }}
+          className="text-gray-600"
+        >
+          {product.username}
+        </span>
+
+        {/* Rating stars */}
+        <div className="flex items-center">
+          <Rating
+            name="read-only"
+            value={product.avgReview}
+            readOnly
+            size="small"
+          />
+          <span className="ml-1 text-sm text-gray-600">
+            {product.avgReview ? Number(product.avgReview).toFixed(2) : "N/A"}
+          </span>
+        </div>
       </div>
 
       <span
@@ -71,13 +99,15 @@ export default function ProductCard({ product }: ProductCardProps) {
       <span>{product.price} EUR</span>
       <HiArrowSmallRight
         className="absolute text-black text-[30px] font-semibold right-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           instanceRef.current?.next();
         }}
       />
       <HiArrowSmallLeft
         className="absolute text-black text-[30px] font-semibold left-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           instanceRef.current?.prev();
         }}
       />

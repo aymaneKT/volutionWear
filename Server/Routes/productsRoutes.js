@@ -7,7 +7,8 @@ import {
   editProduct,
   getProductsForAdmin,
   getAllProducts,
-  getProduct
+  getProduct,
+  PaginatedListProducts,
 } from "../Controllers/productController.js";
 export const router = express.Router();
 
@@ -15,5 +16,5 @@ router.post("/product", [auth], addProduct);
 router.delete("/product/:id", [auth], deleteProduct);
 router.put("/product", [auth], editProduct);
 router.get("/products/:userId", getProductsForAdmin);
-router.get("/products", getAllProducts);
+router.get("/products", PaginatedListProducts);
 router.get("/product/:id", getProduct);

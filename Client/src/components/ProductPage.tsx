@@ -100,7 +100,7 @@ export default function ProductPage() {
 
   const getUserLocalStorage = () => {
     const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : null;
+    return user ? JSON.parse(user) : [];
   };
 
   return (
