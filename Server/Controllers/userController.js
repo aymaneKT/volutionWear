@@ -5,6 +5,7 @@ import {
   register,
   getUsernameCredential,
   getUserEmailCredential,
+  updateProfile,
 } from "../models/user.js";
 import bcrypt from "bcrypt";
 const saltRounds = 10;
@@ -29,7 +30,7 @@ export const GetUser = async (req, res) => {
 
 export const Register = async (req, res) => {
   try {
-    const { nome, cognome, username, email, password, is_seller  } = req.body;
+    const { nome, cognome, username, email, password, is_seller } = req.body;
     if (
       !nome ||
       !cognome ||
@@ -132,5 +133,78 @@ export const Login = async (req, res) => {
     });
   } catch (error) {
     throw error;
+  }
+};
+
+export const UpdateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const {
+      username,
+      Email,
+      phone,
+      surname,
+      name,
+      address,
+      city,
+      cap,
+      country,
+    } = req.body;
+
+    if (
+      !username ||
+      !Email ||
+      !phone ||
+      !surname ||
+      !name ||
+      !address ||
+      !city ||
+      !cap ||
+      !country
+    ) {
+      return res.status(400).json({
+        error: "Not all required fields are filled in",
+      });
+    }
+
+    if (req.file) {
+      const invalidFile = !req.file.mimetype.startsWith("image/");
+      if (invalidFile) {
+        return res.status(403).json({
+          success: false,
+          message: "file is not a valid image",
+        });
+      }
+    }
+    const image = req.file ? req.file.filename : null;
+    const areChanged = await updateProfile(
+      userId,
+      username,
+      name,
+      surname,
+      Email,
+      image,
+      phone,
+      city,
+      cap,
+      country
+    );
+
+    if (!areChanged) {
+      return res.status(400).json({
+        error: "Profile update failed",
+      });
+    }
+
+    const updatedUser = await getUser(userId);
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: error.message,
+    });
   }
 };

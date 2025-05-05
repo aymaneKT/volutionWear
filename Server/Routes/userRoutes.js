@@ -1,5 +1,11 @@
 import express from "express";
 import multer from "multer";
+import { auth } from "../middleware/auth.js";
+import {
+  Register,
+  Login,
+  UpdateProfile,
+} from "../Controllers/userController.js";
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -20,6 +26,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 export const router = express.Router();
-import { Register, Login } from "../Controllers/userController.js";
-router.post("/register",upload.single("avatar"), Register);
+
+router.post("/register", upload.single("avatar"), Register);
 router.post("/login", Login);
+router.put("/user", [auth], upload.single("avatar"), UpdateProfile);

@@ -5,7 +5,7 @@ const key = process.env.KEY;
 
 const option = {
   algorithm: "HS256",
-  expiresIn: "1h",
+  expiresIn: "3h",
 };
 
 export const getPayload = (token) => {
