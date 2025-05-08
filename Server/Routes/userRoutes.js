@@ -5,6 +5,7 @@ import {
   Register,
   Login,
   UpdateProfile,
+  GetUser,
 } from "../Controllers/userController.js";
 const storage = multer.diskStorage({
   destination: "uploads/",
@@ -30,3 +31,4 @@ export const router = express.Router();
 router.post("/register", upload.single("avatar"), Register);
 router.post("/login", Login);
 router.put("/user", [auth], upload.single("avatar"), UpdateProfile);
+router.get("/user/:userId", GetUser);

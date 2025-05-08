@@ -3,7 +3,7 @@ import { connection } from "../config/DataBase.js";
 export const getUser = async (id) => {
   try {
     const [user] = await connection.query(
-      `SELECT id, email , username , nome , cognome , is_seller FROM users WHERE id = ?`,
+      `SELECT id, email , username , nome , cognome , is_seller , phone_number , address , city , cap , country ,image FROM users WHERE id = ?`,
       [id]
     );
     return user[0];
@@ -17,7 +17,12 @@ export const getUsernameCredential = async (username) => {
       `SELECT id FROM users WHERE username = ?`,
       [username]
     );
-    return user.length > 0;
+    if (user.length > 0)
+      return {
+        isUsedUsername: true,
+        id: user[0].id,
+      };
+    return false;
   } catch (error) {
     throw error;
   }
@@ -25,10 +30,15 @@ export const getUsernameCredential = async (username) => {
 export const getUserEmailCredential = async (email) => {
   try {
     const [user] = await connection.query(
-      `SELECT id FROM users WHERE email = ?`,
+      `SELECT id FROM users WHERE email = ? `,
       [email]
     );
-    return user.length > 0;
+    if (user.length > 0)
+      return {
+        isUsedEmail: true,
+        id: user[0].id,
+      };
+    return false;
   } catch (error) {
     throw error;
   }
@@ -68,47 +78,28 @@ export const register = async (
   }
 };
 
-export const updateProfile = async (
-  id,
-  username,
-  nome,
-  cognome,
-  email,
-  image,
-  phone_number,
-  city,
-  cap,
-  country
-) => {
+export const updateProfile = async (id, data) => {
   try {
-    console.log({
-      id,
-      nome,
-      cognome,
-      email,
-      phone_number,
-      city,
-      cap,
-      country,
-    });
+    const fields = [];
+    const values = [];
 
+    for (const [key, value] of Object.entries(data)) {
+      if (value !== null && value !== undefined) {
+        fields.push(`${key} = ?`);
+        values.push(value);
+      }
+    }
+    if (fields.length === 0) {
+      return false;
+    }
+
+    values.push(id);
     const query = `
     UPDATE users
-    SET username = ?, nome = ?, cognome = ?, email = ?, image = ? , phone_number = ?, city = ?, cap = ?, country = ?
+    SET ${fields.join(", ")}
     WHERE id = ?
   `;
-    const result = await connection.query(query, [
-      username,
-      nome,
-      cognome,
-      email,
-      image,
-      phone_number,
-      city,
-      cap,
-      country,
-      id,
-    ]);
+    const result = await connection.query(query, values);
 
     return result[0].affectedRows > 0;
   } catch (error) {

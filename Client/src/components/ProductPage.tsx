@@ -14,6 +14,10 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Loader from "./Loader";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
+interface JwtPayload extends BaseJwtPayload {
+  id?: number;
+}
 type ImageType = {
   image_id: number;
   image_url: string;
@@ -98,9 +102,13 @@ export default function ProductPage() {
       productDetails.reviews.length
     : 0;
 
-  const getUserLocalStorage = () => {
-    const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : [];
+  const getUserId = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const { id } = jwtDecode<JwtPayload>(token);
+      return id;
+    }
+    return null;
   };
 
   return (
@@ -331,19 +339,16 @@ export default function ProductPage() {
                     <div key={index} className="py-4">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center">
-                          {review.image === null ? (
-                            <img
-                              src={pp}
-                              className="h-[70px] w-[50px] object-center"
-                              alt={`${review.username} picture`}
-                            />
-                          ) : (
-                            <img
-                              src={`http://localhost:3000/uploads/${review.image}`}
-                              className="h-[50px] w-[50px] rounded-full"
-                              alt={`${review.username} picture`}
-                            />
-                          )}
+                          <img
+                            src={
+                              !review.image
+                                ? "http://localhost:3000/uploads/${review.image}"
+                                : pp
+                            }
+                            className="h-[70px] w-[50px] object-center"
+                            alt={`${review.username} picture`}
+                          />
+
                           <div>
                             <p className="font-medium">{review.username}</p>
                             <div className="flex mt-1">
@@ -356,7 +361,7 @@ export default function ProductPage() {
                           </div>
                         </div>
                         <div className="flex items-center mr-4   flex-wrap-reverse justify-end">
-                          {getUserLocalStorage().id == review.UserId ? (
+                          {getUserId() == review.UserId ? (
                             <div className="flex gap-2">
                               <button
                                 onClick={() => {

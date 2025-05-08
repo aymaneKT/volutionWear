@@ -35,6 +35,11 @@ type userType = {
   country: string;
   image: string | File;
 };
+type passwordType = {
+  currentPassword: string;
+  newPassword: string;
+  newPassword2: string;
+};
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState<string>("profile");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -55,7 +60,62 @@ export default function UserProfile() {
     country: "",
     image: "",
   });
+  const [password , setPassword]  = useState<passwordType>({
+    currentPassword:"",
+    newPassword:"",
+    newPassword2 :""
+  })
   const token = localStorage.getItem("token");
+
+  const updateProfile = () => {
+    const header = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    const formData = new FormData();
+    formData.append("username", user.username);
+    formData.append("email", user.email);
+    formData.append("phone", user.phone);
+    formData.append("surname", user.surname);
+    formData.append("name", user.name);
+    formData.append("address", user.address);
+    formData.append("city", user.city);
+    formData.append("cap", user.cap);
+    formData.append("country", user.country);
+    if (user.image) formData.append("avatar", user.image);
+    axios
+      .put("http://localhost:3000/api/user", formData, header)
+      .then((res) => {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        toast.success(res.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.error, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      })
+      .finally(() => {
+        setIsEditing(false);
+      });
+  };
   useEffect(() => {
     const getUser = (userId: number) => {
       setIsLoading(true);
@@ -271,7 +331,9 @@ export default function UserProfile() {
                     </button>
                   ) : (
                     <button
-                      onClick={() => setIsEditing(false)}
+                      onClick={() => {
+                        updateProfile();
+                      }}
                       className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
                     >
                       <Save size={16} />

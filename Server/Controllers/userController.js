@@ -12,7 +12,7 @@ const saltRounds = 10;
 
 export const GetUser = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.userId;
     const user = await getUser(id);
 
     if (!user) {
@@ -45,12 +45,13 @@ export const Register = async (req, res) => {
     }
 
     const isUserDuplicated = await getUsernameCredential(username);
-    if (isUserDuplicated) {
+    if (isUserDuplicated.isUsedUsername) {
       return res.status(400).json({
         error: "Username is already taken",
       });
     }
-    if (await getUserEmailCredential(email)) {
+    const isEmeilDuplicated = await getUserEmailCredential(email);
+    if (isEmeilDuplicated.isUsedEmail) {
       return res.status(400).json({
         error: "Email is already taken",
       });
@@ -141,7 +142,7 @@ export const UpdateProfile = async (req, res) => {
     const userId = req.user.id;
     const {
       username,
-      Email,
+      email,
       phone,
       surname,
       name,
@@ -150,22 +151,6 @@ export const UpdateProfile = async (req, res) => {
       cap,
       country,
     } = req.body;
-
-    if (
-      !username ||
-      !Email ||
-      !phone ||
-      !surname ||
-      !name ||
-      !address ||
-      !city ||
-      !cap ||
-      !country
-    ) {
-      return res.status(400).json({
-        error: "Not all required fields are filled in",
-      });
-    }
 
     if (req.file) {
       const invalidFile = !req.file.mimetype.startsWith("image/");
@@ -177,18 +162,51 @@ export const UpdateProfile = async (req, res) => {
       }
     }
     const image = req.file ? req.file.filename : null;
-    const areChanged = await updateProfile(
-      userId,
-      username,
-      name,
-      surname,
-      Email,
-      image,
-      phone,
-      city,
-      cap,
-      country
-    );
+
+    const dataToUpdate = {
+      username: username,
+      country: country,
+      image: image,
+      address: address,
+      city: city,
+      email: email,
+      phone_number: phone,
+      nome: name,
+      cognome: surname,
+      cap: cap,
+    };
+
+    if (
+      Object.keys(dataToUpdate).every((key) => dataToUpdate[key] === undefined)
+    ) {
+      return res.status(400).json({
+        error: "No valid fields provided for update",
+      });
+    }
+
+  
+    if (dataToUpdate.username) {
+      const isUsernameTaken = await getUsernameCredential(
+        dataToUpdate.username
+      );
+
+
+      if (isUsernameTaken.isUsedUsername && isUsernameTaken.id !== userId) {
+        return res.status(400).json({
+          error: "Username is already taken",
+        });
+      }
+    }
+
+    const isEmailTaken = await getUserEmailCredential(dataToUpdate.email);
+    console.log(isEmailTaken);
+    if (isEmailTaken.isUsedEmail && isEmailTaken.id !== userId) {
+      return res.status(400).json({
+        error: "Email is already taken",
+      });
+    }
+
+    const areChanged = await updateProfile(userId, dataToUpdate);
 
     if (!areChanged) {
       return res.status(400).json({
