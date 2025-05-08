@@ -34,6 +34,7 @@ type userType = {
   cap: string;
   country: string;
   image: string | File;
+  password: string;
 };
 type passwordType = {
   currentPassword: string;
@@ -47,6 +48,11 @@ export default function UserProfile() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [activeOrderDetails, setActiveOrderDetails] = useState(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [password, setPassword] = useState<passwordType>({
+    currentPassword: "",
+    newPassword: "",
+    newPassword2: "",
+  });
   const [user, setUser] = useState<userType>({
     id: 0,
     username: "",
@@ -59,12 +65,9 @@ export default function UserProfile() {
     cap: "",
     country: "",
     image: "",
+    password: password.newPassword,
   });
-  const [password , setPassword]  = useState<passwordType>({
-    currentPassword:"",
-    newPassword:"",
-    newPassword2 :""
-  })
+
   const token = localStorage.getItem("token");
 
   const updateProfile = () => {
@@ -73,6 +76,7 @@ export default function UserProfile() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     };
+
     const formData = new FormData();
     formData.append("username", user.username);
     formData.append("email", user.email);
@@ -80,10 +84,12 @@ export default function UserProfile() {
     formData.append("surname", user.surname);
     formData.append("name", user.name);
     formData.append("address", user.address);
+
     formData.append("city", user.city);
     formData.append("cap", user.cap);
     formData.append("country", user.country);
     if (user.image) formData.append("avatar", user.image);
+
     axios
       .put("http://localhost:3000/api/user", formData, header)
       .then((res) => {
@@ -97,6 +103,11 @@ export default function UserProfile() {
           draggable: true,
           progress: undefined,
           theme: "light",
+        });
+        setPassword({
+          currentPassword: "",
+          newPassword: "",
+          newPassword2: "",
         });
       })
       .catch((err) => {
@@ -116,6 +127,67 @@ export default function UserProfile() {
         setIsEditing(false);
       });
   };
+  const updatePassword = () => {
+    const header = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+
+    if (password.newPassword !== password.newPassword2) {
+      toast.error("Passwords do not match!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
+    axios
+      .patch(
+        "http://localhost:3000/api/user/password",
+        {
+          newPassword: password.newPassword,
+          oldPassword: password.currentPassword,
+        },
+        header
+      )
+      .then((res) => {
+        toast.success(res.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setPassword({
+          currentPassword: "",
+          newPassword: "",
+          newPassword2: "",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.error, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      });
+  };
   useEffect(() => {
     const getUser = (userId: number) => {
       setIsLoading(true);
@@ -124,6 +196,7 @@ export default function UserProfile() {
         .then((res) => {
           const user = res.data.data;
           setUser({
+            ...user,
             id: user.id,
             username: user.username,
             email: user.email,
@@ -551,12 +624,19 @@ export default function UserProfile() {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Password Attuale
+                      Current Password
                     </label>
                     <div className="relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         name="currentPassword"
+                        value={password.currentPassword}
+                        onChange={(e) => {
+                          setPassword({
+                            ...password,
+                            currentPassword: e.target.value,
+                          });
+                        }}
                         className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent"
                       />
                       <button
@@ -577,9 +657,16 @@ export default function UserProfile() {
                       New Password
                     </label>
                     <input
+                      value={password.newPassword}
                       type="password"
                       name="newPassword"
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent"
+                      onChange={(e) => {
+                        setPassword({
+                          ...password,
+                          newPassword: e.target.value,
+                        });
+                      }}
                     />
                   </div>
                   <div>
@@ -589,12 +676,20 @@ export default function UserProfile() {
                     <input
                       type="password"
                       name="confirmPassword"
+                      value={password.newPassword2}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent"
+                      onChange={(e) => {
+                        setPassword({
+                          ...password,
+                          newPassword2: e.target.value,
+                        });
+                      }}
                     />
                   </div>
                   <button
+                    onClick={updatePassword}
                     type="button"
-                    className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
+                    className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 cursor-pointer"
                   >
                     Save
                   </button>

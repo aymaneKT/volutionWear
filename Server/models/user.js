@@ -2,10 +2,9 @@ import { connection } from "../config/DataBase.js";
 
 export const getUser = async (id) => {
   try {
-    const [user] = await connection.query(
-      `SELECT id, email , username , nome , cognome , is_seller , phone_number , address , city , cap , country ,image FROM users WHERE id = ?`,
-      [id]
-    );
+    const [user] = await connection.query(`SELECT * FROM users WHERE id = ?`, [
+      id,
+    ]);
     return user[0];
   } catch (error) {
     throw error;
@@ -83,6 +82,7 @@ export const updateProfile = async (id, data) => {
     const fields = [];
     const values = [];
 
+    
     for (const [key, value] of Object.entries(data)) {
       if (value !== null && value !== undefined) {
         fields.push(`${key} = ?`);

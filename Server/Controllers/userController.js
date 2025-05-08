@@ -151,7 +151,6 @@ export const UpdateProfile = async (req, res) => {
       cap,
       country,
     } = req.body;
-
     if (req.file) {
       const invalidFile = !req.file.mimetype.startsWith("image/");
       if (invalidFile) {
@@ -184,12 +183,10 @@ export const UpdateProfile = async (req, res) => {
       });
     }
 
-  
     if (dataToUpdate.username) {
       const isUsernameTaken = await getUsernameCredential(
         dataToUpdate.username
       );
-
 
       if (isUsernameTaken.isUsedUsername && isUsernameTaken.id !== userId) {
         return res.status(400).json({
@@ -199,7 +196,6 @@ export const UpdateProfile = async (req, res) => {
     }
 
     const isEmailTaken = await getUserEmailCredential(dataToUpdate.email);
-    console.log(isEmailTaken);
     if (isEmailTaken.isUsedEmail && isEmailTaken.id !== userId) {
       return res.status(400).json({
         error: "Email is already taken",
@@ -219,6 +215,60 @@ export const UpdateProfile = async (req, res) => {
       message: "Profile updated successfully",
       user: updatedUser,
     });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: error.message,
+    });
+  }
+};
+
+export const updatePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { newPassword, oldPassword } = req.body;
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        error: "Both old and new passwords are required",
+      });
+    }
+
+    if (oldPassword && newPassword) {
+      const user = await getUser(userId);
+      const oldPass = user.password;
+
+      const isMatch = await bcrypt.compare(oldPassword, oldPass);
+
+
+      if (!isMatch)
+        return res.status(400).json({
+          error: "Old password does not match",
+        });
+      if (newPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ error: "New password must be at least 8 characters long" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      const dataToUpdate = {
+        password: hashedPassword,
+      };
+     
+
+      const isUpdated = await updateProfile(userId, dataToUpdate);
+
+      if (!isUpdated) {
+        return res.status(400).json({
+          error: "Password update failed",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Password updated successfully",
+      });
+    }
   } catch (error) {
     return res.status(500).json({
       error: "Internal Server Error",

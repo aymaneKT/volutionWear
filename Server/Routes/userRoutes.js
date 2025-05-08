@@ -6,6 +6,7 @@ import {
   Login,
   UpdateProfile,
   GetUser,
+  updatePassword,
 } from "../Controllers/userController.js";
 const storage = multer.diskStorage({
   destination: "uploads/",
@@ -32,3 +33,4 @@ router.post("/register", upload.single("avatar"), Register);
 router.post("/login", Login);
 router.put("/user", [auth], upload.single("avatar"), UpdateProfile);
 router.get("/user/:userId", GetUser);
+router.patch("/user/password", [auth], updatePassword);
