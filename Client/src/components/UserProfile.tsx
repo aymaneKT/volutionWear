@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   User,
   Package,
@@ -12,33 +12,95 @@ import {
   Save,
 } from "lucide-react";
 import Header from "./Header";
+import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
+import dfImage from "../VID-IMG/No_picture_available.png";
 
+interface JwtPayload extends BaseJwtPayload {
+  id?: number;
+}
+import axios from "axios";
+import Loader from "./Loader";
+import { toast, ToastContainer } from "react-toastify";
+import NotFoundPage from "./NotFoundPage";
+type userType = {
+  id: number;
+  username: string;
+  email: string;
+  phone: string;
+  surname: string;
+  name: string;
+  address: string;
+  city: string;
+  cap: string;
+  country: string;
+  image: string | File;
+};
 export default function UserProfile() {
-  const [activeTab, setActiveTab] = useState("profile");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [activeTab, setActiveTab] = useState<string>("profile");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [activeOrderDetails, setActiveOrderDetails] = useState(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [user, setUser] = useState<userType>({
+    id: 0,
+    username: "",
+    email: "",
+    phone: "",
+    surname: "",
+    name: "",
+    address: "",
+    city: "",
+    cap: "",
+    country: "",
+    image: "",
+  });
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const getUser = (userId: number) => {
+      setIsLoading(true);
+      axios
+        .get(`http://localhost:3000/api/user/${userId}`)
+        .then((res) => {
+          const user = res.data.data;
+          setUser({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            phone: user.phone_number,
+            surname: user.surname,
+            name: user.name,
+            image: user.image,
+            address: user.address,
+            city: user.city,
+            cap: user.cap,
+            country: user.country,
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+          toast.error("Error !!", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    };
 
-  // Default user data
-  const userData = {
-    id: 1,
-    username: "MarcoRossi",
-    email: "marco.rossi@example.com",
-    phone: "+39 123 456 7890",
-    address: "Via Roma 123",
-    city: "Milano",
-    zipCode: "20100",
-    country: "Italia",
-    image: null,
-  };
-
-  // Default password fields
-  const passwordData = {
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  };
+    if (token) {
+      const decoded = jwtDecode<JwtPayload>(token);
+      const { id } = decoded;
+      if (id) getUser(id);
+    }
+  }, []);
 
   // Default orders
   const orders = [
@@ -81,8 +143,6 @@ export default function UserProfile() {
     },
   ];
 
-  const [activeOrderDetails, setActiveOrderDetails] = useState(null);
-
   const toggleOrderDetails = (orderId: any) => {
     if (activeOrderDetails === orderId) {
       setActiveOrderDetails(null);
@@ -91,19 +151,17 @@ export default function UserProfile() {
     }
   };
 
-  // Placeholder image
-  const pp = "/api/placeholder/200/200";
+  const HundleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+    console.log(e.target.name);
+  };
 
-  return (
+  return !token ? (
+    <NotFoundPage />
+  ) : (
     <>
-      {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black mx-auto"></div>
-            <p className="text-center mt-2">Caricamento...</p>
-          </div>
-        </div>
-      )}
+      <ToastContainer />
+      <Loader isLoading={isLoading} />
       <Header />
       <div className="px-4 md:px-8 lg:px-11 pb-16 bg-gray-50 min-h-screen">
         {/* Header placeholder */}
@@ -124,7 +182,13 @@ export default function UserProfile() {
             <div className="flex flex-col items-center mb-6">
               <div className="relative">
                 <img
-                  src={imagePreview || pp}
+                  src={
+                    imagePreview
+                      ? imagePreview
+                      : !(user.image == null || user.image == "")
+                      ? `http://localhost:3000/uploads/${user.image}`
+                      : dfImage
+                  }
                   alt="Profile"
                   className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
                 />
@@ -139,47 +203,54 @@ export default function UserProfile() {
                       id="profile-image"
                       className="hidden"
                       accept="image/*"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const file = e.target.files[0];
+                          setUser({ ...user, image: file });
+                          setImagePreview(URL.createObjectURL(file));
+                        }
+                      }}
                     />
                   </label>
                 )}
               </div>
-              <h2 className="font-bold text-xl mt-3">{userData.username}</h2>
-              <p className="text-gray-600 text-sm">{userData.email}</p>
+              <h2 className="font-bold text-xl mt-3">{user.username}</h2>
+              <p className="text-gray-600 text-sm">{user.email}</p>
             </div>
 
             <div className="border-t border-gray-200 pt-4">
               <button
                 onClick={() => setActiveTab("profile")}
-                className={`flex items-center gap-3 w-full py-3 px-2 rounded-md transition-colors ${
+                className={`cursor-pointer flex items-center gap-3 w-full py-3 px-2 rounded-md transition-colors ${
                   activeTab === "profile"
                     ? "bg-gray-100 font-medium"
                     : "hover:bg-gray-50"
                 }`}
               >
                 <User size={18} />
-                <span>Dati Personali</span>
+                <span>Personal Data</span>
               </button>
               <button
                 onClick={() => setActiveTab("orders")}
-                className={`flex items-center gap-3 w-full py-3 px-2 rounded-md transition-colors ${
+                className={`cursor-pointer flex items-center gap-3 w-full py-3 px-2 rounded-md transition-colors ${
                   activeTab === "orders"
                     ? "bg-gray-100 font-medium"
                     : "hover:bg-gray-50"
                 }`}
               >
                 <Package size={18} />
-                <span>I Miei Ordini</span>
+                <span>My Orders</span>
               </button>
               <button
                 onClick={() => setActiveTab("password")}
-                className={`flex items-center gap-3 w-full py-3 px-2 rounded-md transition-colors ${
+                className={`cursor-pointer flex items-center gap-3 w-full py-3 px-2 rounded-md transition-colors ${
                   activeTab === "password"
                     ? "bg-gray-100 font-medium"
                     : "hover:bg-gray-50"
                 }`}
               >
                 <CreditCard size={18} />
-                <span>Cambia Password</span>
+                <span>Change Password</span>
               </button>
             </div>
           </div>
@@ -189,22 +260,22 @@ export default function UserProfile() {
             {activeTab === "profile" && (
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h1 className="text-2xl font-bold">Dati Personali</h1>
+                  <h1 className="text-2xl font-bold">Personal Information</h1>
                   {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-2 bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-50"
+                      className="flex cursor-pointer items-center gap-2 bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-50"
                     >
                       <Edit size={16} />
-                      <span>Modifica</span>
+                      <span>Edit</span>
                     </button>
                   ) : (
                     <button
                       onClick={() => setIsEditing(false)}
-                      className="flex items-center gap-2 bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
+                      className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
                     >
                       <Save size={16} />
-                      <span>Salva</span>
+                      <span>Save</span>
                     </button>
                   )}
                 </div>
@@ -212,13 +283,14 @@ export default function UserProfile() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nome Utente
+                      Username
                     </label>
                     <input
                       type="text"
                       name="username"
-                      defaultValue={userData.username}
+                      defaultValue={user.username}
                       disabled={!isEditing}
+                      onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
                     />
                   </div>
@@ -229,44 +301,77 @@ export default function UserProfile() {
                     <input
                       type="email"
                       name="email"
-                      defaultValue={userData.email}
+                      defaultValue={user.email}
                       disabled={!isEditing}
+                      onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Telefono
+                      Phone Number
                     </label>
                     <input
-                      type="tel"
                       name="phone"
-                      defaultValue={userData.phone}
+                      type="tel"
+                      pattern="^[0-9]{6,16}$"
+                      maxLength={16}
+                      minLength={6}
+                      disabled={!isEditing}
+                      required
+                      onChange={HundleInput}
+                      className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Surname
+                    </label>
+                    <input
+                      type="text"
+                      name="surname"
+                      defaultValue={user.surname}
+                      onChange={HundleInput}
                       disabled={!isEditing}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Indirizzo
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      defaultValue={user.name}
+                      disabled={!isEditing}
+                      onChange={HundleInput}
+                      className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Address
                     </label>
                     <input
                       type="text"
                       name="address"
-                      defaultValue={userData.address}
+                      defaultValue={user.address}
                       disabled={!isEditing}
+                      onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Città
+                      City
                     </label>
                     <input
                       type="text"
                       name="city"
-                      defaultValue={userData.city}
+                      defaultValue={user.city}
                       disabled={!isEditing}
+                      onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
                     />
                   </div>
@@ -275,22 +380,25 @@ export default function UserProfile() {
                       CAP
                     </label>
                     <input
-                      type="text"
-                      name="zipCode"
-                      defaultValue={userData.zipCode}
+                      type="number"
+                      name="cap"
+                      maxLength={6}
+                      defaultValue={user.cap}
                       disabled={!isEditing}
+                      onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Paese
+                      Country
                     </label>
                     <input
                       type="text"
                       name="country"
-                      defaultValue={userData.country}
+                      defaultValue={user.country}
                       disabled={!isEditing}
+                      onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
                     />
                   </div>
@@ -300,7 +408,7 @@ export default function UserProfile() {
 
             {activeTab === "orders" && (
               <div>
-                <h1 className="text-2xl font-bold mb-6">I Miei Ordini</h1>
+                <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
                 <div className="space-y-4">
                   {orders.map((order) => (
@@ -342,7 +450,7 @@ export default function UserProfile() {
                       {activeOrderDetails === order.id && (
                         <div className="border-t border-gray-200 p-4">
                           <h3 className="font-medium mb-3">
-                            Prodotti nell'ordine
+                            Products in the order
                           </h3>
                           <div className="space-y-3">
                             {order.products.map((product) => (
@@ -351,9 +459,9 @@ export default function UserProfile() {
                                 className="flex items-center gap-4"
                               >
                                 <img
-                                  src={pp}
+                                  src={dfImage}
                                   alt={product.name}
-                                  className="w-16 h-16 object-cover rounded border border-gray-200"
+                                  className="w-16 h-16 object-center object-cover rounded border border-gray-200"
                                 />
                                 <div className="flex-1">
                                   <p className="font-medium">{product.name}</p>
@@ -377,7 +485,7 @@ export default function UserProfile() {
 
             {activeTab === "password" && (
               <div>
-                <h1 className="text-2xl font-bold mb-6">Cambia Password</h1>
+                <h1 className="text-2xl font-bold mb-6">Change Password</h1>
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -404,7 +512,7 @@ export default function UserProfile() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nuova Password
+                      New Password
                     </label>
                     <input
                       type="password"
@@ -426,7 +534,7 @@ export default function UserProfile() {
                     type="button"
                     className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
                   >
-                    Salva Password
+                    Save
                   </button>
                 </div>
               </div>

@@ -65,26 +65,48 @@ export default function Header() {
               </li>
             ))}
           </ul>
-          <div className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
-            <Link to="/Register">
+          {!localStorage.getItem("token") ? (
+            <div className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
+              <Link to="/Register">
+                <button
+                  className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
+                    isBlackTextHeader ? "text-black" : "text-white"
+                  }`}
+                >
+                  Register
+                </button>
+              </Link>
+              <Link to="/login">
+                <button
+                  className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
+                    isBlackTextHeader ? "text-black" : "text-white"
+                  }`}
+                >
+                  Login
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
+              <Link to="/profile">
+                <button
+                  className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
+                    isBlackTextHeader ? "text-black" : "text-white"
+                  } ${location.pathname.toLocaleLowerCase().includes("profile") ? "hidden" : "block"}`}
+                >
+                  Profile
+                </button>
+              </Link>
+
               <button
                 className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
                   isBlackTextHeader ? "text-black" : "text-white"
                 }`}
               >
-                Register
+                Logout
               </button>
-            </Link>
-            <Link to="/login">
-              <button
-                className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
-                  isBlackTextHeader ? "text-black" : "text-white"
-                }`}
-              >
-                Login
-              </button>
-            </Link>
-          </div>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4 ml-2">
           <div
