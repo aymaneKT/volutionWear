@@ -1,15 +1,79 @@
-import BasicMenu from "./Dashboard/BasicMenu";
 import HeadDashbord from "./Dashboard/HeadDashbord";
-import { FaPlus } from "react-icons/fa";
-import img from "../VID-IMG/VolutionWear.png";
-import { useState } from "react";
-import ProductItem from "./ProductItem";
 
+import { FaPlus } from "react-icons/fa";
+import img from "../VID-IMG/No_picture_available.png";
+import { useEffect, useState } from "react";
+import ProductItem from "./ProductItem";
+import axios from "axios";
+import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
+import Loader from "./Loader";
+interface JwtPayload extends BaseJwtPayload {
+  id?: number;
+  is_seller?: boolean | string;
+}
+type ProductItemType = {
+  productId: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  createdAt: string;
+  stock: number;
+  imgs: imageType[];
+};
+type imageType = {
+  imageId: number;
+  image_url: string;
+  product_id: number;
+  is_main: boolean;
+};
 export default function Products() {
   const [isOpenProductInfo, setIsOpenMenuInfo] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [products, setProducts] = useState<ProductItemType[]>([]);
 
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    function getProducts(userId: number) {
+      axios
+        .get(`http://localhost:3000/api/products/${userId}`)
+        .then((res) => {
+          const data = res.data.products.map((item: ProductItemType) => ({
+            ProductId: item.productId,
+            name: item.name,
+            description: item.description,
+            price: parseFloat(Number(item.price).toFixed(2)),
+            category: item.category,
+            createdAt: item.createdAt,
+            stock: item.stock,
+            images: item.imgs.map((img: any) => ({
+              imageId: img.imageId,
+              image_url: img.image_url,
+              product_id: img.product_id,
+              is_main: img.is_main,
+            })),
+          }));
+          setProducts(data);
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
+    if (token) {
+      const decoded = jwtDecode<JwtPayload>(token);
+      const { id } = decoded;
+      if (id) getProducts(id);
+    }
+  }, []);
   return (
     <>
+      <Loader isLoading={isLoading} />
       <ProductItem
         isOpenProductInfo={isOpenProductInfo}
         setIsOpenMenuInfo={setIsOpenMenuInfo}
@@ -48,38 +112,43 @@ export default function Products() {
                 </td>
               </tr>
             </thead>
+
             <tbody>
-              <tr className="border-[10px]  cursor-pointer hover:text-white hover:bg-[#cbc0e0] rounded-tl-[10px] rounded-bl-[10px] border-[#f3f0f0] mt-4">
-                <td className="py-2 px-3 border-r-0 border-3 border-[#f3f0f0] rounded-tl-[10px] rounded-bl-[10px]">
-                  #1
-                </td>
-                <td className="py-2 flex truncate justify-center items-center gap-1 text-center border-[#f3f0f0] border-t-3 border-b-3 px-3">
-                  <img
-                    src={img}
-                    alt="Product Img"
-                    className="w-[60px]   h-[60px] mix-blend-multiply rounded-full"
-                  />{" "}
-                  Wireless Mouse
-                </td>
-                <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
-                  Electronics
-                </td>
-                <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
-                  150
-                </td>
-                <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
-                  85
-                </td>
-                <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
-                  $25.99
-                </td>
-                <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
-                  In Stock
-                </td>
-                <td className="py-2 truncate border-[#f3f0f0] border-3 border-l-0 px-3 rounded-tr-[10px] rounded-br-[10px]">
-                  <BasicMenu />
-                </td>
-              </tr>
+              {products.map((product) => {
+                return (
+                  <tr className="border-[10px]  cursor-pointer hover:text-white hover:bg-[#cbc0e0] rounded-tl-[10px] rounded-bl-[10px] border-[#f3f0f0] mt-4">
+                    <td className="py-2 px-3 border-r-0 border-3 border-[#f3f0f0] rounded-tl-[10px] rounded-bl-[10px]">
+                      {product.productId}
+                    </td>
+                    <td className="py-2 flex truncate justify-center items-center gap-1 text-center border-[#f3f0f0] border-t-3 border-b-3 px-3">
+                      <img
+                        src={img}
+                        alt="Product Img"
+                        className="w-[60px] border-1 object-cover  h-[60px] mix-blend-multiply rounded-full"
+                      />{" "}
+                      {product.name}
+                    </td>
+                    <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
+                      {product.category}
+                    </td>
+                    <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
+                      {product.stock}
+                    </td>
+                    <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
+                      {product.stock - product.stock}
+                    </td>
+                    <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
+                      {product.price} €
+                    </td>
+                    <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
+                      {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                    </td>
+                    <td className="py-2 truncate border-[#f3f0f0] border-3 border-l-0 px-3 rounded-tr-[10px] rounded-br-[10px]">
+                      action
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

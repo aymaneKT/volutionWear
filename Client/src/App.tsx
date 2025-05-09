@@ -2,7 +2,6 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import Profile from "./components/Profile";
 import Home from "./components/Home";
 import Shop from "./components/Shop";
 import SellerDashbord from "./components/SellerDashbord";

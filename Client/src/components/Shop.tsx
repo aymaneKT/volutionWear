@@ -101,14 +101,10 @@ export default function Shop() {
       .get(`http://localhost:3000/api/products?page=${page}`)
       .then((res) => {
         setPage((prev) => prev + 1);
-        console.log(res);
         setProducts((prevProducts) => [...prevProducts, ...res.data.data]);
         sethasMore(res.data.currentPage < res.data.totalPages);
-
-        console.log(res.data.currentPage <= res.data.totalPages);
       })
       .catch((err) => {
-        console.log(err);
         sethasMore(false);
       })
       .finally(() => {
@@ -127,6 +123,7 @@ export default function Shop() {
             src={Image}
             alt="Image"
             className="object-cover object-[100%_15%] h-[100%] w-[100%]"
+            loading="lazy"
           />
           <div className="absolute text-white bottom-[10%] left-[10%] font-['Josefin_Sans']">
             <h1

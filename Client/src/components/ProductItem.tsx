@@ -22,7 +22,7 @@ export default function ProductItem(props: ProductItemType) {
       onClick={() => {
         setIsOpenMenuInfo(false);
       }}
-      className="absolute items-center  z-10 transition duration-200  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
+      className="absolute items-start z-10 transition max-h-screen overflow-y-auto duration-200  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
     >
       <div
         style={{
@@ -30,7 +30,7 @@ export default function ProductItem(props: ProductItemType) {
           opacity: isOpenProductInfo ? 1 : 0,
         }}
         onClick={(e) => e.stopPropagation()}
-        className="flex  justify-between transition duration-200 items-end  border-2 rounded-[8px] bg-white p-9 w-[90%] max-[992px]:w-screen m-5  flex-wrap gap-5"
+        className="flex  justify-between transition h-auto duration-200 items-end  border-2 rounded-[8px] bg-white p-9 w-[90%] max-[992px]:w-screen m-5  flex-wrap gap-5"
       >
         {/* left part */}
         <div className=" flex flex-col  gap-2.5 grow  ">

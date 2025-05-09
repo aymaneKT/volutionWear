@@ -29,6 +29,7 @@ const StyledWrapper = styled.div<{ isLoading: boolean }>`
     justify-content: center;
     height: 100vh;
     width: 100%;
+    border: 1px solid #b3d4fc;
     position: absolute;
     background: white;
     z-index: 4;
