@@ -14,6 +14,7 @@ import {
 import {
   getReviewsForProduct,
   averageRatingForProduct,
+  deleteAllReviewsForProduct,
 } from "../models/Reviews.js";
 
 import { getUser } from "../models/user.js";
@@ -90,6 +91,7 @@ export const deleteProduct = async (req, res) => {
         message: "Non Authorized , you are register as customer",
       });
     }
+    await deleteAllReviewsForProduct(id);
     await deleteListingProduct(id, req.user.id);
     await deleteproduct(id);
 
@@ -244,7 +246,6 @@ export const PaginatedListProducts = async (req, res) => {
       data: productsWimages,
     });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       error: "Internal Server Error",
       message: error.message,

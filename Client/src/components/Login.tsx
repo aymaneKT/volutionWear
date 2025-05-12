@@ -34,8 +34,10 @@ export default function Login() {
           isLoading: false,
           autoClose: 2000,
         });
+        console.log(res.data.user);
+
         setTimeout(() => {
-          if (res.data.user.is_seller) {
+          if (res.data.user.is_seller == 1) {
             navigate("/admin");
           } else {
             navigate("/shop");

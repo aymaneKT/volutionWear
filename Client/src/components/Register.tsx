@@ -50,7 +50,7 @@ export default function Register() {
     formData.append("username", user.username);
     formData.append("email", user.email);
     formData.append("password", user.password);
-    formData.append("is_seller", user.isSeller.toString());
+    formData.append("is_seller", user.isSeller ? "1" : "0");
     if (user.imageProfile) {
       formData.append("avatar", user.imageProfile);
     }

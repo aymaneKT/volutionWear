@@ -61,3 +61,14 @@ export const averageRatingForProduct = async (product_id) => {
     throw error;
   }
 };
+
+export const deleteAllReviewsForProduct = async (productId) => {
+  try {
+    const query = "DELETE FROM reviews WHERE product_id = ?";
+    const [result] = await connection.query(query, [productId]);
+    return result.affectedRows > 0;
+  } catch (error) {
+    console.error("Error deleting all reviews for product:", error);
+    throw error;
+  }
+};

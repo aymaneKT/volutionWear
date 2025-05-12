@@ -6,10 +6,12 @@ import { MdOutlineLogin } from "react-icons/md";
 import { LuPackage } from "react-icons/lu";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { SectionContext } from "@/Contexts/SectionContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SideBar() {
   const { section, setSection } = useContext(SectionContext);
-
+  const navigate = useNavigate();
   const listSideBar = [
     { name: "Dashboard", icon: <MdOutlineDashboard /> },
     { name: "Orders", icon: <FaShoppingCart /> },
@@ -46,7 +48,26 @@ export default function SideBar() {
             ></div>
           </li>
         ))}
-        <li className="flex absolute bottom-3  font-medium items-center gap-2.5 ml-4 text-[17px] w-[80%] rounded-xl text-[#7C7C7C] hover:bg-[#FDEAEA] hover:text-[#EB5757] transition duration-100 pl-3 py-2">
+        <li
+          onClick={() => {
+            localStorage.removeItem("token");
+            toast.success("Log Out Successfully", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+            navigate("/login");
+          }}
+          className="flex absolute bottom-3  font-medium items-center gap-2.5 ml-4 text-[17px] w-[80%] rounded-xl text-[#7C7C7C] hover:bg-[#FDEAEA] hover:text-[#EB5757] transition duration-100 pl-3 py-2"
+        >
           <MdOutlineLogin />
           <span className="max-[900px]:hidden font-[Poppins]">Log Out</span>
         </li>

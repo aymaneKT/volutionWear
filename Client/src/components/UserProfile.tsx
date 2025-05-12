@@ -84,6 +84,7 @@ export default function UserProfile() {
     formData.append("surname", user.surname);
     formData.append("name", user.name);
     formData.append("address", user.address);
+
     formData.append("city", user.city);
     formData.append("cap", user.cap);
     formData.append("country", user.country);
@@ -285,7 +286,6 @@ export default function UserProfile() {
 
   const HundleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
-    console.log(e.target.name);
   };
 
   return !token ? (

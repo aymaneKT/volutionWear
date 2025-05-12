@@ -1,4 +1,6 @@
 import { generateToken } from "../middleware/token.js";
+import { transporter } from "../middleware/EmailSender.js";
+
 import {
   getUser,
   login,
@@ -91,8 +93,46 @@ export const Register = async (req, res) => {
           null
         );
 
-      const userAdded = await getUser(userId);
       const token = generateToken(userId, email, is_seller);
+      const userAdded = await getUser(userId);
+      var message = {
+        from: "volutionwear@gmail.com",
+        to: `${email}`,
+        subject: "Welcome to Volution Wear – Your Account is Ready!",
+        html: `
+<!DOCTYPE html>
+<html>
+  <body style="font-family: Arial, sans-serif; color: #333;">
+    <h2>Welcome to Volution Wear – Your Account is Ready!</h2>
+    <p>Dear <strong>${username}</strong>,</p>
+    <p>Thank you for registering on <strong>Volution Wear</strong>, the perfect marketplace for buying and selling pre-loved clothing! We're thrilled to have you join our community.</p>
+
+    <h4>Your account details:</h4>
+    <ul>
+      <li><strong>Email:</strong> ${email}</li>
+      <li><strong>Username:</strong> ${username}</li>
+    </ul>
+
+    <p>You can now log in to your account and start exploring products, managing your sales, and much more!</p>
+
+    <p>If you have any questions or need assistance, don’t hesitate to contact us at 
+      <a href="mailto:volutionwear@gmail.com">volutionwear@gmail.com</a>.
+    </p>
+
+    <p>Welcome aboard and enjoy your experience with us!</p>
+    <p><strong>The VolutionWear Team</strong></p>
+  </body>
+</html>
+`,
+      };
+
+      transporter.sendMail(message, (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send("Error sending email");
+        }
+        res.status(200).send("Email sent successfully");
+      });
       res.status(200).json({
         token: token,
         user: userAdded,
@@ -128,6 +168,69 @@ export const Login = async (req, res) => {
     }
     const token = generateToken(user.id, user.email, user.is_seller);
     const userFound = await getUser(user.id);
+    const currentDate = new Date();
+    const loginTime = `${currentDate.toLocaleString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: true,
+    })}`;
+
+    const message = {
+      from: "volutionwear@gmail.com",
+      to: email,
+      subject: "Successful Login to Your Volution Wear Account",
+      text: `Dear ${user.username},
+
+We wanted to let you know that your account was successfully logged into.
+
+Login details:
+- Email: ${email}
+- Username: ${user.username}
+- Date and Time of Login: ${loginTime}
+
+If this wasn’t you or if you have any concerns, please reach out to us at volutionwear@gmail.com.
+
+Thank you for using Volution Wear!
+
+– The VolutionWear Team`,
+      html: `
+<!DOCTYPE html>
+<html>
+  <body style="font-family: Arial, sans-serif; color: #333;">
+    <h2>Successful Login to Your Volution Wear Account</h2>
+    <p>Dear <strong>${user.username}</strong>,</p>
+    <p>We wanted to let you know that your account was successfully logged into.</p>
+
+    <h4>Login details:</h4>
+    <ul>
+      <li><strong>Email:</strong> ${email}</li>
+      <li><strong>Username:</strong> ${user.username}</li>
+      <li><strong>Date and Time of Login:</strong> ${loginTime}</li>
+    </ul>
+
+    <p>If this wasn’t you or if you have any concerns, please reach out to us at 
+      <a href="mailto:volutionwear@gmail.com">volutionwear@gmail.com</a>.
+    </p>
+
+    <p>Thank you for using Volution Wear!</p>
+    <p><strong>The VolutionWear Team</strong></p>
+  </body>
+</html>
+`,
+    };
+
+    transporter.sendMail(message, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Error sending email");
+      }
+      res.status(200).send("Login notification email sent successfully");
+    });
     return res.status(200).json({
       token: token,
       user: userFound,
@@ -227,6 +330,8 @@ export const updatePassword = async (req, res) => {
   try {
     const userId = req.user.id;
     const { newPassword, oldPassword } = req.body;
+    console.log(newPassword, oldPassword);
+
     if (!oldPassword || !newPassword) {
       return res.status(400).json({
         error: "Both old and new passwords are required",
@@ -238,7 +343,6 @@ export const updatePassword = async (req, res) => {
       const oldPass = user.password;
 
       const isMatch = await bcrypt.compare(oldPassword, oldPass);
-
 
       if (!isMatch)
         return res.status(400).json({
@@ -255,7 +359,6 @@ export const updatePassword = async (req, res) => {
       const dataToUpdate = {
         password: hashedPassword,
       };
-     
 
       const isUpdated = await updateProfile(userId, dataToUpdate);
 
