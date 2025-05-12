@@ -341,7 +341,7 @@ export default function ProductPage() {
                         <div className="flex items-center">
                           <img
                             src={
-                              !review.image
+                              !review.image == null
                                 ? "http://localhost:3000/uploads/${review.image}"
                                 : pp
                             }

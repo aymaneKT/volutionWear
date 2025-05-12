@@ -116,6 +116,7 @@ export default function Shop() {
   }, []);
   return (
     <>
+      <Loader isLoading={isLoading} />
       <div>
         <Header />
         <div className="relative min-[992px]:px-11 h-[400px]">
@@ -232,7 +233,11 @@ export default function Shop() {
           dataLength={products.length}
           next={loadMore}
           hasMore={hasMore}
-          loader={<Loader isLoading={isLoading} />}
+          loader={
+            <div className="flex justify-center items-center">
+              <Loader isLoading={isLoading} />
+            </div>
+          }
         >
           <div
             style={{ minHeight: "100vh" }}

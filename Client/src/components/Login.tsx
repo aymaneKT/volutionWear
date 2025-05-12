@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 type UserType = {
   email: string;
@@ -16,7 +17,7 @@ export default function Login() {
     password: "",
   });
   const [isPasswordVisible, setPasswordVisibility] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   const login = () => {
     const id = toast.loading("Please wait...");
     axios
@@ -33,6 +34,14 @@ export default function Login() {
           isLoading: false,
           autoClose: 2000,
         });
+        setTimeout(() => {
+          if (res.data.user.is_seller) {
+            navigate("/admin");
+          } else {
+            navigate("/shop");
+          }
+          window.location.reload();
+        }, 2000);
       })
       .catch((err) => {
         console.log(err);

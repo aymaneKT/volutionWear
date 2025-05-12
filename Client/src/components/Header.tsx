@@ -1,9 +1,10 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../VID-IMG/LOGO.png";
 import logo2 from "../VID-IMG/LOGO2.png";
 import Hamburger from "hamburger-react";
 import { useState } from "react";
 import Cart from "./Cart";
+import { toast, ToastContainer } from "react-toastify";
 export default function Header() {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isOpenCartMenu, setIsOpenCartMenu] = useState<boolean>(false);
@@ -18,14 +19,23 @@ export default function Header() {
     { label: "Categories", href: "/categories" },
     { label: "About", href: "/about" },
   ];
+  const navigate = useNavigate();
   const img = isBlackTextHeader ? logo2 : logo;
   const isRelative =
     location.pathname.toLocaleLowerCase().includes("shop") ||
     location.pathname.toLocaleLowerCase().includes("product") ||
     location.pathname.toLocaleLowerCase().includes("profile");
 
+  const logOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/");
+    window.location.reload();
+  };
+
   return (
     <>
+      <ToastContainer />
       <Cart
         isOpenCartMenu={isOpenCartMenu}
         setIsOpenCartMenu={setIsOpenCartMenu}
@@ -92,13 +102,18 @@ export default function Header() {
                 <button
                   className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
                     isBlackTextHeader ? "text-black" : "text-white"
-                  } ${location.pathname.toLocaleLowerCase().includes("profile") ? "hidden" : "block"}`}
+                  } ${
+                    location.pathname.toLocaleLowerCase().includes("profile")
+                      ? "hidden"
+                      : "block"
+                  }`}
                 >
                   Profile
                 </button>
               </Link>
 
               <button
+                onClick={logOut}
                 className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
                   isBlackTextHeader ? "text-black" : "text-white"
                 }`}

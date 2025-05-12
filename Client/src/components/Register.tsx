@@ -4,6 +4,7 @@ import { PiCoatHangerBold } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import FileInputButton from "./FileInputButton";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 import Axios from "axios";
 
@@ -28,11 +29,22 @@ export default function Register() {
     isSeller: false,
     imageProfile: null,
   });
-
+  const navigate = useNavigate();
   const register = () => {
+    if (user.password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+    // how to check if the email is valid
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(user.email)) {
+      toast.error("Invalid email format");
+      return;
+    }
+
     const id = toast.loading("Please wait...");
     const formData = new FormData();
-  
+
     formData.append("nome", user.name);
     formData.append("cognome", user.surname);
     formData.append("username", user.username);
@@ -40,9 +52,9 @@ export default function Register() {
     formData.append("password", user.password);
     formData.append("is_seller", user.isSeller.toString());
     if (user.imageProfile) {
-      formData.append("avatar", user.imageProfile); 
+      formData.append("avatar", user.imageProfile);
     }
-  
+
     Axios.post("http://localhost:3000/api/register", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -57,6 +69,13 @@ export default function Register() {
           isLoading: false,
           autoClose: 2000,
         });
+        setTimeout(() => {
+          if (user.isSeller) {
+            navigate("/admin");
+          } else {
+            navigate("/home");
+          }
+        }, 2000);
       })
       .catch((err) => {
         console.log(err);
@@ -68,7 +87,6 @@ export default function Register() {
         });
       });
   };
-  
 
   return (
     <>
@@ -76,7 +94,7 @@ export default function Register() {
       <div className="flex bg-[#F8F8F8]">
         {/* COLONNA SINISTRA - FORM */}
 
-        <div className="flex flex-col h-screen font-['Josefin_Sans'] min-[993px]:min-w-[500px] max-[480px]:h-auto max-[480px]:py-4 justify-center grow-1 items-center max-w-[100%] max-[992px]:w-[100%] max-[992px]:px-12 max-[480px]:px-0">
+        <div className="flex flex-col py-4 h-[100vh]  font-['Josefin_Sans'] min-[993px]:min-w-[500px] max-[480px]:h-auto max-[480px]:py-4 justify-center grow-1 items-center max-w-[100%] max-[992px]:w-[100%] max-[992px]:px-12 max-[480px]:px-0">
           <h1
             style={{ fontSize: "clamp(1.8rem, 3vw, 2rem)" }}
             className="font-medium"
@@ -203,7 +221,7 @@ export default function Register() {
           </div>
 
           {/* Bottom link */}
-          <p className="text-center absolute bottom-0 max-[992px]:relative max-[992px]:my-2">
+          <p className="text-center  max-[992px]:relative max-[992px]:my-2">
             Already have an account?{" "}
             <Link to="/login">
               <span className="text-[#C3A686] font-medium cursor-pointer">

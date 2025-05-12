@@ -1,9 +1,13 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import HeadDashbord from "./Dashboard/HeadDashbord";
 import img from "../VID-IMG/VolutionWear.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import DeleteAccountModal from "./DeleteAccountModal";
 import { SectionContext } from "@/Contexts/SectionContext";
+import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
+interface JwtPayload extends BaseJwtPayload {
+  id?: number;
+}
 
 type passwordVisibleType = {
   current: boolean;
@@ -12,7 +16,7 @@ type passwordVisibleType = {
 };
 
 export default function Profile() {
-  const { section, setSection } = useContext(SectionContext);
+  const { setSection } = useContext(SectionContext);
   const [sectionPage, setSectionPage] = useState<string>("Profile");
   const [passwordVisible, setPasswordVisible] = useState<passwordVisibleType>({
     current: false,
@@ -21,39 +25,16 @@ export default function Profile() {
   });
   const [time, setTime] = useState<string>("");
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState<boolean>(false);
-  const profileRef = useRef(null);
-  const passwordRef = useRef(null);
+  const token = localStorage.getItem("token");
   useEffect(() => {
     setInterval(() => {
       setTime(new Date().toLocaleString() + "");
     }, 1000);
-  }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (entry.target === profileRef.current) {
-              setSectionPage("Profile");
-            } else if (entry.target === passwordRef.current) {
-              setSectionPage("Password");
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.1, // 50% visibile
-      }
-    );
-
-    if (profileRef.current) observer.observe(profileRef.current);
-    if (passwordRef.current) observer.observe(passwordRef.current);
-
-    return () => {
-      if (profileRef.current) observer.unobserve(profileRef.current);
-      if (passwordRef.current) observer.unobserve(passwordRef.current);
-    };
+    if (token) {
+      const decode = jwtDecode<JwtPayload>(token);
+      const { id } = decode;
+    }
   }, []);
 
   return (
@@ -70,37 +51,37 @@ export default function Profile() {
             <h2 className="font-bold uppercase px-2">Settings</h2>
             <ul className="my-3 text-[#BEBFBE]">
               <li
-                onClick={() => {
-                  setSectionPage("Profile");
-                }}
-                style={{
-                  backgroundColor: section === "Profile" ? "#9810FA" : "#fff",
-                  color: section === "Profile" ? "#fff" : "#BEBFBE",
-                }}
-                className="p-2   rounded-[8px] hover:text-white cursor-pointer"
+                onClick={() => setSectionPage("Profile")}
+                className={`
+      p-2 rounded-[8px] cursor-pointer 
+      ${
+        sectionPage === "Profile"
+          ? "bg-[#9810FA] text-white"
+          : "bg-white text-[#BEBFBE]"
+      } 
+     
+    `}
               >
                 Profile
               </li>
               <li
-                onClick={() => {
-                  scrollTo(0, document.body.scrollHeight);
-                  setSectionPage("Password");
-                }}
-                style={{
-                  backgroundColor: section === "Password" ? "#9810FA" : "#fff",
-                  color: section === "Password" ? "#fff" : "#BEBFBE",
-                }}
-                className="p-2   rounded-[8px] hover:text-white cursor-pointer"
+                onClick={() => setSectionPage("Password")}
+                className={`
+      p-2 rounded-[8px] cursor-pointer 
+      ${
+        sectionPage === "Password"
+          ? "bg-[#9810FA] text-white"
+          : "bg-white text-[#BEBFBE]"
+      } 
+     
+    `}
               >
                 Password
               </li>
             </ul>
           </div>
 
-          <div
-            ref={profileRef}
-            className="rounded-[8px]   grow border-1 flex gap-5 items-end justify-between flex-wrap p-4 max-[480px]:justify-center"
-          >
+          <div className="rounded-[8px]   grow border-1 flex gap-5 items-end justify-between flex-wrap p-4 max-[480px]:justify-center">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <img src={img} className="  w-[120px] rounded-[8px]" />
               <div>
@@ -111,6 +92,7 @@ export default function Profile() {
                   type="text"
                   className="mt-1 focus:bg-[#b348ff0e] block  border-b-1 border-gray-500 outline-none p-2"
                   placeholder="Your Full Name"
+                  disabled
                 />
               </div>
             </div>
@@ -130,148 +112,149 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4">
-          <h2 className="text-[18px] font-bold">Profile</h2>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
-              type="text"
-              className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
-              placeholder="Username"
-            />
-          </div>
+        {sectionPage === "Profile" && (
+          <div className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4">
+            <h2 className="text-[18px] font-bold">Profile</h2>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Username
+              </label>
+              <input
+                type="text"
+                className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
+                placeholder="Username"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
-              placeholder="Name"
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                type="text"
+                className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
+                placeholder="Name"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Surname
-            </label>
-            <input
-              type="text"
-              className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
-              placeholder="Surname"
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Surname
+              </label>
+              <input
+                type="text"
+                className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
+                placeholder="Surname"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
-              placeholder="you@example.com"
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                className="mt-1 focus:bg-[#b348ff0e] block w-full border-b-1 border-gray-500 outline-none p-2"
+                placeholder="you@example.com"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Bio
-            </label>
-            <textarea
-              rows={4}
-              className="mt-1 focus:bg-[#b348ff0e] block w-full border-1 rounded-[8px] border-[BEBFBE] outline-none p-2 resize-none"
-              placeholder="Scrivi qualcosa su di te..."
-            ></textarea>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Bio
+              </label>
+              <textarea
+                rows={4}
+                className="mt-1 focus:bg-[#b348ff0e] block w-full border-1 rounded-[8px] border-[BEBFBE] outline-none p-2 resize-none"
+                placeholder="Scrivi qualcosa su di te..."
+              ></textarea>
+            </div>
           </div>
-        </div>
+        )}
         {/* Passwords */}
-        <div
-          ref={passwordRef}
-          className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4"
-        >
-          <h2 className="text-[18px] font-bold">Change Password</h2>
-          {/* current */}
-          <div className="Password flex flex-col mb-5 gap-1.5 relative">
-            <label htmlFor="password" className="font-medium">
-              Current password
-            </label>
-            <div className="flex items-center border-1 w-[100%]">
-              <input
-                type={passwordVisible.current ? "text" : "password"}
-                id="password"
-                placeholder="Enter current password"
-                required
-                className="border-1 outline-0 pl-2.5 border-r-0 max-[480px]:w-[80%] grow-2 p-2 rounded-[4px] rounded-tr-0 rounded-br-0 border-[#E3E6E9] "
-              />
-              <div
-                className="cursor-pointer  rounded-[4px] justify-center  px-3  flex items-center"
-                onClick={() => {
-                  setPasswordVisible({
-                    ...passwordVisible,
-                    current: !passwordVisible.current,
-                  });
-                }}
-              >
-                {passwordVisible.current ? <FaEyeSlash /> : <FaEye />}
+        {sectionPage === "Password" && (
+          <div className="border-1 rounded-[8px] my-4 p-5 flex flex-col gap-4">
+            <h2 className="text-[18px] font-bold">Change Password</h2>
+            {/* current */}
+            <div className="Password flex flex-col mb-5 gap-1.5 relative">
+              <label htmlFor="password" className="font-medium">
+                Current password
+              </label>
+              <div className="flex items-center border-1 w-[100%]">
+                <input
+                  type={passwordVisible.current ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter current password"
+                  required
+                  className="border-1 outline-0 pl-2.5 border-r-0 max-[480px]:w-[80%] grow-2 p-2 rounded-[4px] rounded-tr-0 rounded-br-0 border-[#E3E6E9] "
+                />
+                <div
+                  className="cursor-pointer  rounded-[4px] justify-center  px-3  flex items-center"
+                  onClick={() => {
+                    setPasswordVisible({
+                      ...passwordVisible,
+                      current: !passwordVisible.current,
+                    });
+                  }}
+                >
+                  {passwordVisible.current ? <FaEyeSlash /> : <FaEye />}
+                </div>
+              </div>
+            </div>
+            {/* new */}
+            <div className="Password flex flex-col mb-5 gap-1.5 relative">
+              <label htmlFor="password" className="font-medium">
+                New password
+              </label>
+              <div className="flex items-center border-1 w-[100%]">
+                <input
+                  type={passwordVisible.new ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter current password"
+                  required
+                  className="border-1 max-[480px]:w-[80%] outline-0 pl-2.5 border-r-0 grow-2 p-2 rounded-[4px] rounded-tr-0 rounded-br-0 border-[#E3E6E9] "
+                />
+                <div
+                  className="cursor-pointer  rounded-[4px] justify-center  px-3  flex items-center"
+                  onClick={() => {
+                    setPasswordVisible({
+                      ...passwordVisible,
+                      new: !passwordVisible.new,
+                    });
+                  }}
+                >
+                  {passwordVisible.new ? <FaEyeSlash /> : <FaEye />}
+                </div>
+              </div>
+            </div>
+            {/* confirm */}
+            <div className="Password flex flex-col mb-5 gap-1.5 relative">
+              <label htmlFor="password" className="font-medium">
+                Conffirm password
+              </label>
+              <div className="flex items-center border-1 w-[100%]">
+                <input
+                  type={passwordVisible.confirm ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter current password"
+                  required
+                  className="border-1 max-[480px]:w-[80%] outline-0 pl-2.5 border-r-0 grow-2 p-2 rounded-[4px] rounded-tr-0 rounded-br-0 border-[#E3E6E9] "
+                />
+                <div
+                  className="cursor-pointer  rounded-[4px] justify-center  px-3  flex items-center"
+                  onClick={() => {
+                    setPasswordVisible({
+                      ...passwordVisible,
+                      confirm: !passwordVisible.confirm,
+                    });
+                  }}
+                >
+                  {passwordVisible.confirm ? <FaEyeSlash /> : <FaEye />}
+                </div>
               </div>
             </div>
           </div>
-          {/* new */}
-          <div className="Password flex flex-col mb-5 gap-1.5 relative">
-            <label htmlFor="password" className="font-medium">
-              New password
-            </label>
-            <div className="flex items-center border-1 w-[100%]">
-              <input
-                type={passwordVisible.new ? "text" : "password"}
-                id="password"
-                placeholder="Enter current password"
-                required
-                className="border-1 max-[480px]:w-[80%] outline-0 pl-2.5 border-r-0 grow-2 p-2 rounded-[4px] rounded-tr-0 rounded-br-0 border-[#E3E6E9] "
-              />
-              <div
-                className="cursor-pointer  rounded-[4px] justify-center  px-3  flex items-center"
-                onClick={() => {
-                  setPasswordVisible({
-                    ...passwordVisible,
-                    new: !passwordVisible.new,
-                  });
-                }}
-              >
-                {passwordVisible.new ? <FaEyeSlash /> : <FaEye />}
-              </div>
-            </div>
-          </div>
-          {/* confirm */}
-          <div className="Password flex flex-col mb-5 gap-1.5 relative">
-            <label htmlFor="password" className="font-medium">
-              Conffirm password
-            </label>
-            <div className="flex items-center border-1 w-[100%]">
-              <input
-                type={passwordVisible.confirm ? "text" : "password"}
-                id="password"
-                placeholder="Enter current password"
-                required
-                className="border-1 max-[480px]:w-[80%] outline-0 pl-2.5 border-r-0 grow-2 p-2 rounded-[4px] rounded-tr-0 rounded-br-0 border-[#E3E6E9] "
-              />
-              <div
-                className="cursor-pointer  rounded-[4px] justify-center  px-3  flex items-center"
-                onClick={() => {
-                  setPasswordVisible({
-                    ...passwordVisible,
-                    confirm: !passwordVisible.confirm,
-                  });
-                }}
-              >
-                {passwordVisible.confirm ? <FaEyeSlash /> : <FaEye />}
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
         <button
           onClick={() => {
             scrollTo({
