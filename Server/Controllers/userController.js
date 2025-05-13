@@ -129,9 +129,7 @@ export const Register = async (req, res) => {
       transporter.sendMail(message, (err) => {
         if (err) {
           console.error(err);
-          return res.status(500).send("Error sending email");
         }
-        res.status(200).send("Email sent successfully");
       });
       res.status(200).json({
         token: token,
@@ -227,9 +225,7 @@ Thank you for using Volution Wear!
     transporter.sendMail(message, (err) => {
       if (err) {
         console.error(err);
-        return res.status(500).send("Error sending email");
       }
-      res.status(200).send("Login notification email sent successfully");
     });
     return res.status(200).json({
       token: token,
@@ -330,7 +326,6 @@ export const updatePassword = async (req, res) => {
   try {
     const userId = req.user.id;
     const { newPassword, oldPassword } = req.body;
-    console.log(newPassword, oldPassword);
 
     if (!oldPassword || !newPassword) {
       return res.status(400).json({
@@ -341,7 +336,7 @@ export const updatePassword = async (req, res) => {
     if (oldPassword && newPassword) {
       const user = await getUser(userId);
       const oldPass = user.password;
-
+      
       const isMatch = await bcrypt.compare(oldPassword, oldPass);
 
       if (!isMatch)

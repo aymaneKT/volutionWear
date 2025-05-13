@@ -40,7 +40,7 @@ export default function Login() {
           if (res.data.user.is_seller == 1) {
             navigate("/admin");
           } else {
-            navigate("/shop");
+            navigate("/profile");
           }
           window.location.reload();
         }, 2000);

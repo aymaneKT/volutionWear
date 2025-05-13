@@ -32,7 +32,6 @@ export default function Products() {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [products, setProducts] = useState<ProductItemType[]>([]);
 
-
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -79,7 +78,6 @@ export default function Products() {
         setIsOpenMenuInfo={setIsOpenMenuInfo}
       />
       <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px]">
-        <HeadDashbord title="Products" subtitle="28 Products found" />
         <button
           onClick={() => {
             setIsOpenMenuInfo(true);

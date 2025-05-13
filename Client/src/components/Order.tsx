@@ -1,10 +1,8 @@
 import BasicMenu from "./Dashboard/BasicMenu";
-import HeadDashbord from "./Dashboard/HeadDashbord";
 
 export default function Order() {
   return (
     <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px]">
-      <HeadDashbord title={"orders"} subtitle="28 Orders found" />
       <div className="flex  justify-between items-center flex-wrap ">
         <ul
           style={{ fontSize: "clamp(0.4rem, 3vw, 0.8rem)" }}

@@ -1,10 +1,22 @@
 import styled from "styled-components";
+import { ProductType } from "./ProductItem";
 
-const Checkbox = () => {
+type productProps = {
+  product: ProductType;
+  setProduct: (product: ProductType) => void;
+};
+
+const Checkbox = ({ product, setProduct }: productProps) => {
   return (
     <StyledWrapper>
-      <label className="container">
-        <input type="checkbox" />
+      <label
+        className="container"
+        onChange={() => {
+          setProduct({ ...product, isActive: !product.isActive });
+
+        }}
+      >
+        <input type="checkbox" checked={product.isActive} />
         <div className="checkmark" />
       </label>
     </StyledWrapper>

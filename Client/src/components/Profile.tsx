@@ -8,6 +8,7 @@ import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
 import axios from "axios";
 import { Camera } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
+
 interface JwtPayload extends BaseJwtPayload {
   id?: number;
 }
@@ -46,7 +47,7 @@ export default function Profile() {
     new_password: "",
     confirm_password: "",
   });
-  const [time, setTime] = useState<string>("");
+
   const [isOpenDeleteModel, setIsOpenDeleteModel] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [admin, setAdmin] = useState<adminType>({
@@ -89,9 +90,22 @@ export default function Profile() {
           draggable: true,
           progress: undefined,
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       })
+
       .catch((err) => {
         console.log(err);
+        toast.error(err.response.data.error, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
   };
 
@@ -134,6 +148,12 @@ export default function Profile() {
           draggable: true,
           progress: undefined,
         });
+        setPassword({
+          ...password,
+          current_password: "",
+          new_password: "",
+          confirm_password: "",
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -174,10 +194,6 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    setInterval(() => {
-      setTime(new Date().toLocaleString() + "");
-    }, 1000);
-
     if (token) {
       const decode = jwtDecode<JwtPayload>(token);
       const { id } = decode;
@@ -193,8 +209,6 @@ export default function Profile() {
         setIsOpen={setIsOpenDeleteModel}
       />
       <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px]">
-        <HeadDashbord title="Welcome, Aymane" subtitle={time} />
-
         <div className="flex flex-wrap gap-4 mt-5">
           <div className="border-1 p-2 rounded-[8px] grow max-w-[200px] max-[900px]:max-w-full">
             <h2 className="font-bold uppercase px-2">Settings</h2>
@@ -405,15 +419,16 @@ export default function Profile() {
             <h2 className="text-[18px] font-bold">Change Password</h2>
             {/* current */}
             <div className="Password flex flex-col mb-5 gap-1.5 relative">
-              <label htmlFor="password" className="font-medium">
+              <label htmlFor="password1" className="font-medium">
                 Current password
               </label>
               <div className="flex items-center border-1 w-[100%]">
                 <input
                   type={passwordVisible.current ? "text" : "password"}
-                  id="password"
+                  id="password1"
                   placeholder="Enter current password"
                   required
+                  value={password.current_password}
                   onChange={(e) => {
                     setPassword({
                       ...password,
@@ -437,13 +452,14 @@ export default function Profile() {
             </div>
             {/* new */}
             <div className="Password flex flex-col mb-5 gap-1.5 relative">
-              <label htmlFor="password" className="font-medium">
+              <label htmlFor="password2" className="font-medium">
                 New password
               </label>
               <div className="flex items-center border-1 w-[100%]">
                 <input
                   type={passwordVisible.new ? "text" : "password"}
-                  id="password"
+                  id="password2"
+                  value={password.new_password}
                   placeholder="Enter current password"
                   onChange={(e) => {
                     setPassword({
@@ -470,13 +486,14 @@ export default function Profile() {
             </div>
             {/* confirm */}
             <div className="Password flex flex-col mb-5 gap-1.5 relative">
-              <label htmlFor="password" className="font-medium">
+              <label htmlFor="password3" className="font-medium">
                 Confirm password
               </label>
               <div className="flex items-center border-1 w-[100%]">
                 <input
                   type={passwordVisible.confirm ? "text" : "password"}
-                  id="password"
+                  id="password3"
+                  value={password.confirm_password}
                   placeholder="Enter current password"
                   required
                   onChange={(e) => {

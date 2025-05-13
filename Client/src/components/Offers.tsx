@@ -13,10 +13,12 @@ export default function Offers() {
         setIsOpenCouponMenu={setIsOpenCouponMenu}
       />
       <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px]">
-        <HeadDashbord title="Coupons" subtitle="All customized coupons" />
-        <button onClick={()=>{
-          setIsOpenCouponMenu(true)
-        }} className="flex z-0 items-center gap-1 mt-3 border-1 px-4 py-2 cursor-pointer text-[#7C7C7C] border-[#7C7C7C] left-[100%] -translate-x-[100%] rounded-[8px] relative right-0">
+        <button
+          onClick={() => {
+            setIsOpenCouponMenu(true);
+          }}
+          className="flex z-0 items-center gap-1 mt-3 border-1 px-4 py-2 cursor-pointer text-[#7C7C7C] border-[#7C7C7C] left-[100%] -translate-x-[100%] rounded-[8px] relative right-0"
+        >
           <FaPlus />
           Add Coupon
         </button>

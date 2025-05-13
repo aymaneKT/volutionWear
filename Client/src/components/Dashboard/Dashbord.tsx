@@ -8,7 +8,6 @@ import Chart from "./Chart";
 export default function Dashbord() {
   return (
     <div className="w-[calc(100% - 180px)] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px]">
-      <HeadDashbord title="Dashboard" subtitle="Live Orders" />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,auto))] gap-3 mt-4 my-5">
         <SalesBox
           icon={
