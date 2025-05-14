@@ -18,12 +18,16 @@ export default function HeadDashbord(props: PropsHeadDash) {
   const { setSection } = useContext(SectionContext);
   const token = localStorage.getItem("token");
   const [username, setUsername] = useState<string>("");
+  const [image , setImage] = useState<string>("");
   const getUser = (id: Number) => {
     axios
       .get(`http://localhost:3000/api/user/${id}`)
       .then((res) => {
         const { data } = res.data;
         setUsername(data.username);
+        setImage(data.image);
+        console.log(data.image);
+        
       })
       .catch((err) => {
         console.log(err);
@@ -70,7 +74,7 @@ export default function HeadDashbord(props: PropsHeadDash) {
             onClick={() => {
               setSection("Profile");
             }}
-            src={img}
+            src={image == null ? img : `http://localhost:3000/uploads/${image}`}
             className="h-[30px]
           w-[30px] rounded-full cursor-pointer"
           />

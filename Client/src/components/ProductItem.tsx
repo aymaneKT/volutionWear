@@ -4,9 +4,13 @@ import Checkbox from "./CheckBox";
 import InputImage from "./InputImage";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-type ProductItemType = {
+import { ProductItemType } from "./Products";
+type ProductItemTypeProps = {
   isOpenProductInfo: boolean;
   setIsOpenMenuInfo: (value: boolean) => void;
+  getProducts: (userId: number) => void;
+  userId: number;
+  productItem: ProductItemType;
 };
 
 export type ProductType = {
@@ -18,13 +22,31 @@ export type ProductType = {
   isActive: boolean;
 };
 
-export default function ProductItem(props: ProductItemType) {
+export default function ProductItem(props: ProductItemTypeProps) {
   const { isOpenProductInfo, setIsOpenMenuInfo } = props;
+
   useEffect(() => {
-    isOpenProductInfo
-      ? (document.body.style.overflow = "hidden")
-      : (document.body.style.overflow = "visible");
-  }, [isOpenProductInfo]);
+    document.body.style.overflow = isOpenProductInfo ? "hidden" : "visible";
+    if (props.productItem.productId != null) {
+      setProduct({
+        name: props.productItem.name,
+        description: props.productItem.description,
+        price: props.productItem.price.toString(),
+        stock: props.productItem.stock.toString(),
+        category_id: props.productItem.category,
+        isActive: props.productItem.isActive,
+      });
+    } else {
+      setProduct({
+        name: "",
+        description: "",
+        price: "",
+        stock: "",
+        category_id: "",
+        isActive: false,
+      });
+    }
+  }, [isOpenProductInfo, props.productItem]);
 
   const [product, setProduct] = useState<ProductType>({
     name: "",
@@ -44,19 +66,38 @@ export default function ProductItem(props: ProductItemType) {
       },
     };
 
-    axios
-      .post(`http://localhost:3000/api/product`, product, headers)
+    const request =
+      props.productItem.productId != null
+        ? axios.put(
+            `http://localhost:3000/api/product`,
+            {
+              id: props.productItem.productId,
+              name: product.name,
+              description: product.description,
+              price: product.price,
+              stock: product.stock,
+              category_id: product.category_id,
+            },
+            headers
+          )
+        : axios.post(`http://localhost:3000/api/product`, product, headers);
+
+    request
       .then((res) => {
-        console.log(res.data);
-        toast.success("Product added successfully", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast.success(
+          props.productItem.productId
+            ? "Product updated successfully"
+            : "Product added successfully",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
         setIsOpenMenuInfo(false);
         setProduct({
           name: "",
@@ -66,9 +107,19 @@ export default function ProductItem(props: ProductItemType) {
           category_id: "",
           isActive: false,
         });
+        props.getProducts(props.userId);
       })
       .catch((err) => {
-        console.error(err);
+        console.log(err);
+        toast.error(err.response.data.error, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
   };
 
@@ -83,7 +134,7 @@ export default function ProductItem(props: ProductItemType) {
         onClick={() => {
           setIsOpenMenuInfo(false);
         }}
-        className="absolute items-center z-10 transition max-h-screen overflow-y-auto duration-200 max-[820px]:items-start  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
+        className="fixed items-center z-10 transition max-h-screen overflow-y-auto duration-200 max-[850px]:items-start  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
       >
         <div
           style={{
@@ -211,21 +262,27 @@ export default function ProductItem(props: ProductItemType) {
                 Product Active
               </label>
             </div>
-            <div className="flex gap-2 self-end my-4 ">
-              <button
-                onClick={() => {
-                  setIsOpenMenuInfo(false);
-                }}
-                className="cursor-pointer bg-[#7E7E7E] text-white  rounded-[7px]  px-4  py-1.5"
-              >
-                Cancel
-              </button>
-              <button
-                className="cursor-pointer text-white  rounded-[7px] bg-purple-600 px-4  py-1.5"
-                onClick={addProduct}
-              >
-                Save
-              </button>
+
+            <div className="flex   justify-between my-4  flex-wrap-reverse gap-3">
+                <button className="cursor-pointer bg-[#f85959] text-white rounded-[7px] px-4 py-1.5 whitespace-nowrap ">
+                Delete Product
+                </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setIsOpenMenuInfo(false);
+                  }}
+                  className="cursor-pointer bg-[#7E7E7E] text-white  rounded-[7px]  px-4  py-1.5"
+                >
+                  Cancel
+                </button>
+                <button
+                  className="cursor-pointer text-white  rounded-[7px] bg-purple-600 px-4  py-1.5"
+                  onClick={addProduct}
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </div>

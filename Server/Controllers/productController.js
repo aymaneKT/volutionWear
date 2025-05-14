@@ -116,11 +116,11 @@ export const editProduct = async (req, res) => {
         error: "Product not found",
       });
     const productsOfUser = await productsForUser(req.user.id);
-    const userHaveProduct = productsOfUser.some((product) => product.id == id);
+    const userHaveProduct = productsOfUser.some((product) => product.productId == id);
     if (!userHaveProduct) {
       return res.status(403).json({
         success: false,
-        error: "Unauthorized to delete this product",
+        error: "Unauthorized to update this product",
       });
     }
     if (req.user.is_seller == 0) {
