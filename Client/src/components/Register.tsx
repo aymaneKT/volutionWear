@@ -221,7 +221,7 @@ export default function Register() {
           </div>
 
           {/* Bottom link */}
-          <p className="text-center  max-[992px]:relative max-[992px]:my-2">
+          <p className="text-center mt-3  max-[992px]:relative max-[992px]:my-2">
             Already have an account?{" "}
             <Link to="/login">
               <span className="text-[#C3A686] font-medium cursor-pointer">

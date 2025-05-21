@@ -80,6 +80,7 @@ export default function ProductPage() {
       .get(`http://localhost:3000/api/product/${productId}`)
       .then((res) => {
         setProductDetails(res.data.product);
+        console.log(res.data.product);
       })
       .catch((err) => {
         console.log(err);
@@ -206,7 +207,7 @@ export default function ProductPage() {
 
             {/* Quantity */}
             <div className="flex items-center gap-3">
-              <span className="font-medium">Quantità:</span>
+              <span className="font-medium">Quantity:</span>
               <div className="flex border border-gray-300 rounded">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -218,14 +219,33 @@ export default function ProductPage() {
                   {quantity}
                 </span>
                 <button
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={() => {
+                    if (
+                      productDetails &&
+                      productDetails?.stock > 0 &&
+                      quantity < productDetails?.stock
+                    )
+                      setQuantity(quantity + 1);
+                  }}
                   className="px-3 py-1 border-l border-gray-300"
                 >
                   <ChevronUp size={16} />
                 </button>
               </div>
             </div>
-
+            {/* Stock Status */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">
+                {productDetails && productDetails?.stock > 0
+                  ? "In Stock"
+                  : "Out of Stock"}
+              </span>
+              {productDetails && productDetails?.stock > 0 && (
+                <span className="text-sm text-green-500">
+                  {productDetails?.stock} available
+                </span>
+              )}
+            </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-2">
               <button className="bg-black cursor-pointer text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors">
@@ -338,14 +358,14 @@ export default function ProductPage() {
                   {productDetails?.reviews.map((review, index) => (
                     <div key={index} className="py-4">
                       <div className="flex justify-between items-start">
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-2">
                           <img
                             src={
-                              !review.image == null
-                                ? "http://localhost:3000/uploads/${review.image}"
+                              review.image != null
+                                ? `http://localhost:3000/uploads/${review.image}`
                                 : pp
                             }
-                            className="h-[70px] w-[50px] object-center"
+                            className="h-[70px] w-[70px] object-center  mix-blend-multiply rounded-full"
                             alt={`${review.username} picture`}
                           />
 

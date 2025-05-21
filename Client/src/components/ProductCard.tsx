@@ -46,12 +46,33 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div ref={sliderRef} className="keen-slider">
         {product.Images.length ? (
           product.Images.map((image, i) => (
-            <img
-              key={i}
-              className="keen-slider__slide aspect-[3/4]"
-              src={`http://localhost:3000/uploads/${image.image_url}`}
-              alt={`Product image ${i + 1}`}
-            />
+            <div key={i} className="keen-slider__slide aspect-[3/4] relative">
+              <img
+                src={`http://localhost:3000/uploads/${image.image_url}`}
+                alt={`Product image ${i + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <HiArrowSmallRight
+                className="absolute border-1 border-black text-black text-[30px] font-semibold right-1 top-1/2 -translate-y-1/2 p-1 bg-white rounded-full cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  instanceRef.current?.next();
+                }}
+                style={{
+                  display : product.Images.length > 1 ? "block" : "none",
+                }}
+              />
+              <HiArrowSmallLeft
+                className="absolute border-1 border-black text-black text-[30px] font-semibold left-1 top-1/2 -translate-y-1/2 p-1 bg-white rounded-full cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  instanceRef.current?.prev();
+                }}
+                style={{
+                  display : product.Images.length > 1 ? "block" : "none",
+                }}
+              />
+            </div>
           ))
         ) : (
           <img
@@ -63,25 +84,25 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Username */}
-      <div className="flex items-center justify-between mt-1">
+      <div className="flex items-end justify-between mt-1 flex-wrap">
         <span
           style={{
             fontSize: "clamp(0.8rem, 0.8vw, 1.7rem)",
           }}
           className="text-gray-600"
         >
-          {product.username}
+          Seller: <span className="font-bold">{product.username}</span>
         </span>
 
         {/* Rating stars */}
-        <div className="flex items-center">
+        <div className="flex items-center overflow-hidden">
           <Rating
             name="read-only"
             value={product.avgReview}
             readOnly
             size="small"
           />
-          <span className="ml-1 text-sm text-gray-600">
+          <span className="ml-1 text-sm  text-gray-600">
             {product.avgReview ? Number(product.avgReview).toFixed(2) : "N/A"}
           </span>
         </div>
@@ -97,20 +118,6 @@ export default function ProductCard({ product }: ProductCardProps) {
       </span>
       <p className="text-[#54545498]">{product.description}</p>
       <span>{product.price} EUR</span>
-      <HiArrowSmallRight
-        className="absolute text-black text-[30px] font-semibold right-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          instanceRef.current?.next();
-        }}
-      />
-      <HiArrowSmallLeft
-        className="absolute text-black text-[30px] font-semibold left-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          instanceRef.current?.prev();
-        }}
-      />
     </div>
   );
 }

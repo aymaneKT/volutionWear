@@ -158,7 +158,7 @@ export const getProductsForAdmin = async (req, res) => {
     const productsWimage = await productsForUser(userId);
     const products = await Promise.all(
       productsWimage.map(async (e) => {
-        const imgs = await getImages(e.id);
+        const imgs = await getImages(e.productId);
         return { ...e, imgs };
       })
     );
@@ -250,5 +250,54 @@ export const PaginatedListProducts = async (req, res) => {
       error: "Internal Server Error",
       message: error.message,
     });
+  }
+};
+export const addProductWithImages = async (req, res) => {
+  try {
+    const { name, description, price, stock, categoryId } = req.body;
+
+    if (!req.files || req.files.length === 0)
+      return res.status(400).json({ success: false, message: "No images uploaded" });
+
+    const invalidFile = req.files.find(file => !file.mimetype.startsWith("image/"));
+    if (invalidFile) {
+      return res.status(403).json({
+        success: false,
+        message: "One or more files are not valid images",
+      });
+    }
+
+    // STEP 1: crea prodotto
+    const productId = await addproduct(name, description, price, stock, categoryId);
+
+    // STEP 2: salva immagini
+    const imagesQuantity = await HowManyImages(productId);
+    if (imagesQuantity + req.files.length > 5) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot upload more than 5 images",
+      });
+    }
+
+    let mainPictureExist = imagesQuantity > 0;
+
+    await Promise.all(
+      req.files.map(async (image, i) => {
+        const isMain = mainPictureExist ? false : i === 0;
+        await saveImage(productId, image.filename, isMain);
+      })
+    );
+
+    // STEP 3: rispondi
+    return res.status(200).json({
+      success: true,
+      message: "Product and images saved successfully",
+      product_id: productId,
+      images: await getImages(productId),
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
