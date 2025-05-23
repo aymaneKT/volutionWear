@@ -20,11 +20,11 @@ export type ProductItemType = {
   isActive: boolean;
   imgs: imageType[];
 };
-type imageType = {
+export type imageType = {
   imageId: number;
   image_url: string;
   product_id: number;
-  is_main: boolean;
+  is_main: boolean | string;
 };
 export default function Products() {
   const [isOpenProductInfo, setIsOpenMenuInfo] = useState<boolean>(false);
@@ -56,7 +56,8 @@ export default function Products() {
           category: item.category,
           createdAt: item.createdAt,
           stock: item.stock,
-          images: item.imgs.map((img: any) => ({
+          isActive: item.isActive,
+          imgs: item.imgs.map((img: imageType) => ({
             imageId: img.imageId,
             image_url: img.image_url,
             product_id: img.product_id,
@@ -151,10 +152,20 @@ export default function Products() {
                     </td>
                     <td className="py-2 flex truncate justify-start items-center gap-1 text-center border-[#f3f0f0] border-t-3 border-b-3 px-3">
                       <img
-                        src={img}
+                        src={
+                          product.imgs && product.imgs.length > 0
+                            ? `http://localhost:3000/uploads/${
+                                product.imgs.find(
+                                  (img) =>
+                                    img.is_main === true || img.is_main == "1"
+                                )?.image_url 
+                              }`
+                            : img
+                        }
                         alt="Product Img"
-                        className="w-[60px] border-1 object-cover  h-[60px] mix-blend-multiply rounded-full"
-                      />{" "}
+                        className="w-[60px] border-1 object-cover h-[60px] mix-blend-multiply rounded-full"
+                      />
+
                       {product.name}
                     </td>
                     <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">

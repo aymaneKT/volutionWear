@@ -48,7 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           product.Images.map((image, i) => (
             <img
               key={i}
-              className="keen-slider__slide aspect-[3/4]"
+              className="keen-slider__slide aspect-[3/4] object-center object-cover"
               src={`http://localhost:3000/uploads/${image.image_url}`}
               alt={`Product image ${i + 1}`}
             />

@@ -1,4 +1,4 @@
-import { getImages } from "../models/images.js";
+import { getImages, HowManyImages,saveImage } from "../models/images.js";
 import {
   addproduct,
   getproduct,
@@ -21,9 +21,15 @@ import { getUser } from "../models/user.js";
 
 export const addProduct = async (req, res) => {
   try {
+    if(!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No Images  were uploaded",
+      });
+    }
     const product = req.body;
     const { name, description, price, stock, category_id } = product;
-
+    // Check if all required fields are present
     if (
       !name ||
       !description ||
@@ -35,6 +41,7 @@ export const addProduct = async (req, res) => {
         .status(400)
         .json({ error: "Not all required fields are filled in" });
     }
+    // Check if the user is a seller
     if (req.user.is_seller == 0) {
       return res.status(400).json({
         success: false,
@@ -57,9 +64,36 @@ export const addProduct = async (req, res) => {
       });
     }
 
+    
     const addedProduct = await getproduct(idOfAddedProduct);
     await addListingProduct(idOfAddedProduct, req.user.id);
+    if (req.files && req.files.length > 0) {
+      const invalidFile = req.files.find(
+        (file) => !file.mimetype.startsWith("image/")
+      );
+      if (invalidFile) {
+        return res.status(403).json({
+          success: false,
+          message: "One or more files are not valid images",
+        });
+      }
+      const imagesQuantity = await HowManyImages(idOfAddedProduct);
+      const mainPictureExist = imagesQuantity >= 1;
 
+      if (imagesQuantity + req.files.length > 5)
+        return res.status(400).json({
+          success: false,
+          message: "You cannot upload more than 5 images",
+        });
+      await Promise.all(
+        req.files.map(async (image, i) => {
+          const isMain = mainPictureExist ? false : i === 0;
+          return await saveImage(idOfAddedProduct, image.filename, isMain);
+        })
+      );
+    }
+
+    
     return res.status(200).json({
       result: true,
       product: addedProduct,
@@ -116,7 +150,9 @@ export const editProduct = async (req, res) => {
         error: "Product not found",
       });
     const productsOfUser = await productsForUser(req.user.id);
-    const userHaveProduct = productsOfUser.some((product) => product.productId == id);
+    const userHaveProduct = productsOfUser.some(
+      (product) => product.productId == id
+    );
     if (!userHaveProduct) {
       return res.status(403).json({
         success: false,
@@ -158,7 +194,7 @@ export const getProductsForAdmin = async (req, res) => {
     const productsWimage = await productsForUser(userId);
     const products = await Promise.all(
       productsWimage.map(async (e) => {
-        const imgs = await getImages(e.id);
+        const imgs = await getImages(e.productId);
         return { ...e, imgs };
       })
     );
