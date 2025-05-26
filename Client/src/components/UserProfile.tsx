@@ -41,6 +41,24 @@ type passwordType = {
   newPassword: string;
   newPassword2: string;
 };
+export interface OrderItem {
+  id: number;
+  product_name: string;
+  price: string;
+  quantity: number;
+  category_name: string;
+  image_url: string;
+}
+
+export interface Order {
+  id: number;
+  user_id: number;
+  status: string;
+  total_amount: string;
+  created_at: string;
+  items: OrderItem[];
+}
+
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState<string>("profile");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -48,6 +66,7 @@ export default function UserProfile() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [activeOrderDetails, setActiveOrderDetails] = useState(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [Userorders, setUserOrders] = useState<Order[]>([]);
   const [password, setPassword] = useState<passwordType>({
     currentPassword: "",
     newPassword: "",
@@ -234,47 +253,42 @@ export default function UserProfile() {
       if (id) getUser(id);
     }
   }, []);
-
-  // Default orders
-  const orders = [
-    {
-      id: 1001,
-      date: "2025-04-28",
-      status: "Consegnato",
-      total: 129.99,
-      products: [
-        {
-          id: 1,
-          name: "Premium T-Shirt",
-          price: 39.99,
-          quantity: 2,
-          image: "tshirt.jpg",
+  const getOrders = () => {
+    setIsLoading(true);
+    axios
+      .get(`http://localhost:3000/api/orders`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          id: 2,
-          name: "Designer Jeans",
-          price: 50.01,
-          quantity: 1,
-          image: "jeans.jpg",
-        },
-      ],
-    },
-    {
-      id: 982,
-      date: "2025-04-15",
-      status: "In Elaborazione",
-      total: 85.5,
-      products: [
-        {
-          id: 3,
-          name: "Sneakers",
-          price: 85.5,
-          quantity: 1,
-          image: "sneakers.jpg",
-        },
-      ],
-    },
-  ];
+      })
+      .then((res) => {
+        console.log(res.data);
+        setUserOrders(res.data.orders);
+      })
+      .catch((e) => {
+        console.log(e);
+        toast.error("Error fetching orders!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+  useEffect(() => {
+    if (token) {
+      const decoded = jwtDecode<JwtPayload>(token);
+      const { id } = decoded;
+      if (id) getOrders();
+    }
+  }, []);
 
   const toggleOrderDetails = (orderId: any) => {
     if (activeOrderDetails === orderId) {
@@ -545,7 +559,7 @@ export default function UserProfile() {
                 <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
                 <div className="space-y-4">
-                  {orders.map((order) => (
+                  {Userorders.map((order) => (
                     <div
                       key={order.id}
                       className="border border-gray-200 rounded-lg overflow-hidden"
@@ -555,15 +569,17 @@ export default function UserProfile() {
                         onClick={() => toggleOrderDetails(order.id)}
                       >
                         <div>
-                          <p className="font-medium">Ordine #{order.id}</p>
+                          <p className="font-medium">Order #{order.id}</p>
                           <p className="text-sm text-gray-600">
-                            {new Date(order.date).toLocaleDateString("it-IT")}
+                            {new Date(order.created_at).toLocaleDateString(
+                              "it-IT"
+                            )}
                           </p>
                         </div>
                         <div className="flex items-center gap-4">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              order.status === "Consegnato"
+                              order.status === "Completed"
                                 ? "bg-green-100 text-green-800"
                                 : "bg-blue-100 text-blue-800"
                             }`}
@@ -571,7 +587,7 @@ export default function UserProfile() {
                             {order.status}
                           </span>
                           <span className="font-medium">
-                            €{order.total.toFixed(2)}
+                            €{Number(order.total_amount).toFixed(2)}
                           </span>
                           {activeOrderDetails === order.id ? (
                             <ChevronUp size={20} />
@@ -587,24 +603,29 @@ export default function UserProfile() {
                             Products in the order
                           </h3>
                           <div className="space-y-3">
-                            {order.products.map((product) => (
+                            {order.items.map((product) => (
                               <div
                                 key={product.id}
                                 className="flex items-center gap-4"
                               >
                                 <img
-                                  src={dfImage}
-                                  alt={product.name}
+                                  src={
+                                    `http://localhost:3000/uploads/${product.image_url}` ||
+                                    dfImage
+                                  }
+                                  alt={product.product_name}
                                   className="w-16 h-16 object-center object-cover rounded border border-gray-200"
                                 />
                                 <div className="flex-1">
-                                  <p className="font-medium">{product.name}</p>
+                                  <p className="font-medium">
+                                    {product.product_name}
+                                  </p>
                                   <p className="text-sm text-gray-600">
                                     Quantità: {product.quantity}
                                   </p>
                                 </div>
                                 <p className="font-medium">
-                                  €{product.price.toFixed(2)}
+                                  €{Number(product.price).toFixed(2)}
                                 </p>
                               </div>
                             ))}

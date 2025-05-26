@@ -95,7 +95,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         {product.name}
       </span>
-      <p className="text-[#54545498]">{product.description}</p>
+      <p className="text-[#54545498] truncate">{product.description}</p>
       <span>{product.price} EUR</span>
       <HiArrowSmallRight
         className="absolute text-black text-[30px] font-semibold right-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
@@ -103,12 +103,18 @@ export default function ProductCard({ product }: ProductCardProps) {
           e.stopPropagation();
           instanceRef.current?.next();
         }}
+        style={{
+          display: product.Images.length > 1 ? "block" : "none",
+        }}
       />
       <HiArrowSmallLeft
         className="absolute text-black text-[30px] font-semibold left-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           instanceRef.current?.prev();
+        }}
+        style={{
+          display: product.Images.length > 1 ? "block" : "none",
         }}
       />
     </div>

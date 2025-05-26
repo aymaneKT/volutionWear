@@ -4,7 +4,7 @@ import logo2 from "../VID-IMG/LOGO2.png";
 import Hamburger from "hamburger-react";
 import { useState } from "react";
 import Cart from "./Cart";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 export default function Header() {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isOpenCartMenu, setIsOpenCartMenu] = useState<boolean>(false);
@@ -35,7 +35,6 @@ export default function Header() {
 
   return (
     <>
-    
       <ToastContainer />
       <Cart
         isOpenCartMenu={isOpenCartMenu}

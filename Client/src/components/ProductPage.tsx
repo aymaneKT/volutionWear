@@ -15,6 +15,7 @@ import axios from "axios";
 import Loader from "./Loader";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
+import { toast } from "react-toastify";
 interface JwtPayload extends BaseJwtPayload {
   id?: number;
 }
@@ -76,16 +77,109 @@ export default function ProductPage() {
     setProductDetails({ ...productDetails, images: updatedImages });
   };
   const getReviews = (productId: Number) => {
+    setIsLoading(true);
     axios
       .get(`http://localhost:3000/api/product/${productId}`)
       .then((res) => {
         setProductDetails(res.data.product);
+        console.log(res.data.product);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => {
         setIsLoading(false);
+      });
+  };
+
+  const addProductToCart = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      // Recupera il carrello esistente, oppure inizializza un array vuoto
+      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      // Controlla se il prodotto è già nel carrello
+      const existingItemIndex = existingCart.findIndex(
+        (item:any) => item.productId === productId
+      );
+
+      if (existingItemIndex !== -1) {
+        // Se esiste, aggiorna la quantità
+        existingCart[existingItemIndex].quantity += quantity;
+
+        toast.success("Quantità aggiornata nel carrello", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      } else {
+        // Altrimenti, aggiungi un nuovo prodotto
+        existingCart.push({ productId, quantity , price: productDetails?.price , name: productDetails?.name , images: productDetails?.images.find((f) => f.is_main == 1)?.image_url });
+
+        toast.success("Prodotto aggiunto al carrello", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+
+      // Salva il nuovo carrello aggiornato
+      localStorage.setItem("cart", JSON.stringify(existingCart));
+
+      // Esci dalla funzione (non loggato, quindi non si prosegue con l’API)
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios
+      .post(
+        "http://localhost:3000/api/order",
+        {
+          productId: productId,
+          quantity: quantity,
+          price: productDetails?.price,
+        },
+        config
+      )
+      .then((res) => {
+        toast.success(res.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      })
+      .catch((err) => {
+        toast.error(
+          err.response.data.message || "Error adding product to cart",
+          {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+        console.error("Error adding product to cart:", err);
       });
   };
   useEffect(() => {
@@ -203,6 +297,20 @@ export default function ProductPage() {
             <p className="text-gray-600 leading-relaxed">
               {productDetails?.description}
             </p>
+            {/* Stock */}
+            <div className="flex items-center gap-3">
+              <span
+                className={`${
+                  productDetails && productDetails.stock > 0
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {productDetails && productDetails.stock > 0
+                  ? `${productDetails?.stock} in stock`
+                  : "Out of stock"}
+              </span>
+            </div>
 
             {/* Quantity */}
             <div className="flex items-center gap-3">
@@ -210,7 +318,7 @@ export default function ProductPage() {
               <div className="flex border border-gray-300 rounded">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3 py-1 border-r border-gray-300"
+                  className="px-3 py-1 border-r border-gray-300 cursor-pointer"
                 >
                   <ChevronDown size={16} />
                 </button>
@@ -218,8 +326,16 @@ export default function ProductPage() {
                   {quantity}
                 </span>
                 <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-3 py-1 border-l border-gray-300"
+                  onClick={() => {
+                    if (
+                      productDetails &&
+                      productDetails.stock > 0 &&
+                      quantity < productDetails.stock
+                    ) {
+                      setQuantity(quantity + 1);
+                    }
+                  }}
+                  className="px-3 py-1 border-l border-gray-300 cursor-pointer"
                 >
                   <ChevronUp size={16} />
                 </button>
@@ -228,7 +344,11 @@ export default function ProductPage() {
 
             {/* Action Buttons */}
             <div className="flex gap-4 mt-2">
-              <button className="bg-black cursor-pointer text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors">
+              <button
+                onClick={addProductToCart}
+                disabled={productDetails && productDetails.stock == 0}
+                className="bg-black cursor-pointer text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+              >
                 <ShoppingCart size={18} />
                 <span>ADD TO CART</span>
               </button>

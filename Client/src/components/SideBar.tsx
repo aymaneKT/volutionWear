@@ -1,6 +1,5 @@
 import { MdOutlineDashboard } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
-import { FaChartBar } from "react-icons/fa";
 import { useContext } from "react";
 import { MdOutlineLogin } from "react-icons/md";
 import { LuPackage } from "react-icons/lu";
@@ -15,7 +14,6 @@ export default function SideBar() {
   const listSideBar = [
     { name: "Dashboard", icon: <MdOutlineDashboard /> },
     { name: "Orders", icon: <FaShoppingCart /> },
-    // { name: "Statistics", icon: <FaChartBar /> },
     { name: "Products", icon: <LuPackage /> },
     { name: "Offers", icon: <MdOutlineLocalOffer /> },
   ];
