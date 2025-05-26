@@ -15,7 +15,7 @@ interface JwtPayload extends BaseJwtPayload {
   is_seller?: boolean | string;
 }
 export default function SellerDashbord() {
-  const [section, setSection] = useState<string>("Dashboard");
+  const [section, setSection] = useState<string>("Profile");
   const [isLoading, setLoading] = useState<boolean>(true);
   const [time, setTime] = useState<string>("");
 

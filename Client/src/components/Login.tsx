@@ -38,9 +38,9 @@ export default function Login() {
 
         setTimeout(() => {
           if (res.data.user.is_seller == 1) {
-            navigate("/admin");
-          } else {
             navigate("/profile");
+          } else {
+            navigate("/shop");
           }
           window.location.reload();
         }, 2000);

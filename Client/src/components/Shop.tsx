@@ -112,7 +112,7 @@ export default function Shop() {
       });
   };
   useEffect(() => {
-    loadMore(); // carica la prima pagina
+    loadMore(); 
   }, []);
   return (
     <>
@@ -171,7 +171,7 @@ export default function Shop() {
             <IoFilterSharp />
             Filter
           </button>
-          <div className="flex gap-3">
+          <div className=" gap-3 hidden max-[480px]:flex">
             <LuLayoutGrid
               onClick={() => {
                 setLayout("viewLayout4");
