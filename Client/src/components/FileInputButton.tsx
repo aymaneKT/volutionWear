@@ -3,8 +3,15 @@ import { UserType } from "./Register";
 type FileInputButtonType = {
   user: UserType;
   setUser: (value: UserType) => void;
+  previewImage: string | null;
+  setPreviewImage: (value: string | null) => void;
 };
-const FileInputButton = ({ user, setUser }: FileInputButtonType) => {
+const FileInputButton = ({
+  user,
+  setUser,
+
+  setPreviewImage,
+}: FileInputButtonType) => {
   return (
     <div className="flex items-center">
       <label
@@ -42,6 +49,7 @@ const FileInputButton = ({ user, setUser }: FileInputButtonType) => {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           if (e.target.files && e.target.files[0]) {
             setUser({ ...user, imageProfile: e.target.files[0] });
+            setPreviewImage(URL.createObjectURL(e.target.files[0]));
           }
         }}
         id="fileInput"

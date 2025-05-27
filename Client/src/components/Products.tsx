@@ -155,16 +155,12 @@ export default function Products() {
                       <img
                         src={
                           product.imgs && product.imgs.length > 0
-<<<<<<< HEAD
                             ? `http://localhost:3000/uploads/${
                                 product.imgs.find(
                                   (img) =>
                                     img.is_main === true || img.is_main == "1"
                                 )?.image_url 
                               }`
-=======
-                            ? `http://localhost:3000/uploads/${product.imgs.find((i) => i.is_main == "1")?.image_url || product.imgs[0].image_url}`
->>>>>>> 01f23aa1194eb73f8177b3f46e0f3955083dcb5b
                             : img
                         }
                         alt="Product Img"

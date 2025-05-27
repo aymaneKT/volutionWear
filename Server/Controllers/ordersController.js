@@ -12,7 +12,6 @@ import {
 export const addProductToCart = async (req, res) => {
   try {
     const { productId, quantity, price } = req.body;
-
     if (!productId || !quantity || quantity <= 0) {
       return res.status(400).json({ error: "Invalid product ID or quantity" });
     }
@@ -21,19 +20,27 @@ export const addProductToCart = async (req, res) => {
 
     // Verifica se esiste un ordine PENDING per l'utente
     let existOrder = await existPendingOrder(userId);
+
     let orderId = existOrder.exist
       ? existOrder.id
       : await createPendingOrder(userId);
 
     // Verifica se il prodotto è già presente nell'ordine
     const existingProdInOrder = await chekcOrderItemExist(orderId, productId);
-
-    if (existingProdInOrder) {
-      // Se esiste, aggiorna la quantità
+    if (existingProdInOrder.length > 0) {
       const updatedQuantity =
         Number(existingProdInOrder[0].quantity) + Number(quantity);
 
-      await updateOrderItem(orderId, productId, updatedQuantity);
+      const isUpdated = await updateOrderItem(
+        orderId,
+        productId,
+        updatedQuantity
+      );
+      if (!isUpdated) {
+        return res.status(500).json({
+          error: "Failed to update product quantity in order",
+        });
+      }
       return res.status(200).json({
         success: true,
         message: "Product quantity updated successfully",
@@ -64,23 +71,27 @@ export const getUserOrders = async (req, res) => {
       return res.status(404).json({ message: "No orders found for this user" });
     }
 
+    // 2. Carica articoli e calcola totale per ogni ordine
     const orderWithItems = await Promise.all(
       orders.map(async (order) => {
-        const orderItems = await getOrderItems(order.id);
+        const items = await getOrderItems(order.id);
+
+        const total = items.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+
+        await editOrder(order.id, total);
+
         return {
           ...order,
-          items: orderItems,
+          items,
+          total,
         };
       })
     );
-    const TotalAmout = orderWithItems.reduce((acc, order) => {
-      const orderTotal = order.items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
-      return acc + orderTotal;
-    }, 0);
-    await editOrder(orderWithItems[0].id, TotalAmout);
+
+    // 4. Risposta
     return res.status(200).json({
       success: true,
       orders: orderWithItems,

@@ -46,14 +46,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div ref={sliderRef} className="keen-slider">
         {product.Images.length ? (
           product.Images.map((image, i) => (
-<<<<<<< HEAD
-            <img
-              key={i}
-              className="keen-slider__slide aspect-[3/4] object-center object-cover"
-              src={`http://localhost:3000/uploads/${image.image_url}`}
-              alt={`Product image ${i + 1}`}
-            />
-=======
+
             <div key={i} className="keen-slider__slide aspect-[3/4] relative">
               <img
                 src={`http://localhost:3000/uploads/${image.image_url}`}
@@ -81,7 +74,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                 }}
               />
             </div>
->>>>>>> 01f23aa1194eb73f8177b3f46e0f3955083dcb5b
           ))
         ) : (
           <img
@@ -127,29 +119,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </span>
       <p className="text-[#54545498] truncate">{product.description}</p>
       <span>{product.price} EUR</span>
-<<<<<<< HEAD
-      <HiArrowSmallRight
-        className="absolute text-black text-[30px] font-semibold right-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          instanceRef.current?.next();
-        }}
-        style={{
-          display: product.Images.length > 1 ? "block" : "none",
-        }}
-      />
-      <HiArrowSmallLeft
-        className="absolute text-black text-[30px] font-semibold left-1 top-[45%] p-1 bg-white rounded-full cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          instanceRef.current?.prev();
-        }}
-        style={{
-          display: product.Images.length > 1 ? "block" : "none",
-        }}
-      />
-=======
->>>>>>> 01f23aa1194eb73f8177b3f46e0f3955083dcb5b
+
     </div>
   );
 }

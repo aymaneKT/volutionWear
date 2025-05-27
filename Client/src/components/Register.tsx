@@ -20,6 +20,8 @@ export type UserType = {
 
 export default function Register() {
   const [isPasswordVisible, setPasswordVisibility] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const [user, setUser] = useState<UserType>({
     username: "",
     name: "",
@@ -71,7 +73,7 @@ export default function Register() {
         });
         setTimeout(() => {
           if (user.isSeller) {
-            navigate("/admin");
+            navigate("/profile");
           } else {
             navigate("/home");
           }
@@ -91,7 +93,7 @@ export default function Register() {
   return (
     <>
       <ToastContainer />
-      <div className="flex bg-[#F8F8F8]">
+      <div className="flex bg-[#F8F8F8] ">
         {/* COLONNA SINISTRA - FORM */}
 
         <div className="flex flex-col py-4 h-[100vh]  font-['Josefin_Sans'] min-[993px]:min-w-[500px] max-[480px]:h-auto max-[480px]:py-4 justify-center grow-1 items-center max-w-[100%] max-[992px]:w-[100%] max-[992px]:px-12 max-[480px]:px-0">
@@ -169,7 +171,7 @@ export default function Register() {
             </div>
 
             {/* Password con toggle visibilità */}
-            <div className="flex flex-col mb-5 gap-1.5 relative">
+            <div className="flex flex-col  gap-1.5 relative">
               <label htmlFor="password" className="font-medium">
                 Password
               </label>
@@ -194,7 +196,24 @@ export default function Register() {
               </div>
             </div>
 
-            <FileInputButton user={user} setUser={setUser} />
+            <div className="flex  flex-st  gap-5">
+              <FileInputButton
+                user={user}
+                setUser={setUser}
+                previewImage={previewImage}
+                setPreviewImage={setPreviewImage}
+              />
+              {previewImage && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Image preview:</p>
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="max-w-[70px] object-cover object-center rounded-md border"
+                  />
+                </div>
+              )}
+            </div>
 
             {/* Seller toggle */}
             <div className="flex items-center gap-2 my-1">

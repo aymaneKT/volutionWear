@@ -53,14 +53,31 @@ export const getOrders = async (userId) => {
 
 export const getOrderItems = async (orderId) => {
   try {
-    const query =
-      "SELECT orders.id, products.name AS product_name, products.price, categories.name AS category_name, order_items.quantity, product_images.image_url FROM products JOIN categories ON products.category_id = categories.id JOIN order_items ON order_items.product_id = products.id JOIN product_images ON product_images.product_id = products.id JOIN orders ON orders.id = order_items.order_id WHERE product_images.is_main = 1 AND orders.id = ?";
+    const query = `
+      SELECT 
+        orders.id AS order_id,
+        products.name AS product_name,
+        products.price,
+        order_items.quantity,
+        (products.price * order_items.quantity) AS total_price,
+        categories.name AS category_name,
+        product_images.image_url
+      FROM order_items
+      INNER JOIN products ON order_items.product_id = products.id
+      LEFT JOIN categories ON products.category_id = categories.id
+      LEFT JOIN product_images ON product_images.product_id = products.id AND product_images.is_main = 1
+      INNER JOIN orders ON order_items.order_id = orders.id
+      WHERE orders.id = ?
+    `;
+
     const [rows] = await connection.query(query, [orderId]);
     return rows;
   } catch (error) {
+    console.error("Error in getOrderItems:", error);
     throw new Error("Error fetching order items: " + error.message);
   }
 };
+
 export const editOrder = async (orderId, TotalAmout) => {
   try {
     const query = "UPDATE orders SET total_amount = ? WHERE id = ?";
@@ -94,3 +111,4 @@ export const updateOrderItem = async (orderId, productId, quantity) => {
     throw new Error("Error updating order item: " + error.message);
   }
 };
+

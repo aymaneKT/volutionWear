@@ -83,10 +83,6 @@ export default function ProductPage() {
       .then((res) => {
         setProductDetails(res.data.product);
         console.log(res.data.product);
-<<<<<<< HEAD
-        setIsLoading(false);
-=======
->>>>>>> 01f23aa1194eb73f8177b3f46e0f3955083dcb5b
       })
       .catch((err) => {
         console.log(err);
@@ -98,50 +94,6 @@ export default function ProductPage() {
 
   const addProductToCart = () => {
     const token = localStorage.getItem("token");
-
-    if (!token) {
-      // Recupera il carrello esistente, oppure inizializza un array vuoto
-      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      // Controlla se il prodotto è già nel carrello
-      const existingItemIndex = existingCart.findIndex(
-        (item:any) => item.productId === productId
-      );
-
-      if (existingItemIndex !== -1) {
-        // Se esiste, aggiorna la quantità
-        existingCart[existingItemIndex].quantity += quantity;
-
-        toast.success("Quantità aggiornata nel carrello", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      } else {
-        // Altrimenti, aggiungi un nuovo prodotto
-        existingCart.push({ productId, quantity , price: productDetails?.price , name: productDetails?.name , images: productDetails?.images.find((f) => f.is_main == 1)?.image_url });
-
-        toast.success("Prodotto aggiunto al carrello", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-
-      // Salva il nuovo carrello aggiornato
-      localStorage.setItem("cart", JSON.stringify(existingCart));
-
-      // Esci dalla funzione (non loggato, quindi non si prosegue con l’API)
-      return;
-    }
 
     const config = {
       headers: {
@@ -300,20 +252,7 @@ export default function ProductPage() {
             <p className="text-gray-600 leading-relaxed">
               {productDetails?.description}
             </p>
-            {/* Stock */}
-            <div className="flex items-center gap-3">
-              <span
-                className={`${
-                  productDetails && productDetails.stock > 0
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
-              >
-                {productDetails && productDetails.stock > 0
-                  ? `${productDetails?.stock} in stock`
-                  : "Out of stock"}
-              </span>
-            </div>
+            
 
             {/* Quantity */}
             <div className="flex items-center gap-3">
@@ -332,7 +271,6 @@ export default function ProductPage() {
                   onClick={() => {
                     if (
                       productDetails &&
-<<<<<<< HEAD
                       productDetails.stock > 0 &&
                       quantity < productDetails.stock
                     ) {
@@ -340,14 +278,6 @@ export default function ProductPage() {
                     }
                   }}
                   className="px-3 py-1 border-l border-gray-300 cursor-pointer"
-=======
-                      productDetails?.stock > 0 &&
-                      quantity < productDetails?.stock
-                    )
-                      setQuantity(quantity + 1);
-                  }}
-                  className="px-3 py-1 border-l border-gray-300"
->>>>>>> 01f23aa1194eb73f8177b3f46e0f3955083dcb5b
                 >
                   <ChevronUp size={16} />
                 </button>

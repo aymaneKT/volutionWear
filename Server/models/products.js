@@ -138,9 +138,13 @@ export const addProductWithImages = async (req, res) => {
     const { name, description, price, stock, categoryId } = req.body;
 
     if (!req.files || req.files.length === 0)
-      return res.status(400).json({ success: false, message: "No images uploaded" });
+      return res
+        .status(400)
+        .json({ success: false, message: "No images uploaded" });
 
-    const invalidFile = req.files.find(file => !file.mimetype.startsWith("image/"));
+    const invalidFile = req.files.find(
+      (file) => !file.mimetype.startsWith("image/")
+    );
     if (invalidFile) {
       return res.status(403).json({
         success: false,
@@ -149,7 +153,13 @@ export const addProductWithImages = async (req, res) => {
     }
 
     // STEP 1: crea prodotto
-    const productId = await addproduct(name, description, price, stock, categoryId);
+    const productId = await addproduct(
+      name,
+      description,
+      price,
+      stock,
+      categoryId
+    );
 
     // STEP 2: salva immagini
     const imagesQuantity = await HowManyImages(productId);
@@ -176,9 +186,28 @@ export const addProductWithImages = async (req, res) => {
       product_id: productId,
       images: await getImages(productId),
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const deleteProductFromOrder = async (productId) => {
+  try {
+    const query = "DELETE FROM order_items WHERE product_id = ?";
+    await connection.query(query, [productId]);
+    return;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getcategories = async () => {
+  try {
+    const query = "SELECT * FROM categories";
+    const [rows] = await connection.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error("Error fetching categories: " + error.message);
   }
 };

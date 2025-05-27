@@ -83,3 +83,12 @@ export const isOwnerImage = async (user_id, product_id) => {
     throw error;
   }
 };
+
+export const deleteAllImagesForProduct = async (product_id) => {
+  try {
+    const query = "DELETE FROM product_images WHERE product_id = ?";
+    await connection.query(query, [product_id]);
+  } catch (error) {
+    throw error;
+  }
+};
