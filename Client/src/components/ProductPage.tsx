@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Header from "./Header";
 import pp from "../VID-IMG/No_picture_available.png";
 import {
@@ -16,6 +16,7 @@ import Loader from "./Loader";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
 import { toast } from "react-toastify";
+import { CartContext } from "@/Contexts/CartContext";
 interface JwtPayload extends BaseJwtPayload {
   id?: number;
 }
@@ -91,7 +92,11 @@ export default function ProductPage() {
         setIsLoading(false);
       });
   };
-
+  const context = useContext(CartContext);
+  if (!context) {
+    return null;
+  }
+  const { cart, setCart } = context;
   const addProductToCart = () => {
     const token = localStorage.getItem("token");
 
@@ -195,7 +200,7 @@ export default function ProductPage() {
                 productDetails?.images.find((f) => f.is_main == 1)?.image_url
               }`}
               alt="Product Image"
-              className="w-full max-w-[700px] object-cover rounded-md"
+              className="w-[500px] h-[500px] object-center object-cover rounded-md"
             />
 
             {/* Thumbnails */}
@@ -208,7 +213,7 @@ export default function ProductPage() {
                       handleImageClick(e.image_id);
                     }}
                     key={i}
-                    className={`w-16 h-16 border-2 rounded-md overflow-hidden cursor-pointer ${
+                    className={`w-16 h-16 object-cover border-2 rounded-md overflow-hidden cursor-pointer ${
                       i === 0 ? "border-black" : "border-gray-200"
                     }`}
                   >
@@ -252,7 +257,6 @@ export default function ProductPage() {
             <p className="text-gray-600 leading-relaxed">
               {productDetails?.description}
             </p>
-            
 
             {/* Quantity */}
             <div className="flex items-center gap-3">

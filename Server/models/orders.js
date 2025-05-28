@@ -5,7 +5,7 @@ export const existPendingOrder = async (userId) => {
     const query = `SELECT * FROM orders WHERE user_id = ? AND status = 'pending' LIMIT 1`;
     const [rows] = await connection.query(query, [userId]);
 
-    return { exist: rows.length > 0, id: rows[0].id };
+    return { exist: rows.length > 0, id: rows.length > 0 ? rows[0].id : null };
   } catch (error) {
     throw new Error("Error checking pending orders: " + error.message);
   }
@@ -55,7 +55,8 @@ export const getOrderItems = async (orderId) => {
   try {
     const query = `
       SELECT 
-        orders.id AS order_id,
+      order_items.product_id AS id,
+        
         products.name AS product_name,
         products.price,
         order_items.quantity,
@@ -112,3 +113,12 @@ export const updateOrderItem = async (orderId, productId, quantity) => {
   }
 };
 
+export const deleteOrderItem = async (orderId, productId) => {
+  try {
+    const query = `DELETE FROM order_items WHERE order_id = ? AND product_id = ?`;
+    const [result] = await connection.query(query, [orderId, productId]);
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw new Error("Error deleting order item: " + error.message);
+  }
+};

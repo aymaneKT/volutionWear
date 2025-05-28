@@ -2,9 +2,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../VID-IMG/LOGO.png";
 import logo2 from "../VID-IMG/LOGO2.png";
 import Hamburger from "hamburger-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Cart from "./Cart";
 import { ToastContainer } from "react-toastify";
+import { CartContext, Order } from "@/Contexts/CartContext";
 export default function Header() {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isOpenCartMenu, setIsOpenCartMenu] = useState<boolean>(false);
@@ -32,6 +33,14 @@ export default function Header() {
     navigate("/");
     window.location.reload();
   };
+  const context = useContext(CartContext);
+  if (!context) {
+    return null;
+  }
+  const { cart } = context;
+  const pendingCartItems: Order[] = cart.filter(
+    (item: Order) => item.status === "pending"
+  );
 
   return (
     <>
@@ -134,7 +143,7 @@ export default function Header() {
               isBlackTextHeader ? "border-black" : "border-white"
             } flex justify-center items-center pt-1 cursor-pointer rounded-[8px] `}
           >
-            7
+            {pendingCartItems[0]?.items?.length}
           </div>
           <div
             onClick={() => {

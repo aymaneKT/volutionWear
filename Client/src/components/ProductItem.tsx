@@ -24,33 +24,38 @@ export type ProductType = {
   imgs: imageType[];
 };
 
+type categoryType = {
+  id: number;
+  name: string;
+  description: string;
+};
 export default function ProductItem(props: ProductItemTypeProps) {
   const { isOpenProductInfo, setIsOpenMenuInfo } = props;
   const [isOpenDeleteProduct, setIsOpenDeleteProduct] =
     useState<boolean>(false);
-  const [categories, setCategories] = useState<any[]>([
-    { id: "17", name: "Women's Clothing" },
-    { id: "18", name: "Men's Clothing" },
-    { id: "19", name: "Shoes" },
-    { id: "20", name: "Bags & Purses" },
-    { id: "21", name: "Jewelry & Accessories" },
-    { id: "22", name: "Kids & Baby" },
-    { id: "23", name: "Beauty Products" },
-    { id: "24", name: "Home & Living" },
-    { id: "25", name: "Vintage" },
-    { id: "26", name: "Luxury & Designer" },
-    { id: "27", name: "Sportswear" },
-    { id: "28", name: "Plus Size" },
-    { id: "29", name: "Maternity" },
-    { id: "30", name: "Swimwear" },
-    { id: "31", name: "Underwear & Lingerie" },
-  ]);
-
+  const [categories, setCategories] = useState<categoryType[]>([]);
 
   const getCategories = () => {
-  }
+    axios
+      .get("http://localhost:3000/api/category")
+      .then((res) => {
+        setCategories(res.data.categories);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+  };
 
   useEffect(() => {
+    getCategories();
     document.body.style.overflow = isOpenProductInfo ? "hidden" : "visible";
     if (props.productItem.productId != null) {
       setProduct({
@@ -172,7 +177,7 @@ export default function ProductItem(props: ProductItemTypeProps) {
 
   return (
     <>
-      z
+      
       <DeleteProductModal
         isOpen={isOpenDeleteProduct}
         setIsOpen={setIsOpenDeleteProduct}
@@ -274,9 +279,9 @@ export default function ProductItem(props: ProductItemTypeProps) {
                   style={{
                     display:
                       props.productItem.productId != null ||
-                      imagePreview.length == 0
-                        ? "flex"
-                        : "none",
+                      imagePreview.length > 0
+                        ? "none"
+                        : "flex",
                   }}
                   className="h-[100px] w-[200px] flex flex-col justify-center items-center border-2 border-dashed border-gray-300 bg-black p-6 rounded-[10px] shadow-[0px_48px_35px_-48px_#e8e8e8] cursor-pointer"
                 >

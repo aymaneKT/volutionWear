@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   User,
   Package,
@@ -22,6 +22,7 @@ import axios from "axios";
 import Loader from "./Loader";
 import { toast, ToastContainer } from "react-toastify";
 import NotFoundPage from "./NotFoundPage";
+import { CartContext } from "@/Contexts/CartContext";
 type userType = {
   id: number;
   username: string;
@@ -66,12 +67,18 @@ export default function UserProfile() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [activeOrderDetails, setActiveOrderDetails] = useState(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [Userorders, setUserOrders] = useState<Order[]>([]);
+  // const [Userorders, setUserOrders] = useState<Order[]>([]);
   const [password, setPassword] = useState<passwordType>({
     currentPassword: "",
     newPassword: "",
     newPassword2: "",
   });
+  const context = useContext(CartContext);
+  if (!context) {
+    // Se il contesto è null (cioè non c'è provider), evita l'errore
+    return null; // o un messaggio di fallback
+  }
+  const { cart, setCart } = context;
   const [user, setUser] = useState<userType>({
     id: 0,
     username: "",
@@ -253,42 +260,32 @@ export default function UserProfile() {
       if (id) getUser(id);
     }
   }, []);
-  const getOrders = () => {
-    setIsLoading(true);
-    axios
-      .get(`http://localhost:3000/api/orders`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setUserOrders(res.data.orders);
-      })
-      .catch((e) => {
-        console.log(e);
-        toast.error("Error fetching orders!", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-  useEffect(() => {
-    if (token) {
-      const decoded = jwtDecode<JwtPayload>(token);
-      const { id } = decoded;
-      if (id) getOrders();
-    }
-  }, []);
+  // const getOrders = () => {
+  //   setIsLoading(true);
+  //   axios
+  //     .get(`http://localhost:3000/api/orders`, {
+  //       headers: {
+  //         Authorization: `Bearer ` + token,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       setUserOrders(res.data.orders);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
+  // useEffect(() => {
+  //   if (token) {
+  //     const decoded = jwtDecode<JwtPayload>(token);
+  //     const { id } = decoded;
+  //     if (id) getOrders();
+  //   }
+  // }, []);
 
   const toggleOrderDetails = (orderId: any) => {
     if (activeOrderDetails === orderId) {
@@ -559,7 +556,7 @@ export default function UserProfile() {
                 <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
                 <div className="space-y-4">
-                  {Userorders.map((order) => (
+                  {cart.map((order: Order) => (
                     <div
                       key={order.id}
                       className="border border-gray-200 rounded-lg overflow-hidden"

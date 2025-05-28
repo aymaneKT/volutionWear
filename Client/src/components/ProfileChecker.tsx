@@ -11,29 +11,28 @@ type DecodedToken = {
 };
 
 export default function ProfileChecker() {
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isSeller, setIsSeller] = useState<boolean | null>(null); 
   const navigate = useNavigate();
   const { setSection } = useContext(SectionContext);
-  const CheckUserIfIsSeller = () => {
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
     }
-    const decodedToken = jwtDecode<DecodedToken>(token);
-    if (decodedToken.is_seller =="0" || decodedToken.is_seller === false) {
-      setIsAdmin(false);
-      return;
+    try {
+      const decodedToken = jwtDecode<DecodedToken>(token);
+      const sellerStatus =
+        decodedToken.is_seller == "1" || decodedToken.is_seller === true;
+      setIsSeller(sellerStatus);
+      if (sellerStatus) {
+        setSection("Profile");
+      }
+    } catch (error) {
+      navigate("/login");
     }
-    if (decodedToken.is_seller == "1" || decodedToken.is_seller === true) {
-      setSection("Profile");
-      setIsAdmin(true);
-      return;
-    }
-  };
-  useEffect(() => {
-    CheckUserIfIsSeller();
-  }, []);
+  }, [navigate, setSection]);
 
-  return isAdmin ? <SellerDashbord /> : <UserProfile />;
+  return isSeller ? <SellerDashbord /> : <UserProfile />;
 }

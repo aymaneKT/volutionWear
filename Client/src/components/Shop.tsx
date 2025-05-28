@@ -101,8 +101,10 @@ export default function Shop() {
       .get(`http://localhost:3000/api/products?page=${page}`)
       .then((res) => {
         setPage((prev) => prev + 1);
-        setProducts((prevProducts) => [...prevProducts, ...res.data.data]);
+        setProducts(res.data.data);
+
         sethasMore(res.data.currentPage < res.data.totalPages);
+        console.log(res.data.data);
       })
       .catch((err) => {
         sethasMore(false);
@@ -112,7 +114,7 @@ export default function Shop() {
       });
   };
   useEffect(() => {
-    loadMore(); 
+    loadMore();
   }, []);
   return (
     <>
@@ -124,7 +126,6 @@ export default function Shop() {
             src={Image}
             alt="Image"
             className="object-cover object-[100%_15%] h-[100%] w-[100%]"
-            loading="lazy"
           />
           <div className="absolute text-white bottom-[10%] left-[10%] font-['Josefin_Sans']">
             <h1
@@ -229,33 +230,35 @@ export default function Shop() {
           setIsFilterOpen={setIsFilterOpen}
         />
         {/* Products */}
-        <InfiniteScroll
-          dataLength={products.length}
-          next={loadMore}
-          hasMore={hasMore}
-          loader={
-            <div className="flex justify-center items-center">
-              <Loader isLoading={isLoading} />
-            </div>
-          }
-        >
-          <div
-            style={{ minHeight: "100vh" }}
-            className={`grid  ${
+        <div
+          className="grid px-11 my-10 gap-x-6 font-['Josefin_Sans'] gap-y-5"
+          style={{
+            minHeight: "100vh",
+            gridTemplateColumns:
               layout === "viewLayout4"
-                ? "grid-cols-[repeat(auto-fill,minmax(300px,auto))]"
-                : "grid-cols-2"
-            }  px-11 my-10 gap-x-6 font-['Josefin_Sans'] gap-y-5`}
-          >
-            {products
-              .filter((product) =>
-                product.name.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .map((product: productType, i: number) => (
-                <ProductCard key={i} product={product} />
-              ))}
+                ? "repeat(auto-fill, minmax(300px, auto))"
+                : "repeat(2, 1fr)",
+          }}
+        >
+          {products
+            .filter((product) =>
+              product.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((product: productType, i: number) => (
+              <ProductCard key={i} product={product} />
+            ))}
+        </div>
+        {hasMore && (
+          <div className="flex justify-center my-6">
+            <button
+              onClick={loadMore}
+              className="px-6 py-3 text-white bg-black hover:bg-gray-800 transition duration-200"
+            >
+              Load More
+            </button>
           </div>
-        </InfiniteScroll>
+        )}
+
         <HomeFooter />
       </div>
     </>

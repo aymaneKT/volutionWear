@@ -19,4 +19,4 @@ router.put("/product", [auth], editProduct);
 router.get("/products/:userId", getProductsForAdmin);
 router.get("/products", PaginatedListProducts);
 router.get("/product/:id", getProduct);
-router.get("/categories", getCategories);
+router.get("/category", getCategories);

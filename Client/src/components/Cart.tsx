@@ -1,7 +1,11 @@
 import { IoClose } from "react-icons/io5";
 import { Link } from "react-router";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import img from "C:/Users/ayman/OneDrive/Desktop/img.jpg";
+import { CartContext, OrderItem } from "@/Contexts/CartContext";
+import { Order } from "./UserProfile";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 type CartProps = {
   isOpenCartMenu: boolean;
@@ -9,12 +13,21 @@ type CartProps = {
 };
 
 export default function Cart(props: CartProps) {
+  const context = useContext(CartContext);
+  if (!context) {
+    return null;
+  }
+  const { cart, setCart } = context;
   useEffect(() => {
     props.isOpenCartMenu
       ? (document.body.style.overflow = "hidden")
       : (document.body.style.overflow = "visible");
   }, [props.isOpenCartMenu]);
 
+  const pendingCartItems: Order[] = cart.filter(
+    (item: Order) => item.status === "pending"
+  );
+  console.log(pendingCartItems[0]?.items?.length);
   return (
     <div
       className="fixed top-0 h-screen right-0 bg-[white] w-[400px] z-500000 px-[2rem] max-[700px]:w-full border-l-1"
@@ -25,7 +38,8 @@ export default function Cart(props: CartProps) {
     >
       <div className="flex justify-between items-center p-2.5 mt-6">
         <span className="font-[700] text-[14px] uppercase">
-          YOU HAVE 1 ITEM IN YOUR CART
+          YOU HAVE {pendingCartItems[0]?.items?.length} ITEM{" "}
+          {pendingCartItems[0]?.items?.length > 0 ? "S" : ""} IN YOUR CART
         </span>
         <IoClose
           className="border cursor-pointer text-2xl rounded-[4px]"
@@ -35,34 +49,81 @@ export default function Cart(props: CartProps) {
 
       <div className="overflow-y-auto h-[80%]">
         {/* Static item */}
-        <div className="flex items-center justify-between bg-[#F3F3F3] border-1 my-2">
-          <img
-            src={img}
-            className="w-[100px]"
-            alt="Product"
-          />
-          <div className="flex flex-col items-end gap-2 p-2 text-[13px]">
-            <span>1</span>
-            <span>Sample Item</span>
-            <span>20 €</span>
-            <button className="uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] transition duration-500">
-              Delete
-            </button>
+        {pendingCartItems[0]?.items?.map((item: OrderItem, idx: number) => (
+          <div
+            key={item.id || idx}
+            className="flex items-center justify-between bg-[#F3F3F3] border-1 my-2"
+          >
+            <img
+              src={`http://localhost:3000/uploads/${item.image_url}` || img}
+              className="w-[100px]"
+              alt={item.product_name || "Product"}
+            />
+            <div className="flex flex-col items-end gap-2 p-2 text-[13px]">
+              <span>{item.quantity || 1}</span>
+              <span>{item.product_name || "Item"}</span>
+              <span>{item.price ? `${item.price} €` : "0 €"}</span>
+              <button
+                className="uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] transition duration-500"
+                onClick={() => {
+                  axios
+                    .delete(
+                      `http://localhost:3000/api/order/product/${item.id}`,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                          )}`,
+                        },
+                      }
+                    )
+                    .then(() => {
+                      // Trova l'ordine pending
+                      const updatedCart = cart.map((order : any) => {
+                        if (order.status === "pending") {
+                          return {
+                            ...order,
+                            items: order.items.filter((i:any) => i.id !== item.id),
+                          };
+                        }
+                        return order;
+                      });
+
+                      setCart(updatedCart);
+
+                      toast.success(
+                        `${item.product_name} deleted successfully!`,
+                        {
+                          position: "top-left",
+                          autoClose: 2000,
+                          theme: "light",
+                        }
+                      );
+                    })
+                    .catch((error) => {
+                      console.error("Error deleting item:", error);
+                      toast.error("Error deleting item");
+                    });
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
 
-      {/* Checkout button */}
-      <button className="border-2 absolute w-[85%] bottom-2.5 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200">
-        20 € <span>CHECKOUT</span>
-      </button>
-
-      {/* Continue shopping button */}
-      <Link to="/shop" onClick={() => props.setIsOpenCartMenu(false)}>
-        <button className="border-2 absolute w-[85%] top-17 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200 hidden">
-          CONTINUE SHOPPING
+      {pendingCartItems[0]?.items?.length == 0 ? (
+        <Link to="/shop" onClick={() => props.setIsOpenCartMenu(false)}>
+          <button className="border-2 absolute w-[85%] top-17 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200">
+            CONTINUE SHOPPING
+          </button>
+        </Link>
+      ) : (
+        <button className="border-2 absolute w-[85%] bottom-2.5 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200">
+          {pendingCartItems[0]?.total_amount} € <span>CHECKOUT</span>
         </button>
-      </Link>
+      )}
     </div>
   );
 }
