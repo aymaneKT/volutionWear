@@ -58,6 +58,7 @@ export const getOrderItems = async (orderId) => {
       order_items.product_id AS id,
       products.name AS product_name,
       products.price,
+      products.stock,
       order_items.quantity,
       (products.price * order_items.quantity) AS total_price,
       categories.name AS category_name,

@@ -3,7 +3,9 @@ import { FaCreditCard, FaPaypal, FaApplePay, FaGoogle } from "react-icons/fa";
 import Header from "./Header";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Order, OrderItem } from "@/Contexts/CartContext";
+import { CartContext, Order, OrderItem } from "@/Contexts/CartContext";
+import Loader from "./Loader";
+import { toast, ToastContainer } from "react-toastify";
 
 const CheckoutPage = () => {
   const [couponCode, setCouponCode] = useState("");
@@ -16,9 +18,13 @@ const CheckoutPage = () => {
     cvv: "",
   });
   const [order, setOrder] = useState<Order>();
-
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
-
+  const context = useContext(CartContext);
+  if (!context) {
+    return null;
+  }
+  const { cart, setCart } = context;
   const subtotal =
     order?.items.reduce(
       (acc, item: OrderItem) => acc + Number(item.price) * item.quantity,
@@ -53,33 +59,112 @@ const CheckoutPage = () => {
     }
     // const decoded = jwtDecode<JwtPayload>(token);
     // const { id } = decoded;
-    const config = {
+    const headers = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
     axios
-      .get("http://localhost:3000/api/orders", config)
+      .get("http://localhost:3000/api/orders", headers)
       .then((response) => {
         const order = response.data.orders;
         const pandingOrder = order.find(
           (order: Order) => order.status === "pending"
         );
         setOrder(pandingOrder);
-        // Process the order data as needed
       })
       .catch((error) => {
         console.error("Error fetching order data:", error);
-        // Handle error appropriately
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
   useEffect(() => {
     axiosGetOrderForCheckout();
   }, [navigate]);
 
-  return (
+  const handleCheckout = (e: React.FormEvent) => {
+    if (
+      !formData.cardNumber ||
+      !formData.cardName ||
+      !formData.expiry ||
+      !formData.cvv
+    ) {
+      console.error("Please fill in all credit card details.");
+      toast.error("Please fill in all credit card details.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+      return;
+    }
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in localStorage");
+      navigate("/login");
+      return;
+    }
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios
+      .post("http://localhost:3000/api/order/checkout", {}, config)
+      .then((response) => {
+        console.log("Checkout successful:", response.data);
+        const pendingOrder = cart.find(
+          (order: Order) => order.status === "pending"
+        );
+        if (pendingOrder) {
+          setCart((prevCart: Order[]) =>
+            prevCart.map((order) =>
+              order.status === "pending"
+                ? { ...order, status: "completed" }
+                : order
+            )
+          );
+        }
+        toast.success(response.data.message, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        navigate("/shop");
+      })
+
+      .catch((error) => {
+        console.error("Error during checkout:", error);
+        toast.error(error.response.data.error, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      });
+  };
+
+  return isLoading ? (
+    <Loader isLoading={isLoading} />
+  ) : (
     <>
       <Header />
+      <ToastContainer />
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -244,6 +329,9 @@ const CheckoutPage = () => {
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="MM/YY"
+                        required
+                        pattern="\d{2}/\d{2}"
+                        maxLength={5}
                       />
                     </div>
                     <div>
@@ -264,7 +352,10 @@ const CheckoutPage = () => {
                       />
                     </div>
                   </div>
-                  <button className="w-full cursor-pointer py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mt-6">
+                  <button
+                    onClick={handleCheckout}
+                    className="w-full cursor-pointer py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mt-6"
+                  >
                     Pay {total.toFixed(2)} €
                   </button>
                 </div>

@@ -12,6 +12,7 @@ export interface OrderItem {
   quantity: number;
   category_name: string;
   image_url: string;
+  stock?: number | null;
 }
 
 export interface Order {
@@ -67,7 +68,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     <>
       {/* <Loader isLoading={isLoading} /> */}
       <ToastContainer />
-      <CartContext.Provider value={{ cart, setCart }}>
+      <CartContext.Provider value={{ cart, setCart, refreshOrders: getOrders }}>
         {children}
       </CartContext.Provider>
     </>

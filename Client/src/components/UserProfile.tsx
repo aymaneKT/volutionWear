@@ -78,7 +78,7 @@ export default function UserProfile() {
     // Se il contesto è null (cioè non c'è provider), evita l'errore
     return null; // o un messaggio di fallback
   }
-  const { cart, setCart } = context;
+  const { cart, refreshOrders } = context;
   const [user, setUser] = useState<userType>({
     id: 0,
     username: "",
@@ -259,33 +259,8 @@ export default function UserProfile() {
       const { id } = decoded;
       if (id) getUser(id);
     }
+    refreshOrders();
   }, []);
-  // const getOrders = () => {
-  //   setIsLoading(true);
-  //   axios
-  //     .get(`http://localhost:3000/api/orders`, {
-  //       headers: {
-  //         Authorization: `Bearer ` + token,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setUserOrders(res.data.orders);
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false);
-  //     });
-  // };
-  // useEffect(() => {
-  //   if (token) {
-  //     const decoded = jwtDecode<JwtPayload>(token);
-  //     const { id } = decoded;
-  //     if (id) getOrders();
-  //   }
-  // }, []);
 
   const toggleOrderDetails = (orderId: any) => {
     if (activeOrderDetails === orderId) {
@@ -576,7 +551,7 @@ export default function UserProfile() {
                         <div className="flex items-center gap-4">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              order.status === "Completed"
+                              order.status === "completed"
                                 ? "bg-green-100 text-green-800"
                                 : "bg-blue-100 text-blue-800"
                             }`}

@@ -1,5 +1,5 @@
 import { IoClose } from "react-icons/io5";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useContext, useEffect } from "react";
 import img from "C:/Users/ayman/OneDrive/Desktop/img.jpg";
 import { CartContext, OrderItem } from "@/Contexts/CartContext";
@@ -7,12 +7,15 @@ import { Order } from "./UserProfile";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+
+
 type CartProps = {
   isOpenCartMenu: boolean;
   setIsOpenCartMenu: (value: boolean) => void;
 };
 
 export default function Cart(props: CartProps) {
+  const navigate = useNavigate();
   const context = useContext(CartContext);
   if (!context) {
     return null;
@@ -77,10 +80,16 @@ export default function Cart(props: CartProps) {
       }}
     >
       <div className="flex justify-between items-center p-2.5 mt-6">
-        <span className="font-[700] text-[14px] uppercase">
-          YOU HAVE {pendingCartItems[0]?.items?.length} ITEM{" "}
-          {pendingCartItems[0]?.items?.length > 0 ? "S" : ""} IN YOUR CART
-        </span>
+        {pendingCartItems[0]?.items?.length > 0 ? (
+          <span className="font-[700] text-[14px] uppercase">
+            YOU HAVE {pendingCartItems[0]?.items?.length} ITEM
+            {pendingCartItems[0]?.items?.length > 1 ? "S" : ""} IN YOUR CART
+          </span>
+        ) : (
+          <span className="font-[700] text-[14px] uppercase">
+            YOUR CART IS EMPTY
+          </span>
+        )}
         <IoClose
           className="border cursor-pointer text-2xl rounded-[4px]"
           onClick={() => props.setIsOpenCartMenu(false)}
@@ -120,10 +129,22 @@ export default function Cart(props: CartProps) {
                 <button
                   className="w-6 h-6 flex cursor items-center justify-center border border-gray-400 hover:bg-gray-200 transition duration-200 text-sm font-bold"
                   onClick={() => {
-                    // Aumenta quantità
                     const newQuantity = (item.quantity || 1) + 1;
-                    axiosUpdateQuantity(item, newQuantity);
+
+                    if (newQuantity <= (item.stock ?? 0)) {
+                      axiosUpdateQuantity(item, newQuantity);
+                    } else {
+                        toast.warning(
+                        "You have reached the available stock limit!",
+                        {
+                          position: "top-left",
+                          autoClose: 2000,
+                          theme: "light",
+                        }
+                        );
+                    }
                   }}
+                  disabled={(item.quantity || 1) >= (item.stock ?? 0)}
                 >
                   ▲
                 </button>
@@ -182,14 +203,17 @@ export default function Cart(props: CartProps) {
         ))}
       </div>
 
-      {pendingCartItems[0]?.items?.length == 0 ? (
+      {pendingCartItems[0]?.items?.length == 0 || pendingCartItems[0]?.items?.length == null ? (
         <Link to="/shop" onClick={() => props.setIsOpenCartMenu(false)}>
           <button className="border-2 absolute w-[85%] top-17 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200">
             CONTINUE SHOPPING
           </button>
         </Link>
       ) : (
-        <button className="border-2 absolute w-[85%] bottom-2.5 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200">
+        <button onClick={()=>{
+          navigate("/checkout");
+          props.setIsOpenCartMenu(false);
+        }} className="border-2 absolute w-[85%] bottom-2.5 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200">
           {pendingCartItems[0]?.items?.reduce(
             (total, item: any) =>
               total + (item.price || 0) * (item.quantity || 1),

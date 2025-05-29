@@ -211,3 +211,24 @@ export const getcategories = async () => {
     throw new Error("Error fetching categories: " + error.message);
   }
 };
+
+export const editProductStock = async (productId, quantityToDeduct) => {
+  try {
+    const query = `
+      UPDATE products
+      SET stock = stock - ?
+      WHERE id = ? AND stock >= ?
+    `;
+    const [result] = await connection.query(query, [
+      quantityToDeduct,
+      productId,
+      quantityToDeduct, // controllo che ci sia stock sufficiente
+    ]);
+
+    if (result.affectedRows === 0) {
+      throw new Error("Stock insufficiente o prodotto non trovato");
+    }
+  } catch (error) {
+    throw new Error("Errore nell'aggiornamento dello stock: " + error.message);
+  }
+};

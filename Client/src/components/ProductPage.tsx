@@ -98,56 +98,101 @@ export default function ProductPage() {
   }
   const { cart, setCart } = context;
   const addProductToCart = () => {
-    const updatedCart = cart.map((order: any) => {
-      if (order.status === "pending") {
-        const existingItem = order.items.find(
-          (item: any) => item.id === productId
-        );
-        if (existingItem) {
-          return {
-            ...order,
-            items: order.items.map((item: any) =>
-              item.id === productId
-                ? { ...item, quantity: item.quantity + quantity }
-                : item
-            ),
-          };
-        } else {
-          return {
-            ...order,
-            items: [
-              ...order.items,
-              {
-                id: productId,
-                quantity: quantity,
-                price: productDetails?.price,
-                image_url:
-                  productDetails?.images.find((f) => f.is_main == 1)
-                    ?.image_url || "",
-                product_name: productDetails?.name || "",
-              },
-            ],
-          };
-        }
-      }
-      return order;
-    });
-    setCart(updatedCart);
-
     const token = localStorage.getItem("token");
-    if (!token) return null;
+    if (!token || !productDetails) return;
+
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
+
+    const pendingOrder = cart.find((order: any) => order.status === "pending");
+
+    // Calcola quantità attuale del prodotto nel carrello
+    let currentQtyInCart = 0;
+    if (pendingOrder) {
+      const existingItem = pendingOrder.items.find(
+        (item: any) => item.id === productId
+      );
+      if (existingItem) {
+        currentQtyInCart = existingItem.quantity;
+      }
+    }
+
+    const totalAfterAdd = currentQtyInCart + quantity;
+
+    if (totalAfterAdd > productDetails.stock) {
+      toast.error("The quantity exceeds available stock.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    // Continua con la logica esistente
+    if (pendingOrder) {
+      const updatedCart = cart.map((order: any) => {
+        if (order.status === "pending") {
+          const existingItem = order.items.find(
+            (item: any) => item.id === productId
+          );
+          if (existingItem) {
+            return {
+              ...order,
+              items: order.items.map((item: any) =>
+                item.id === productId
+                  ? { ...item, quantity: item.quantity + quantity }
+                  : item
+              ),
+            };
+          } else {
+            return {
+              ...order,
+              items: [
+                ...order.items,
+                {
+                  id: productId,
+                  quantity: quantity,
+                  price: productDetails.price,
+                  image_url:
+                    productDetails.images.find((f) => f.is_main == 1)
+                      ?.image_url || "",
+                  product_name: productDetails.name,
+                },
+              ],
+            };
+          }
+        }
+        return order;
+      });
+      setCart(updatedCart);
+    } else {
+      const newOrder = {
+        id: Date.now(),
+        status: "pending",
+        items: [
+          {
+            id: productId,
+            quantity: quantity,
+            price: productDetails.price,
+            image_url:
+              productDetails.images.find((f) => f.is_main == 1)?.image_url ||
+              "",
+            product_name: productDetails.name,
+          },
+        ],
+      };
+      setCart([...cart, newOrder]);
+    }
+
     axios
       .post(
         "http://localhost:3000/api/order",
         {
           productId: productId,
           quantity: quantity,
-          price: productDetails?.price,
+          price: productDetails.price,
         },
         config
       )
@@ -155,29 +200,19 @@ export default function ProductPage() {
         toast.success(res.data.message, {
           position: "top-right",
           autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
         });
       })
       .catch((err) => {
         toast.error(
-          err.response.data.message || "Error adding product to cart",
+          err.response?.data?.message || "Error adding product to cart",
           {
             position: "top-right",
             autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
           }
         );
-        console.error("Error adding product to cart:", err);
       });
   };
+
   useEffect(() => {
     if (!showReviewModal) {
       setSelectedReview({ id: null, rating: 0, comment: "" });
@@ -224,7 +259,9 @@ export default function ProductPage() {
         {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-6 mt-4">
           <Link to="/">Home</Link> /<Link to="/shop">Products</Link> /{" "}
-          <span className="font-medium text-gray-800">{productDetails?.name}</span>
+          <span className="font-medium text-gray-800">
+            {productDetails?.name}
+          </span>
         </div>
 
         {/* Product Section */}
@@ -284,9 +321,6 @@ export default function ProductPage() {
                 {productDetails?.price} EUR
               </span>
               <span className="text-lg text-gray-500 line-through"></span>
-              {/* <span className="bg-red-100 text-red-700 px-2 py-1 text-sm font-medium rounded">
-              -25%
-            </span> */}
             </div>
 
             {/* Description */}
@@ -309,12 +343,25 @@ export default function ProductPage() {
                 </span>
                 <button
                   onClick={() => {
-                    if (
-                      productDetails &&
-                      productDetails.stock > 0 &&
-                      quantity < productDetails.stock
-                    ) {
+                    if (!productDetails || productDetails.stock <= 0) return;
+
+                    const pendingOrder = cart.find(
+                      (order: any) => order.status === "pending"
+                    );
+                    const existingItem = pendingOrder?.items.find(
+                      (item: any) => item.id === productId
+                    );
+                    const quantityInCart = existingItem
+                      ? existingItem.quantity
+                      : 0;
+
+                    if (quantity + quantityInCart < productDetails.stock) {
                       setQuantity(quantity + 1);
+                    } else {
+                      toast.warning("Stock limit reached", {
+                        position: "top-right",
+                        autoClose: 2000,
+                      });
                     }
                   }}
                   className="px-3 py-1 border-l border-gray-300 cursor-pointer"
@@ -328,7 +375,7 @@ export default function ProductPage() {
               <span className="text-sm text-gray-600">
                 {productDetails && productDetails?.stock > 0
                   ? "In Stock"
-                  : "Out of Stock"}
+                  : <span className="text-red-500 font-bold">Out of Stock</span>}
               </span>
               {productDetails && productDetails?.stock > 0 && (
                 <span className="text-sm text-green-500">
@@ -338,14 +385,18 @@ export default function ProductPage() {
             </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-2">
-              <button
+                <button
                 onClick={addProductToCart}
-                disabled={productDetails && productDetails.stock == 0}
-                className="bg-black cursor-pointer text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
-              >
+                disabled={!productDetails || productDetails.stock - (cart.find((order: any) => order.status === "pending")?.items.find((item: any) => item.id === productId)?.quantity || 0) <= 0}
+                className={`bg-black text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors ${
+                  (!productDetails || productDetails.stock - (cart.find((order: any) => order.status === "pending")?.items.find((item: any) => item.id === productId)?.quantity || 0) <= 0)
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer"
+                }`}
+                >
                 <ShoppingCart size={18} />
                 <span>ADD TO CART</span>
-              </button>
+                </button>
             </div>
 
             {/* Shipping Info */}

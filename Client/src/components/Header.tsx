@@ -26,7 +26,7 @@ export default function Header() {
   const isRelative =
     location.pathname.toLocaleLowerCase().includes("shop") ||
     location.pathname.toLocaleLowerCase().includes("product") ||
-    location.pathname.toLocaleLowerCase().includes("profile")||
+    location.pathname.toLocaleLowerCase().includes("profile") ||
     location.pathname.toLocaleLowerCase().includes("checkout");
 
   const logOut = () => {
@@ -44,8 +44,9 @@ export default function Header() {
     (item: Order) => item.status === "pending"
   );
 
-  const isCheckoutPage =
-    location.pathname.toLocaleLowerCase().includes("checkout");
+  const isCheckoutPage = location.pathname
+    .toLocaleLowerCase()
+    .includes("checkout");
   return (
     <>
       <ToastContainer />
@@ -110,7 +111,7 @@ export default function Header() {
               </Link>
             </div>
           ) : (
-            <div className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
+            <div  className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
               <Link to="/profile">
                 <button
                   className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${
@@ -136,11 +137,11 @@ export default function Header() {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-4 ml-2 " style={{
-            display: isCheckoutPage ? "none" : "flex"
-          }}>
+        <div className="flex items-center gap-4 ml-2 ">
           <div
-          
+            style={{
+              display: isCheckoutPage ? "none" : "flex",
+            }}
             onClick={() => {
               setIsOpenCartMenu(!isOpenCartMenu);
             }}

@@ -12,6 +12,8 @@ import {
 } from "../models/orders.js";
 import { getUser } from "../models/user.js";
 import { notifySeller } from "./adminActions.js";
+import { transporter } from "../middleware/EmailSender.js";
+import {editProductStock} from "../models/products.js";
 export const addProductToCart = async (req, res) => {
   try {
     const { productId, quantity, price } = req.body;
@@ -131,7 +133,13 @@ export const deleteProductFromCart = async (req, res) => {
     }
 
     // Elimina il prodotto dall'ordine
-
+    // Ricalcola il totale dell'ordine dopo la rimozione del prodotto
+    const items = await getOrderItems(existOrder.id);
+    const total = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    await editOrder(existOrder.id, total);
     const result = await deleteOrderItem(existOrder.id, productId);
     if (!result) {
       return res
@@ -195,6 +203,13 @@ export const checkoutOrder = async (req, res) => {
   try {
     const userId = req.user.id;
 
+    const user = await getUser(userId);
+    if (!user.address || !user.city || !user.cap || !user.country) {
+      return res.status(400).json({
+        error: "Please complete your profile with address ",
+      });
+    }
+
     const pendingOrder = await existPendingOrder(userId);
     if (!pendingOrder.exist) {
       return res.status(404).json({ error: "No pending order found" });
@@ -202,6 +217,11 @@ export const checkoutOrder = async (req, res) => {
 
     const orderId = pendingOrder.id;
     const items = await getOrderItems(orderId);
+     
+    // Aggiorna lo stock di ogni prodotto
+    for (const item of items) {
+      await editProductStock(item.id, item.quantity);
+    }
 
     // Notifica ogni venditore
     for (const item of items) {
@@ -210,7 +230,7 @@ export const checkoutOrder = async (req, res) => {
         await notifySeller(
           seller.id,
           "New Order Notification",
-          `You have received a new order for the product "${item.name}" (ID: ${item.product_id})`,
+          `You have received a new order for the product "${item.product_name}" (ID: ${item.product_id})`,
           orderId
         );
       }
@@ -218,7 +238,136 @@ export const checkoutOrder = async (req, res) => {
 
     // Aggiorna lo stato dell'ordine
     await updateOrderStatus(orderId, "completed");
+    const orderTime = new Date().toLocaleString();
+    // Compose order items details as HTML and plain text
+    const itemsListHtml = items
+      .map(
+        (item) => `
+      <tr>
+      <td style="padding: 8px; border: 1px solid #ddd;">${
+        item.product_name
+      }</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">${item.quantity}</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">€${Number(
+        item.price
+      ).toFixed(2)}</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">€${Number(
+        item.price * item.quantity
+      ).toFixed(2)}</td>
+      </tr>
+    `
+      )
+      .join("");
 
+    const itemsListText = items
+      .map(
+        (item) =>
+          `- ${item.product_name} | Qty: ${item.quantity} | Price: €${Number(
+            item.price
+          ).toFixed(2)} | Subtotal: €${(item.price * item.quantity).toFixed(2)}`
+      )
+      .join("\n");
+
+    const orderTotal = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    const tax = orderTotal * 0.1;
+    const shipping = 15.99;
+    const grandTotal = orderTotal + tax + shipping;
+
+    const message = {
+      from: "volutionwear@gmail.com",
+      to: user.email,
+      subject: "Order Confirmation - Volution Wear",
+      text: `Dear ${user.username},
+
+    Thank you for your order!
+
+    Order details:
+    - Order ID: ${orderId}
+    - Date and Time: ${orderTime}
+    - Shipping Address: ${user.address}, ${user.city}, ${user.cap}, ${
+        user.country
+      }
+
+    Items:
+    ${itemsListText}
+
+    Subtotal: €${orderTotal.toFixed(2)}
+    Tax (10%): €${tax.toFixed(2)}
+    Shipping: €${shipping.toFixed(2)}
+    Total: €${grandTotal.toFixed(2)}
+
+    You will receive another email when your order is shipped.
+
+    Thank you for shopping with Volution Wear!
+
+    – The VolutionWear Team`,
+      html: `
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family: Arial, sans-serif; color: #333;">
+    <h2>Order Confirmation - Volution Wear</h2>
+    <p>Dear <strong>${user.username}</strong>,</p>
+    <p>Thank you for your order!</p>
+    <h4>Order details:</h4>
+    <ul>
+      <li><strong>Order ID:</strong> ${orderId}</li>
+      <li><strong>Date and Time:</strong> ${orderTime}</li>
+      <li><strong>Shipping Address:</strong> ${user.address}, ${user.city}, ${
+        user.cap
+      }, ${user.country}</li>
+    </ul>
+    <h4>Items:</h4>
+    <table style="border-collapse: collapse; width: 100%;">
+      <thead>
+      <tr>
+      <th style="padding: 8px; border: 1px solid #ddd;">Product</th>
+      <th style="padding: 8px; border: 1px solid #ddd;">Quantity</th>
+      <th style="padding: 8px; border: 1px solid #ddd;">Price</th>
+      <th style="padding: 8px; border: 1px solid #ddd;">Subtotal</th>
+      </tr>
+      </thead>
+      <tbody>
+      ${items
+        .map(
+          (item) => `
+      <tr>
+      <td style="padding: 8px; border: 1px solid #ddd;">${
+        item.product_name
+      }</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">${item.quantity}</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">€${Number(
+        item.price
+      ).toFixed(2)}</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">€${(
+        Number(item.price) * Number(item.quantity)
+      ).toFixed(2)}</td>
+      </tr>
+      `
+        )
+        .join("")}
+      </tbody>
+    </table>
+    <p><strong>Subtotal: €${orderTotal.toFixed(2)}</strong></p>
+    <p><strong>Tax (10%): €${tax.toFixed(2)}</strong></p>
+    <p><strong>Shipping: €${shipping.toFixed(2)}</strong></p>
+    <p><strong>Total: €${grandTotal.toFixed(2)}</strong></p>
+    <p>You will receive another email when your order is shipped.</p>
+    <p>Thank you for shopping with Volution Wear!</p>
+    <p><strong>The VolutionWear Team</strong></p>
+    </body>
+    </html>
+    `,
+    };
+
+    transporter.sendMail(message, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
     return res.status(200).json({
       success: true,
       message: "Order completed. You will receive a confirmation email.",
