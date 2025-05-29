@@ -14,7 +14,8 @@ export default function Header() {
     location.pathname.toLocaleLowerCase().includes("shop") ||
     isOpen ||
     location.pathname.toLocaleLowerCase().includes("product") ||
-    location.pathname.toLocaleLowerCase().includes("profile");
+    location.pathname.toLocaleLowerCase().includes("profile") ||
+    location.pathname.toLocaleLowerCase().includes("checkout");
   const navLinks = [
     { label: "Shop", href: "/shop" },
     { label: "Categories", href: "/categories" },
@@ -25,7 +26,8 @@ export default function Header() {
   const isRelative =
     location.pathname.toLocaleLowerCase().includes("shop") ||
     location.pathname.toLocaleLowerCase().includes("product") ||
-    location.pathname.toLocaleLowerCase().includes("profile");
+    location.pathname.toLocaleLowerCase().includes("profile")||
+    location.pathname.toLocaleLowerCase().includes("checkout");
 
   const logOut = () => {
     localStorage.removeItem("token");
@@ -42,6 +44,8 @@ export default function Header() {
     (item: Order) => item.status === "pending"
   );
 
+  const isCheckoutPage =
+    location.pathname.toLocaleLowerCase().includes("checkout");
   return (
     <>
       <ToastContainer />
@@ -132,8 +136,11 @@ export default function Header() {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-4 ml-2">
+        <div className="flex items-center gap-4 ml-2 " style={{
+            display: isCheckoutPage ? "none" : "flex"
+          }}>
           <div
+          
             onClick={() => {
               setIsOpenCartMenu(!isOpenCartMenu);
             }}
@@ -143,7 +150,7 @@ export default function Header() {
               isBlackTextHeader ? "border-black" : "border-white"
             } flex justify-center items-center pt-1 cursor-pointer rounded-[8px] `}
           >
-            {pendingCartItems[0]?.items?.length}
+            {pendingCartItems[0]?.items?.length || 0}
           </div>
           <div
             onClick={() => {

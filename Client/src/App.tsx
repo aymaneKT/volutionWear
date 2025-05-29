@@ -9,6 +9,7 @@ import NotFoundPage from "./components/NotFoundPage";
 import { useEffect } from "react";
 import checkTokenExpiration from "./MidFunction";
 import ProfileChecker from "./components/ProfileChecker";
+import CheckoutPage from "./components/CheckoutPage";
 
 function App() {
   useEffect(() => {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<ProfileChecker />} />
         <Route path="/shop/product/:id" element={<ProductPage />} />
+        <Route path="/Checkout" element={<CheckoutPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>

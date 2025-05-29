@@ -56,18 +56,21 @@ export const getOrderItems = async (orderId) => {
     const query = `
       SELECT 
       order_items.product_id AS id,
-        
-        products.name AS product_name,
-        products.price,
-        order_items.quantity,
-        (products.price * order_items.quantity) AS total_price,
-        categories.name AS category_name,
-        product_images.image_url
+      products.name AS product_name,
+      products.price,
+      order_items.quantity,
+      (products.price * order_items.quantity) AS total_price,
+      categories.name AS category_name,
+      product_images.image_url,
+      users.id AS sellerId,
+      users.username AS seller_username
       FROM order_items
       INNER JOIN products ON order_items.product_id = products.id
       LEFT JOIN categories ON products.category_id = categories.id
       LEFT JOIN product_images ON product_images.product_id = products.id AND product_images.is_main = 1
       INNER JOIN orders ON order_items.order_id = orders.id
+      INNER JOIN product_listings ON products.id = product_listings.product_id
+      INNER JOIN users ON product_listings.seller_id = users.id
       WHERE orders.id = ?
     `;
 
@@ -120,5 +123,14 @@ export const deleteOrderItem = async (orderId, productId) => {
     return result.affectedRows > 0;
   } catch (error) {
     throw new Error("Error deleting order item: " + error.message);
+  }
+};
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    const query = `UPDATE orders SET status = ? WHERE id = ?`;
+    const [result] = await connection.query(query, [status, orderId]);
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw new Error("Error updating order status: " + error.message);
   }
 };

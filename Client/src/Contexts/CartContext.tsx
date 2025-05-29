@@ -1,4 +1,3 @@
-import Loader from "@/components/Loader";
 import axios from "axios";
 import { jwtDecode, JwtPayload as BaseJwtPayload } from "jwt-decode";
 import { createContext, useEffect, useState } from "react";
@@ -62,6 +61,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (id) getOrders();
     }
   }, []);
+  console.log("Cart Context", cart);
 
   return (
     <>

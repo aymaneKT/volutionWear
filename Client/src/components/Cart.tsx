@@ -27,7 +27,47 @@ export default function Cart(props: CartProps) {
   const pendingCartItems: Order[] = cart.filter(
     (item: Order) => item.status === "pending"
   );
-  console.log(pendingCartItems[0]?.items?.length);
+  const axiosUpdateQuantity = (item: OrderItem, newQuantity: number) => {
+    axios
+      .put(
+        `http://localhost:3000/api/order/product/`,
+        {
+          quantity: newQuantity,
+          productId: item.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+      .then(() => {
+        const updatedCart = cart.map((order: any) => {
+          if (order.status === "pending") {
+            return {
+              ...order,
+              items: order.items.map((i: any) =>
+                i.id === item.id ? { ...i, quantity: newQuantity } : i
+              ),
+            };
+          }
+          return order;
+        });
+
+        setCart(updatedCart);
+
+        // toast.success(`${item.product_name} quantity updated successfully!`, {
+        //   position: "top-left",
+        //   autoClose: 2000,
+        //   theme: "light",
+        // });
+      })
+      .catch((error) => {
+        console.error("Error updating item quantity:", error);
+        toast.error("Error updating item quantity");
+      });
+  };
+
   return (
     <div
       className="fixed top-0 h-screen right-0 bg-[white] w-[400px] z-500000 px-[2rem] max-[700px]:w-full border-l-1"
@@ -60,7 +100,34 @@ export default function Cart(props: CartProps) {
               alt={item.product_name || "Product"}
             />
             <div className="flex flex-col items-end gap-2 p-2 text-[13px]">
-              <span>{item.quantity || 1}</span>
+              <div className="flex items-center gap-1">
+                <button
+                  className="w-6 h-6 flex cursor items-center justify-center border border-gray-400 hover:bg-gray-200 transition duration-200 text-sm font-bold"
+                  onClick={() => {
+                    // Diminuisci quantità
+                    const newQuantity = (item.quantity || 1) - 1;
+                    if (newQuantity >= 1) {
+                      axiosUpdateQuantity(item, newQuantity);
+                    }
+                  }}
+                  disabled={(item.quantity || 1) <= 1}
+                >
+                  ▼
+                </button>
+                <span className="min-w-[20px] text-center font-medium">
+                  {item.quantity || 1}
+                </span>
+                <button
+                  className="w-6 h-6 flex cursor items-center justify-center border border-gray-400 hover:bg-gray-200 transition duration-200 text-sm font-bold"
+                  onClick={() => {
+                    // Aumenta quantità
+                    const newQuantity = (item.quantity || 1) + 1;
+                    axiosUpdateQuantity(item, newQuantity);
+                  }}
+                >
+                  ▲
+                </button>
+              </div>
               <span>{item.product_name || "Item"}</span>
               <span>{item.price ? `${item.price} €` : "0 €"}</span>
               <button
@@ -79,11 +146,13 @@ export default function Cart(props: CartProps) {
                     )
                     .then(() => {
                       // Trova l'ordine pending
-                      const updatedCart = cart.map((order : any) => {
+                      const updatedCart = cart.map((order: any) => {
                         if (order.status === "pending") {
                           return {
                             ...order,
-                            items: order.items.filter((i:any) => i.id !== item.id),
+                            items: order.items.filter(
+                              (i: any) => i.id !== item.id
+                            ),
                           };
                         }
                         return order;
@@ -121,7 +190,12 @@ export default function Cart(props: CartProps) {
         </Link>
       ) : (
         <button className="border-2 absolute w-[85%] bottom-2.5 border-[#000] p-2.5 uppercase font-[700] cursor-pointer hover:text-[#C0BFBF] hover:bg-black transition duration-200">
-          {pendingCartItems[0]?.total_amount} € <span>CHECKOUT</span>
+          {pendingCartItems[0]?.items?.reduce(
+            (total, item: any) =>
+              total + (item.price || 0) * (item.quantity || 1),
+            0
+          ) || 0}
+          € <span>CHECKOUT</span>
         </button>
       )}
     </div>

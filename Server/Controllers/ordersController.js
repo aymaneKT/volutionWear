@@ -8,8 +8,10 @@ import {
   chekcOrderItemExist,
   updateOrderItem,
   deleteOrderItem,
+  updateOrderStatus,
 } from "../models/orders.js";
-
+import { getUser } from "../models/user.js";
+import { notifySeller } from "./adminActions.js";
 export const addProductToCart = async (req, res) => {
   try {
     const { productId, quantity, price } = req.body;
@@ -42,10 +44,19 @@ export const addProductToCart = async (req, res) => {
           error: "Failed to update product quantity in order",
         });
       }
+
+      // Recalculate order total after updating item quantity
+      const items = await getOrderItems(orderId);
+      const total = items.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+      await editOrder(orderId, total);
+
       return res.status(200).json({
         success: true,
         message: "Product quantity updated successfully",
-        orderItemId: existingProdInOrder.id,
+        orderItemId: existingProdInOrder[0].id,
       });
     }
 
@@ -103,15 +114,13 @@ export const getUserOrders = async (req, res) => {
   }
 };
 
-
 export const deleteProductFromCart = async (req, res) => {
   try {
-    const  productId  = req.params.productId;
+    const productId = req.params.productId;
     if (!productId) {
       return res.status(400).json({ error: "Invalid product ID" });
     }
     console.log("Deleting product from cart:", productId);
-    
 
     const userId = req.user.id;
 
@@ -122,10 +131,12 @@ export const deleteProductFromCart = async (req, res) => {
     }
 
     // Elimina il prodotto dall'ordine
-    console.log("Order ID:", existOrder.id);
+
     const result = await deleteOrderItem(existOrder.id, productId);
     if (!result) {
-      return res.status(500).json({ error: "Failed to delete product from cart" });
+      return res
+        .status(500)
+        .json({ error: "Failed to delete product from cart" });
     }
 
     return res.status(200).json({
@@ -136,4 +147,85 @@ export const deleteProductFromCart = async (req, res) => {
     console.error("Error deleting product from cart:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
+
+export const updateQuantity = async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    if (!productId || !quantity || quantity <= 0) {
+      return res.status(400).json({ error: "Invalid product ID or quantity" });
+    }
+
+    const userId = req.user.id;
+
+    // Verifica se esiste un ordine PENDING per l'utente
+    let existOrder = await existPendingOrder(userId);
+    if (!existOrder.exist) {
+      return res.status(404).json({ error: "No pending order found" });
+    }
+
+    // Aggiorna la quantità del prodotto nell'ordine
+    const isUpdated = await updateOrderItem(existOrder.id, productId, quantity);
+    if (!isUpdated) {
+      return res.status(500).json({
+        error: "Failed to update product quantity in order",
+      });
+    }
+
+    // Recalculate order total after updating item quantity
+    const items = await getOrderItems(existOrder.id);
+    const total = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    await editOrder(existOrder.id, total);
+
+    return res.status(200).json({
+      success: true,
+      message: "Product quantity updated successfully",
+      orderItemId: isUpdated,
+    });
+  } catch (error) {
+    console.error("Error updating product quantity:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const checkoutOrder = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const pendingOrder = await existPendingOrder(userId);
+    if (!pendingOrder.exist) {
+      return res.status(404).json({ error: "No pending order found" });
+    }
+
+    const orderId = pendingOrder.id;
+    const items = await getOrderItems(orderId);
+
+    // Notifica ogni venditore
+    for (const item of items) {
+      const seller = await getUser(item.sellerId);
+      if (seller) {
+        await notifySeller(
+          seller.id,
+          "New Order Notification",
+          `You have received a new order for the product "${item.name}" (ID: ${item.product_id})`,
+          orderId
+        );
+      }
+    }
+
+    // Aggiorna lo stato dell'ordine
+    await updateOrderStatus(orderId, "completed");
+
+    return res.status(200).json({
+      success: true,
+      message: "Order completed. You will receive a confirmation email.",
+      orderId,
+    });
+  } catch (error) {
+    console.error("Errore durante il checkout:", error);
+    return res.status(500).json({ error: "Errore durante il checkout" });
+  }
+};

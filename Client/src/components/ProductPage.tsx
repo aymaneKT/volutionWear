@@ -98,8 +98,44 @@ export default function ProductPage() {
   }
   const { cart, setCart } = context;
   const addProductToCart = () => {
-    const token = localStorage.getItem("token");
+    const updatedCart = cart.map((order: any) => {
+      if (order.status === "pending") {
+        const existingItem = order.items.find(
+          (item: any) => item.id === productId
+        );
+        if (existingItem) {
+          return {
+            ...order,
+            items: order.items.map((item: any) =>
+              item.id === productId
+                ? { ...item, quantity: item.quantity + quantity }
+                : item
+            ),
+          };
+        } else {
+          return {
+            ...order,
+            items: [
+              ...order.items,
+              {
+                id: productId,
+                quantity: quantity,
+                price: productDetails?.price,
+                image_url:
+                  productDetails?.images.find((f) => f.is_main == 1)
+                    ?.image_url || "",
+                product_name: productDetails?.name || "",
+              },
+            ],
+          };
+        }
+      }
+      return order;
+    });
+    setCart(updatedCart);
 
+    const token = localStorage.getItem("token");
+    if (!token) return null;
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -188,7 +224,7 @@ export default function ProductPage() {
         {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-6 mt-4">
           <Link to="/">Home</Link> /<Link to="/shop">Products</Link> /{" "}
-          <span className="font-medium text-gray-800">Prodotto</span>
+          <span className="font-medium text-gray-800">{productDetails?.name}</span>
         </div>
 
         {/* Product Section */}
