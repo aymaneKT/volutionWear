@@ -130,7 +130,6 @@ export default function ProductPage() {
       return;
     }
 
-    // Continua con la logica esistente
     if (pendingOrder) {
       const updatedCart = cart.map((order: any) => {
         if (order.status === "pending") {
@@ -372,11 +371,16 @@ export default function ProductPage() {
             </div>
             {/* Stock Status */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">
-                {productDetails && productDetails?.stock > 0
-                  ? "In Stock"
-                  : <span className="text-red-500 font-bold">Out of Stock</span>}
-              </span>
+              {/* <span className="text-sm text-gray-600">
+                {productDetails && (
+                  <span>
+                    Stock:{" "}
+                    <span className={productDetails.stock > 0 ? "text-green-600 font-semibold" : "text-red-500 font-bold"}>
+                      {productDetails.stock}
+                    </span>
+                  </span>
+                )}
+              </span> */}
               {productDetails && productDetails?.stock > 0 && (
                 <span className="text-sm text-green-500">
                   {productDetails?.stock} available
@@ -402,7 +406,7 @@ export default function ProductPage() {
             {/* Shipping Info */}
             <div className="border-t border-gray-200 pt-4 mt-2 text-sm text-gray-600">
               <p className="flex items-center gap-2">
-                <span>✓</span> Free shipping on orders over €100
+                {/* <span>✓</span> Free shipping on orders over €100 */}
               </p>
               <p className="flex items-center gap-2">
                 <span>✓</span> Estimated delivery: 3–5 business days

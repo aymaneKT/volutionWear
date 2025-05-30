@@ -67,6 +67,8 @@ export default function UserProfile() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [activeOrderDetails, setActiveOrderDetails] = useState(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [originalUser, setOriginalUser] = useState<userType | null>(null);
+
   // const [Userorders, setUserOrders] = useState<Order[]>([]);
   const [password, setPassword] = useState<passwordType>({
     currentPassword: "",
@@ -76,7 +78,7 @@ export default function UserProfile() {
   const context = useContext(CartContext);
   if (!context) {
     // Se il contesto è null (cioè non c'è provider), evita l'errore
-    return null; // o un messaggio di fallback
+    return null;
   }
   const { cart, refreshOrders } = context;
   const [user, setUser] = useState<userType>({
@@ -97,6 +99,26 @@ export default function UserProfile() {
   const token = localStorage.getItem("token");
 
   const updateProfile = () => {
+    if (!user.username.trim() || !user.email.trim()) {
+      toast.error("Username and Email cannot be empty", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "light",
+      });
+      if (originalUser) setUser(originalUser);
+      setIsEditing(false);
+      return;
+    }
+    if (!isUserDataChanged()) {
+      toast.info("No changes to save", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "light",
+      });
+      setIsEditing(false);
+      return;
+    }
+
     const header = {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -122,7 +144,7 @@ export default function UserProfile() {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         toast.success(res.data.message, {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,
@@ -214,6 +236,22 @@ export default function UserProfile() {
         });
       });
   };
+  const isUserDataChanged = () => {
+    if (!originalUser) return false;
+    for (const key of Object.keys(originalUser)) {
+      if (key !== "password" && key !== "image") {
+        if ((user as any)[key] !== (originalUser as any)[key]) {
+          return true;
+        }
+      }
+    }
+    // Se l'immagine è cambiata
+    if (user.image && typeof user.image !== "string") {
+      return true;
+    }
+    return false;
+  };
+
   useEffect(() => {
     const getUser = (userId: number) => {
       setIsLoading(true);
@@ -221,20 +259,25 @@ export default function UserProfile() {
         .get(`http://localhost:3000/api/user/${userId}`)
         .then((res) => {
           const user = res.data.data;
-          setUser({
-            ...user,
+          const mappedUser: userType = {
             id: user.id,
             username: user.username,
             email: user.email,
             phone: user.phone_number,
-            surname: user.surname,
-            name: user.name,
+            surname: user.cognome,
+            name: user.nome,
             image: user.image,
-            address: user.address,
-            city: user.city,
-            cap: user.cap,
-            country: user.country,
-          });
+            address:
+              !user.address || user.address === "null" ? "" : user.address,
+            city: !user.city || user.city === "null" ? "" : user.city,
+            cap: !user.cap || user.cap === "null" ? "" : user.cap,
+            country:
+              !user.country || user.country === "null" ? "" : user.country,
+            password: "",
+          };
+          console.log(mappedUser);
+          setUser(mappedUser);
+          setOriginalUser(mappedUser);
         })
         .catch((e) => {
           console.log(e);
@@ -290,7 +333,7 @@ export default function UserProfile() {
         {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-6 mt-4">
           <a href="/">Home</a> /{" "}
-          <span className="font-medium text-gray-800">Il Mio Profilo</span>
+          <span className="font-medium text-gray-800">My Profile</span>
         </div>
 
         {/* Profile Section */}
@@ -408,7 +451,7 @@ export default function UserProfile() {
                     <input
                       type="text"
                       name="username"
-                      defaultValue={user.username}
+                      value={user.username}
                       disabled={!isEditing}
                       onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
@@ -441,6 +484,7 @@ export default function UserProfile() {
                       required
                       onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
+                      value={user.phone}
                     />
                   </div>
                   <div>
@@ -450,7 +494,7 @@ export default function UserProfile() {
                     <input
                       type="text"
                       name="surname"
-                      defaultValue={user.surname}
+                      value={user.surname}
                       onChange={HundleInput}
                       disabled={!isEditing}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
@@ -463,7 +507,7 @@ export default function UserProfile() {
                     <input
                       type="text"
                       name="name"
-                      defaultValue={user.name}
+                      value={user.name}
                       disabled={!isEditing}
                       onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
@@ -476,7 +520,7 @@ export default function UserProfile() {
                     <input
                       type="text"
                       name="address"
-                      defaultValue={user.address}
+                      value={user.address}
                       disabled={!isEditing}
                       onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
@@ -489,7 +533,7 @@ export default function UserProfile() {
                     <input
                       type="text"
                       name="city"
-                      defaultValue={user.city}
+                      value={user.city}
                       disabled={!isEditing}
                       onChange={HundleInput}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100"
@@ -531,81 +575,87 @@ export default function UserProfile() {
                 <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
                 <div className="space-y-4">
-                  {cart.map((order: Order) => (
-                    <div
-                      key={order.id}
-                      className="border border-gray-200 rounded-lg overflow-hidden"
-                    >
+                  {cart.length > 0 ? (
+                    cart.map((order: Order) => (
                       <div
-                        className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
-                        onClick={() => toggleOrderDetails(order.id)}
+                        key={order.id}
+                        className="border border-gray-200 rounded-lg overflow-hidden"
                       >
-                        <div>
-                          <p className="font-medium">Order #{order.id}</p>
-                          <p className="text-sm text-gray-600">
-                            {new Date(order.created_at).toLocaleDateString(
-                              "it-IT"
+                        <div
+                          className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
+                          onClick={() => toggleOrderDetails(order.id)}
+                        >
+                          <div>
+                            <p className="font-medium">Order #{order.id}</p>
+                            <p className="text-sm text-gray-600">
+                              {new Date(order.created_at).toLocaleDateString(
+                                "it-IT"
+                              )}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                order.status === "completed"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-blue-100 text-blue-800"
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                            <span className="font-medium">
+                              €{Number(order.total_amount).toFixed(2)}
+                            </span>
+                            {activeOrderDetails === order.id ? (
+                              <ChevronUp size={20} />
+                            ) : (
+                              <ChevronDown size={20} />
                             )}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              order.status === "completed"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-blue-100 text-blue-800"
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                          <span className="font-medium">
-                            €{Number(order.total_amount).toFixed(2)}
-                          </span>
-                          {activeOrderDetails === order.id ? (
-                            <ChevronUp size={20} />
-                          ) : (
-                            <ChevronDown size={20} />
-                          )}
-                        </div>
-                      </div>
-
-                      {activeOrderDetails === order.id && (
-                        <div className="border-t border-gray-200 p-4">
-                          <h3 className="font-medium mb-3">
-                            Products in the order
-                          </h3>
-                          <div className="space-y-3">
-                            {order.items.map((product) => (
-                              <div
-                                key={product.id}
-                                className="flex items-center gap-4"
-                              >
-                                <img
-                                  src={
-                                    `http://localhost:3000/uploads/${product.image_url}` ||
-                                    dfImage
-                                  }
-                                  alt={product.product_name}
-                                  className="w-16 h-16 object-center object-cover rounded border border-gray-200"
-                                />
-                                <div className="flex-1">
-                                  <p className="font-medium">
-                                    {product.product_name}
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    Quantità: {product.quantity}
-                                  </p>
-                                </div>
-                                <p className="font-medium">
-                                  €{Number(product.price).toFixed(2)}
-                                </p>
-                              </div>
-                            ))}
                           </div>
                         </div>
-                      )}
+
+                        {activeOrderDetails === order.id && (
+                          <div className="border-t border-gray-200 p-4">
+                            <h3 className="font-medium mb-3">
+                              Products in the order
+                            </h3>
+                            <div className="space-y-3">
+                              {order.items.map((product) => (
+                                <div
+                                  key={product.id}
+                                  className="flex items-center gap-4"
+                                >
+                                  <img
+                                    src={
+                                      `http://localhost:3000/uploads/${product.image_url}` ||
+                                      dfImage
+                                    }
+                                    alt={product.product_name}
+                                    className="w-16 h-16 object-center object-cover rounded border border-gray-200"
+                                  />
+                                  <div className="flex-1">
+                                    <p className="font-medium">
+                                      {product.product_name}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                      Quantità: {product.quantity}
+                                    </p>
+                                  </div>
+                                  <p className="font-medium">
+                                    €{Number(product.price).toFixed(2)}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-gray-500 py-6">
+                      <p>No orders found.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             )}

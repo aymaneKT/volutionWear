@@ -1,4 +1,4 @@
-import { addReview, deleteReview,updateReview } from "../models/Reviews.js";
+import { addReview, deleteReview, updateReview } from "../models/Reviews.js";
 
 export const postReview = async (req, res) => {
   try {
@@ -35,18 +35,17 @@ export const DeleteReview = async (req, res) => {
       return res.status(401).json({ message: " not authorized" });
     }
 
-    res.status(200).json({ message: "Review deleted successfully" });
+    return res.status(200).json({ message: "Review deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-
 export const UpdateReview = async (req, res) => {
   try {
     const userId = req.user.id;
-    const {reviewId , rating, comment } = req.body;
+    const { reviewId, rating, comment } = req.body;
 
     if (!reviewId || !userId || !rating) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -55,10 +54,12 @@ export const UpdateReview = async (req, res) => {
     const updatedReview = await updateReview(userId, reviewId, rating, comment);
 
     if (!updatedReview) {
-      return res.status(401).json({ message: "Not authorized or review not found" });
+      return res
+        .status(401)
+        .json({ message: "Not authorized or review not found" });
     }
 
-    res
+    return res
       .status(200)
       .json({ message: "Review updated successfully", review: updatedReview });
   } catch (error) {

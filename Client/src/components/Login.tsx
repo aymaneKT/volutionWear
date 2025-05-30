@@ -42,7 +42,6 @@ export default function Login() {
           } else {
             navigate("/shop");
           }
-          window.location.reload();
         }, 2000);
       })
       .catch((err) => {

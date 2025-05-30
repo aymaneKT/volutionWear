@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import HeadDashbord from "./Dashboard/HeadDashbord";
 import img from "../VID-IMG/No_picture_available.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import DeleteAccountModal from "./DeleteAccountModal";
@@ -42,6 +41,8 @@ export default function Profile() {
     new: false,
     confirm: false,
   });
+  const [originalAdmin, setOriginalAdmin] = useState<adminType | null>(null);
+
   const [password, setPassword] = useState<passwordType>({
     current_password: "",
     new_password: "",
@@ -62,6 +63,19 @@ export default function Profile() {
   });
 
   const updateProfile = () => {
+    const isModified =
+      admin.username !== originalAdmin?.username ||
+      admin.name !== originalAdmin.name ||
+      admin.surname !== originalAdmin.surname ||
+      admin.phone !== originalAdmin.phone ||
+      admin.email !== originalAdmin.email ||
+      admin.bio !== originalAdmin.bio ||
+      (admin.image && admin.image !== originalAdmin.image);
+
+    if (!isModified) {
+      toast.info("No changes detected!", { position: "top-right" });
+      return;
+    }
     const formData = new FormData();
     formData.append("username", admin.username);
     formData.append("name", admin.name);
@@ -176,8 +190,7 @@ export default function Profile() {
       .get(`http://localhost:3000/api/user/${id}`)
       .then((res) => {
         const { data } = res.data;
-
-        setAdmin({
+        const userData: adminType = {
           id: data.id,
           username: data.username,
           name: data.nome,
@@ -186,7 +199,9 @@ export default function Profile() {
           image: data.image,
           phone: data.phone_number,
           bio: data.Bio,
-        });
+        };
+        setAdmin(userData);
+        setOriginalAdmin(userData);
       })
       .catch((err) => {
         console.log(err);

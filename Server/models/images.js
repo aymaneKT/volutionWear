@@ -24,7 +24,6 @@ export const getImages = async (product_id) => {
     throw error;
   }
 };
-
 export const deleteimage = async (image_id, product_id) => {
   try {
     const query =
@@ -35,7 +34,6 @@ export const deleteimage = async (image_id, product_id) => {
     throw error;
   }
 };
-
 export const HowManyImages = async (product_id) => {
   try {
     const query =
@@ -71,7 +69,6 @@ export const setMainImage = async (product_id, image_id) => {
     throw error;
   }
 };
-
 export const isOwnerImage = async (user_id, product_id) => {
   try {
     const query =
@@ -83,7 +80,6 @@ export const isOwnerImage = async (user_id, product_id) => {
     throw error;
   }
 };
-
 export const deleteAllImagesForProduct = async (product_id) => {
   try {
     const query = "DELETE FROM product_images WHERE product_id = ?";

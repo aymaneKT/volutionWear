@@ -38,7 +38,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const navigate = useNavigate();
   return (
     <div
-      className="h-auto cursor-pointer mb-2 relative"
+      className="h-[500px] cursor-pointer mb-2 relative border-2 border-gray-200 rounded-lg p-2 flex flex-col gap-1 hover:shadow-lg transition-shadow duration-300 ease-in-out"
       onClick={() => {
         navigate(`/shop/product/${product.ProductId}`);
       }}
@@ -46,12 +46,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div ref={sliderRef} className="keen-slider">
         {product.Images.length ? (
           product.Images.map((image, i) => (
-
-            <div key={i} className="keen-slider__slide aspect-[3/4] relative">
+            <div key={i} className="keen-slider__slide  relative">
               <img
                 src={`http://localhost:3000/uploads/${image.image_url}`}
                 alt={`Product image ${i + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover aspect-[3/4]  rounded-lg"
               />
               <HiArrowSmallRight
                 className="absolute border-1 border-black text-black text-[30px] font-semibold right-1 top-1/2 -translate-y-1/2 p-1 bg-white rounded-full cursor-pointer"
@@ -60,7 +59,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   instanceRef.current?.next();
                 }}
                 style={{
-                  display : product.Images.length > 1 ? "block" : "none",
+                  display: product.Images.length > 1 ? "block" : "none",
                 }}
               />
               <HiArrowSmallLeft
@@ -70,7 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   instanceRef.current?.prev();
                 }}
                 style={{
-                  display : product.Images.length > 1 ? "block" : "none",
+                  display: product.Images.length > 1 ? "block" : "none",
                 }}
               />
             </div>
@@ -119,7 +118,6 @@ export default function ProductCard({ product }: ProductCardProps) {
       </span>
       <p className="text-[#54545498] truncate">{product.description}</p>
       <span>{product.price} EUR</span>
-
     </div>
   );
 }

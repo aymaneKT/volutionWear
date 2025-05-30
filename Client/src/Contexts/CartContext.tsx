@@ -43,16 +43,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       })
       .catch((e) => {
         console.log(e);
-        toast.error("Error fetching orders!", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
       });
   };
   useEffect(() => {
@@ -62,7 +52,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (id) getOrders();
     }
   }, []);
-  console.log("Cart Context", cart);
 
   return (
     <>

@@ -62,7 +62,7 @@ export default function SideBar() {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
               navigate("/");
-              window.location.reload();
+             
             }, 2000);
           }}
           className="flex absolute bottom-3  font-medium items-center gap-2.5 ml-4 text-[17px] w-[80%] rounded-xl text-[#7C7C7C] hover:bg-[#FDEAEA] hover:text-[#EB5757] transition duration-100 pl-3 py-2"

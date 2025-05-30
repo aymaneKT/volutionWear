@@ -11,9 +11,9 @@ import {
   updateOrderStatus,
 } from "../models/orders.js";
 import { getUser } from "../models/user.js";
-import { notifySeller } from "./adminActions.js";
+import { notifySeller } from "../models/adminActions.js";
 import { transporter } from "../middleware/EmailSender.js";
-import {editProductStock} from "../models/products.js";
+import { editProductStock } from "../models/products.js";
 export const addProductToCart = async (req, res) => {
   try {
     const { productId, quantity, price } = req.body;
@@ -81,11 +81,6 @@ export const getUserOrders = async (req, res) => {
     const userId = req.user.id;
     const orders = await getOrders(userId);
 
-    if (orders.length === 0) {
-      return res.status(404).json({ message: "No orders found for this user" });
-    }
-
-    // 2. Carica articoli e calcola totale per ogni ordine
     const orderWithItems = await Promise.all(
       orders.map(async (order) => {
         const items = await getOrderItems(order.id);
@@ -217,7 +212,7 @@ export const checkoutOrder = async (req, res) => {
 
     const orderId = pendingOrder.id;
     const items = await getOrderItems(orderId);
-     
+
     // Aggiorna lo stock di ogni prodotto
     for (const item of items) {
       await editProductStock(item.id, item.quantity);
@@ -230,7 +225,7 @@ export const checkoutOrder = async (req, res) => {
         await notifySeller(
           seller.id,
           "New Order Notification",
-          `You have received a new order for the product "${item.product_name}" (ID: ${item.product_id})`,
+          `You have received a new order for the product "${item.product_name} from ${user.username}". Order ID: ${orderId}. Please prepare the item for shipping.`,
           orderId
         );
       }
@@ -239,7 +234,6 @@ export const checkoutOrder = async (req, res) => {
     // Aggiorna lo stato dell'ordine
     await updateOrderStatus(orderId, "completed");
     const orderTime = new Date().toLocaleString();
-    // Compose order items details as HTML and plain text
     const itemsListHtml = items
       .map(
         (item) => `

@@ -30,10 +30,10 @@ export default function Header() {
     location.pathname.toLocaleLowerCase().includes("checkout");
 
   const logOut = () => {
+    setOpen(false);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
-    window.location.reload();
   };
   const context = useContext(CartContext);
   if (!context) {
