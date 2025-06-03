@@ -1,89 +1,115 @@
-import HeadDashbord from "./Dashboard/HeadDashbord";
 import OrderItemInfo from "./OrderItemInfo";
 import { FaRegUser } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import { CiCreditCard1 } from "react-icons/ci";
-import { FaRegNoteSticky } from "react-icons/fa6";
+import { FiArrowLeft } from "react-icons/fi";
 import { TableDemo } from "./TableDemo";
-import StatusTag from "./StatusTag";
-import { useState } from "react";
-
-export type orderItemInfoIterationType = {
-  title: string;
-  icon: React.ReactNode;
-  first?: string;
-  second?: string;
-  third?: string;
-  isEditable: boolean;
+import { ISellerOrder } from "./SellerDashbord";
+interface OrderModalProps {
+  order: ISellerOrder;
+  onClose: () => void;
+}
+export type OrderInfoItemType = {
+  sectionTitle: string;
+  sectionIcon: React.ReactNode;
+  labelOne?: string;
+  valueOne?: string;
+  labelTwo?: string;
+  valueTwo?: string;
+  labelThree?: string;
+  valueThree?: string;
 };
-
-export default function OrderDetails() {
-  const [status, setStatus] = useState<string>("Pending");
-  const mapOrderItem: orderItemInfoIterationType[] = [
+export default function OrderDetails({
+  order,
+  onClose,
+}: OrderModalProps) {
+  // const [status, setStatus] = useState<string>("Completed");
+  const mapOrderItem: OrderInfoItemType[] = [
     {
-      title: "Customer",
-      icon: <FaRegUser />,
-      first: "Name",
-      second: "Email ",
-      third: "Phone",
-      isEditable: false,
+      sectionTitle: "Customer",
+      sectionIcon: <FaRegUser />,
+      labelOne: "Name",
+      valueOne: order.buyer_name ?? "-",
+      labelTwo: "Email",
+      valueTwo: order.buyer_email ?? "-",
+      labelThree: "Phone",
+      valueThree: order.buyer_phone ?? "-",
     },
     {
-      title: "Order Info",
-      icon: <IoCartOutline />,
-      first: "Shipping",
-      second: "Payement method",
-      third: "Status",
-      isEditable: false,
+      sectionTitle: "Order Info",
+      sectionIcon: <IoCartOutline />,
+      labelOne: "Shipping",
+      valueOne:
+        order.buyer_address + " " + order.buyer_city + " " + order.buyer_cap,
+      labelTwo: "Payment Method",
+      valueTwo: "CREDIT CARD",
+      labelThree: "Status",
+      valueThree: order.status ?? "-",
     },
     {
-      title: "Payament Info",
-      icon: <CiCreditCard1 />,
-      first: "Card",
-      second: "Business name",
-      third: "Phone",
-      isEditable: false,
-    },
-    {
-      title: "Notes",
-      icon: <FaRegNoteSticky />,
-      isEditable: true,
+      sectionTitle: "Payment Info",
+      sectionIcon: <CiCreditCard1 />,
+      labelOne: "Card",
+      valueOne: "VISA / MASTER CARD",
+      labelTwo: "Business Name",
+      valueTwo: order.buyer_name ?? "-",
     },
   ];
+
   return (
     <div className="w-[calc(100% - 180px)] font-[Poppins] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px] ">
-      <HeadDashbord title="Order Details" subtitle="" />
-      <div className="flex justify-between py-4 items-center my-4">
-        <div className="flex flex-col gap-1">
-          <span className="font-bold">Order ID : #222562</span>
-          <p>Mon , July 22 , 2025</p>
-          <StatusTag status={status} />
+      <div className="flex justify-between py-4 items-center my-4 flex-wrap gap-y-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-black cursor-pointer self-start mr-4"
+            title="Close"
+          >
+            <FiArrowLeft size={24} />
+          </button>
+          <div className="flex flex-col gap-1">
+            <span className="font-bold">Order ID: #{order.order_id}</span>
+            <p>
+              {new Date(order.order_created_at).toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </p>
+            {/* <StatusTag status={status} /> */}
+          </div>
         </div>
-        <select
+        {/* <select
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => {
+            const newStatus = e.target.value;
+            setStatus(newStatus);
+            if (newStatus !== order.status && setSelectedOrder) {
+              setSelectedOrder({ ...order, status: newStatus });
+            }
+          }}
           className="py-3 px-4 bg-[#F1F3F4] rounded-md text-sm text-gray-700 outline-none"
         >
-          <option value="" disabled selected>
+          <option value="" disabled>
             Change Status
           </option>
-          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+          <option value="Processing">Processing</option>
           <option value="Shipped">Shipped</option>
           <option value="Delivered">Delivered</option>
           <option value="Canceled">Canceled</option>
-        </select>
+        </select> */}
       </div>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,auto))]  gap-3 my-4">
-        {mapOrderItem.map((e: orderItemInfoIterationType, index: number) => (
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,auto))]  gap-3 my-4">
+        {mapOrderItem.map((e: OrderInfoItemType, index: number) => (
           <OrderItemInfo {...e} key={index} />
         ))}
       </div>
-      <button className="bg-[#EEE6FD] cursor-pointer text-[#5805E9] px-7 py-2 rounded-[8px] font-bold relative left-[80%] ">
-        Save
-      </button>
+
 
       <h2 className="uppercase my-4 font-bold">Products:</h2>
-      <TableDemo />
+      <TableDemo products={order.items} />
     </div>
   );
 }

@@ -1,9 +1,10 @@
-type statusType = {
+type StatusType = {
   status: string;
 };
-export default function StatusTag(props: statusType) {
+
+export default function StatusTag(props: StatusType) {
   const styles: Record<string, { bg: string; text: string }> = {
-    Pending: {
+    Processing: {
       bg: "bg-[#FFF6E5]",
       text: "text-[#F5A623]",
     },
@@ -19,13 +20,21 @@ export default function StatusTag(props: statusType) {
       bg: "bg-[#FDEAEA]",
       text: "text-[#EB5757]",
     },
+    Completed: {
+      bg: "bg-[#E5FFE5]",
+      text: "text-[#27AE60]",
+    },
+  };
+
+  // Default style fallback
+  const style = styles[props.status] || {
+    bg: "bg-gray-200",
+    text: "text-gray-600",
   };
 
   return (
     <span
-      className={`rounded-[4px] w-fit py-1 px-2 font-medium ${
-        styles[props.status].bg
-      } ${styles[props.status].text}`}
+      className={`rounded-[4px] w-fit py-1 px-2 font-medium ${style.bg} ${style.text}`}
     >
       {props.status}
     </span>

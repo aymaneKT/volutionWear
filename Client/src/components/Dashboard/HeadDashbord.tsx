@@ -1,6 +1,6 @@
 import { IoIosSearch } from "react-icons/io";
 import { CiMail } from "react-icons/ci";
-import img from "../../VID-IMG/VolutionWear.png";
+import img from "../../VID-IMG/No_picture_available.png";
 import { useContext, useEffect, useState } from "react";
 import NotificationCard from "../NotificationCard";
 import { SectionContext } from "@/Contexts/SectionContext";
@@ -80,7 +80,11 @@ export default function HeadDashbord(props: PropsHeadDash) {
             onClick={() => {
               setSection("Profile");
             }}
-            src={image == null ? img : `http://localhost:3000/uploads/${image}`}
+            src={
+              image == null
+                ? "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI="
+                : `http://localhost:3000/uploads/${image}`
+            }
             className="h-[30px]
           w-[30px] rounded-full cursor-pointer"
           />

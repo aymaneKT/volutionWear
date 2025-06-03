@@ -1,6 +1,4 @@
 import { FaPlus } from "react-icons/fa";
-import BasicMenu from "./Dashboard/BasicMenu";
-import HeadDashbord from "./Dashboard/HeadDashbord";
 import { useState } from "react";
 import CouponItem from "./CouponItem";
 
@@ -67,9 +65,6 @@ export default function Offers() {
                 </td>
                 <td className="py-2 border-[#f3f0f0] border-t-3 border-b-3 px-3">
                   100 uses
-                </td>
-                <td className="py-2 border-[#f3f0f0] border-3 border-l-0 px-3 rounded-tr-[10px] rounded-br-[10px]">
-                  <BasicMenu />
                 </td>
               </tr>
             </tbody>

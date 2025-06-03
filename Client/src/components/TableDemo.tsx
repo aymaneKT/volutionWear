@@ -8,47 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import img from "../VolutionWear.png";
+import { ISellerOrderItem } from "./SellerDashbord";
 
-const products = [
-  {
-    id: "P001",
-    name: "Wireless Headphones",
-    unitPrice: 99.99,
-    quantity: 2,
-    image: img,
-  },
-  {
-    id: "P002",
-    name: "Smart Watch",
-    unitPrice: 199.99,
-    quantity: 1,
-    image: img,
-  },
-  {
-    id: "P003",
-    name: "Bluetooth Speaker",
-    unitPrice: 59.99,
-    quantity: 3,
-    image: img,
-  },
-  {
-    id: "P004",
-    name: "Gaming Mouse",
-    unitPrice: 49.99,
-    quantity: 2,
-    image: img,
-  },
-  {
-    id: "P005",
-    name: "Mechanical Keyboard",
-    unitPrice: 129.99,
-    quantity: 1,
-    image: img,
-  },
-];
+interface IProductProps {
+  products: ISellerOrderItem[];
+}
 
-export function TableDemo() {
+export function TableDemo({ products }: IProductProps) {
   return (
     <Table className="my-5">
       <TableCaption>A list of Products in this order.</TableCaption>
@@ -68,19 +34,17 @@ export function TableDemo() {
             <TableCell className="truncate flex items-center gap-2">
               <img
                 className="h-[50px] w-[50px] rounded-full object-cover"
-                src={product.image}
-                alt={product.name}
+                src={`http://localhost:3000/uploads/${product.image_url}`}
+                alt={product.product_name}
               />
-              {product.name}
+              {product.product_name}
             </TableCell>
             <TableCell className="truncate">
-              €{product.unitPrice.toFixed(2)}
+              €{Number(product.price).toFixed(2)}
             </TableCell>
-            <TableCell className="text-center">
-              {product.quantity}
-            </TableCell>
+            <TableCell className="text-center">{product.quantity}</TableCell>
             <TableCell className="text-right truncate">
-              €{(product.unitPrice * product.quantity).toFixed(2)}
+              €{(Number(product.price) * product.quantity).toFixed(2)}
             </TableCell>
           </TableRow>
         ))}
@@ -91,7 +55,7 @@ export function TableDemo() {
           <TableCell className="text-right">
             €
             {products
-              .reduce((acc, p) => acc + p.unitPrice * p.quantity, 0)
+              .reduce((acc, p) => acc + Number(p.price) * p.quantity, 0)
               .toFixed(2)}
           </TableCell>
         </TableRow>

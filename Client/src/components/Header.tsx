@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../VID-IMG/LOGO.png";
 import logo2 from "../VID-IMG/LOGO2.png";
 import Hamburger from "hamburger-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Cart from "./Cart";
 import { ToastContainer } from "react-toastify";
 import { CartContext, Order } from "@/Contexts/CartContext";
@@ -15,9 +15,11 @@ export default function Header() {
     isOpen ||
     location.pathname.toLocaleLowerCase().includes("product") ||
     location.pathname.toLocaleLowerCase().includes("profile") ||
-    location.pathname.toLocaleLowerCase().includes("checkout");
+    location.pathname.toLocaleLowerCase().includes("checkout") ||
+    location.pathname.toLocaleLowerCase().includes("categories");
   const navLinks = [
     { label: "Shop", href: "/shop" },
+    { label: "Home", href: "/" },
     { label: "Categories", href: "/categories" },
     { label: "About", href: "/about" },
   ];
@@ -27,7 +29,8 @@ export default function Header() {
     location.pathname.toLocaleLowerCase().includes("shop") ||
     location.pathname.toLocaleLowerCase().includes("product") ||
     location.pathname.toLocaleLowerCase().includes("profile") ||
-    location.pathname.toLocaleLowerCase().includes("checkout");
+    location.pathname.toLocaleLowerCase().includes("checkout") ||
+    location.pathname.toLocaleLowerCase().includes("categories");
 
   const logOut = () => {
     setOpen(false);
@@ -43,7 +46,10 @@ export default function Header() {
   const pendingCartItems: Order[] = cart.filter(
     (item: Order) => item.status === "pending"
   );
-
+  useEffect(() => {
+    document.body.style.overflow = isOpenCartMenu ? "hidden" : "auto";
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+  }, [isOpenCartMenu, isOpen]);
   const isCheckoutPage = location.pathname
     .toLocaleLowerCase()
     .includes("checkout");
@@ -111,7 +117,7 @@ export default function Header() {
               </Link>
             </div>
           ) : (
-            <div  className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
+            <div className="flex gap-5 relative top-1/8 max-[992px]:flex-col   items-center ">
               <Link to="/profile">
                 <button
                   className={`cursor-pointer transition duration-200 hover:text-[#adb5bd] ${

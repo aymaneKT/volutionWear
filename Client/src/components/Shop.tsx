@@ -116,9 +116,10 @@ export default function Shop() {
   useEffect(() => {
     loadMore();
   }, []);
-  return (
+  return isLoading ? (
+    <Loader isLoading={isLoading} />
+  ) : (
     <>
-      <Loader isLoading={isLoading} />
       <div>
         <Header />
         <div className="relative min-[992px]:px-11 h-[400px]">
@@ -167,7 +168,7 @@ export default function Shop() {
         <div className="px-11 my-8 flex justify-between items-center ">
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="border-2 border-[#c0bcbc45] flex items-center gap-2 px-6 py-2 cursor-pointer font-semibold "
+            className="border-2 opacity-0 border-[#c0bcbc45] flex items-center gap-2 px-6 py-2 cursor-pointer font-semibold "
           >
             <IoFilterSharp />
             Filter

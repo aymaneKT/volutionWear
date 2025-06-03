@@ -46,11 +46,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div ref={sliderRef} className="keen-slider">
         {product.Images.length ? (
           product.Images.map((image, i) => (
-            <div key={i} className="keen-slider__slide  relative">
+            <div
+              key={i}
+              className="keen-slider__slide  relative aspect-[3/4] overflow-hidden"
+            >
               <img
                 src={`http://localhost:3000/uploads/${image.image_url}`}
                 alt={`Product image ${i + 1}`}
-                className="w-full h-full object-cover aspect-[3/4]  rounded-lg"
+                className="w-full h-full object-cover   rounded-lg"
               />
               <HiArrowSmallRight
                 className="absolute border-1 border-black text-black text-[30px] font-semibold right-1 top-1/2 -translate-y-1/2 p-1 bg-white rounded-full cursor-pointer"

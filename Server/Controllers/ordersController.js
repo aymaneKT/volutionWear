@@ -9,6 +9,9 @@ import {
   updateOrderItem,
   deleteOrderItem,
   updateOrderStatus,
+  getSellerOrders,
+  getOrderItemsBySeller,
+  addSellerOrder,
 } from "../models/orders.js";
 import { getUser } from "../models/user.js";
 import { notifySeller } from "../models/adminActions.js";
@@ -199,9 +202,16 @@ export const checkoutOrder = async (req, res) => {
     const userId = req.user.id;
 
     const user = await getUser(userId);
-    if (!user.address || !user.city || !user.cap || !user.country) {
+    if (
+      !user.address ||
+      !user.city ||
+      !user.cap ||
+      !user.country ||
+      !user.phone_number
+    ) {
       return res.status(400).json({
-        error: "Please complete your profile with address ",
+        error:
+          "Please complete your profile with address and contact information.",
       });
     }
 
@@ -212,6 +222,25 @@ export const checkoutOrder = async (req, res) => {
 
     const orderId = pendingOrder.id;
     const items = await getOrderItems(orderId);
+
+    // Salva per ogni seller i prodotti venduti
+    for (const item of items) {
+      await addSellerOrder({
+        order_id: orderId,
+        seller_id: item.sellerId,
+        order_item_id: item.order_item_id,
+        product_id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+        buyer_name: `${user.nome} ${user.cognome}`,
+        buyer_email: user.email,
+        buyer_address: user.address,
+        buyer_city: user.city,
+        buyer_cap: user.cap,
+        buyer_country: user.country,
+        buyer_phone: user.phone_number,
+      });
+    }
 
     // Aggiorna lo stock di ogni prodotto
     for (const item of items) {
@@ -370,5 +399,27 @@ export const checkoutOrder = async (req, res) => {
   } catch (error) {
     console.error("Errore durante il checkout:", error);
     return res.status(500).json({ error: "Errore durante il checkout" });
+  }
+};
+
+export const fetchSellerOrders = async (req, res) => {
+  try {
+    const sellerId = req.user.id;
+    const orders = await getSellerOrders(sellerId);
+
+    const ordersWithItems = await Promise.all(
+      orders.map(async (order) => {
+        const items = await getOrderItemsBySeller(order.order_id, sellerId);
+        return { ...order, items };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      orders: ordersWithItems,
+    });
+  } catch (error) {
+    console.error("Error fetching seller orders:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

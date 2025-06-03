@@ -235,7 +235,9 @@ export default function ProductPage() {
     return null;
   };
 
-  return (
+  return isLoading ? (
+    <Loader isLoading={isLoading} />
+  ) : (
     <>
       <DeleteConfirmationModal
         showDeleteModal={showDeleteModal}
@@ -244,7 +246,7 @@ export default function ProductPage() {
         getReviews={getReviews}
         productId={productId}
       />
-      <Loader isLoading={isLoading} />
+
       <ReviewModal
         showReviewModal={showReviewModal}
         setShowReviewModal={setShowReviewModal}
@@ -326,6 +328,21 @@ export default function ProductPage() {
             <p className="text-gray-600 leading-relaxed">
               {productDetails?.description}
             </p>
+            {/* Stock Status & Out of Stock Handling */}
+            {productDetails && productDetails.stock <= 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-red-500 font-semibold">
+                  Out of stock
+                </span>
+              </div>
+            )}
+            {productDetails && productDetails.stock > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-green-500">
+                  {productDetails.stock} available
+                </span>
+              </div>
+            )}
 
             {/* Quantity */}
             <div className="flex items-center gap-3">
@@ -389,18 +406,32 @@ export default function ProductPage() {
             </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-2">
-                <button
+              <button
                 onClick={addProductToCart}
-                disabled={!productDetails || productDetails.stock - (cart.find((order: any) => order.status === "pending")?.items.find((item: any) => item.id === productId)?.quantity || 0) <= 0}
+                disabled={
+                  !productDetails ||
+                  productDetails.stock -
+                    (cart
+                      .find((order: any) => order.status === "pending")
+                      ?.items.find((item: any) => item.id === productId)
+                      ?.quantity || 0) <=
+                    0
+                }
                 className={`bg-black text-white py-3 px-6 rounded flex-1 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors ${
-                  (!productDetails || productDetails.stock - (cart.find((order: any) => order.status === "pending")?.items.find((item: any) => item.id === productId)?.quantity || 0) <= 0)
-                  ? "opacity-50 cursor-not-allowed"
-                  : "cursor-pointer"
+                  !productDetails ||
+                  productDetails.stock -
+                    (cart
+                      .find((order: any) => order.status === "pending")
+                      ?.items.find((item: any) => item.id === productId)
+                      ?.quantity || 0) <=
+                    0
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
                 }`}
-                >
+              >
                 <ShoppingCart size={18} />
                 <span>ADD TO CART</span>
-                </button>
+              </button>
             </div>
 
             {/* Shipping Info */}
@@ -453,7 +484,7 @@ export default function ProductPage() {
                       Based on {productDetails?.reviews.length} reviews
                     </p>
                   </div>
-                  <div className="flex-1 max-w-md">
+                  {/* <div className="flex-1 max-w-md">
                     {[5, 4, 3, 2, 1].map((rating) => (
                       <div key={rating} className="flex items-center gap-2">
                         <span className="text-sm text-gray-600 w-6">
@@ -490,14 +521,14 @@ export default function ProductPage() {
                         </span>
                       </div>
                     ))}
-                  </div>
+                  </div> */}
                 </div>
 
                 <button
                   onClick={() => {
                     setShowReviewModal(true);
                   }}
-                  className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-50"
+                  className="bg-white border cursor-pointer border-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-50"
                 >
                   Add a review
                 </button>

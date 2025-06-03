@@ -91,7 +91,6 @@ const CheckoutPage = () => {
       !formData.expiry ||
       !formData.cvv
     ) {
-      console.error("Please fill in all credit card details.");
       toast.error("Please fill in all credit card details.", {
         position: "top-right",
         autoClose: 2000,
@@ -219,7 +218,7 @@ const CheckoutPage = () => {
               <h2 className="text-2xl font-semibold mb-6">Payment Details</h2>
 
               {/* Coupon Section */}
-              <div className="mb-8">
+              {/* <div className="mb-8">
                 <form className="flex space-x-2">
                   <input
                     type="text"
@@ -243,7 +242,7 @@ const CheckoutPage = () => {
                     {couponError}
                   </p>
                 )}
-              </div>
+              </div> */}
 
               {/* Payment Methods */}
               <div className="mb-6">
@@ -262,7 +261,7 @@ const CheckoutPage = () => {
                     <button
                       key={method.id}
                       onClick={() => setSelectedPayment(method.id)}
-                      className={`p-4 border rounded-lg flex items-center justify-center space-x-2 transition-colors
+                      className={`p-4 border cursor-pointer rounded-lg flex items-center justify-center space-x-2 transition-colors
                       ${
                         selectedPayment === method.id
                           ? "border-blue-500 bg-blue-50"

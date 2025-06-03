@@ -4,7 +4,8 @@ import {
   getUserOrders,
   deleteProductFromCart,
   updateQuantity,
-  checkoutOrder
+  checkoutOrder,
+  fetchSellerOrders,
 } from "../Controllers/ordersController.js";
 import { auth } from "../middleware/auth.js";
 
@@ -14,3 +15,4 @@ router.get("/orders", auth, getUserOrders);
 router.delete("/order/product/:productId", auth, deleteProductFromCart);
 router.put("/order/product", auth, updateQuantity);
 router.post("/order/checkout", auth, checkoutOrder);
+router.get("/sellerOrders", auth, fetchSellerOrders);
