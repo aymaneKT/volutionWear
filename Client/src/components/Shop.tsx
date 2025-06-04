@@ -173,7 +173,7 @@ export default function Shop() {
             <IoFilterSharp />
             Filter
           </button>
-          <div className=" gap-3 hidden max-[480px]:flex">
+          {/* <div className=" gap-3 hidden max-[480px]:flex">
             <LuLayoutGrid
               onClick={() => {
                 setLayout("viewLayout4");
@@ -190,7 +190,7 @@ export default function Shop() {
                 layout == "viewLayout6" ? "text-black" : "text-[#c9c5c5]"
               }`}
             />
-          </div>
+          </div> */}
           <button
             onClick={() => {
               setIsOpenSortList(!isOpenSortList);

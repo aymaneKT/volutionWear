@@ -34,13 +34,23 @@ export default function Register() {
   const navigate = useNavigate();
   const register = () => {
     if (user.password.length < 8) {
-      toast.error("Password must be at least 8 characters long");
+      toast.error("Password must be at least 8 characters long" , 
+        {
+          position: "top-left",
+          autoClose: 2000,
+        }
+      );
       return;
     }
     // how to check if the email is valid
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(user.email)) {
-      toast.error("Invalid email format");
+      toast.error("Invalid email format" 
+        , {
+          position: "top-left",
+          autoClose: 2000,
+        }
+      );
       return;
     }
 
@@ -70,12 +80,13 @@ export default function Register() {
           type: "success",
           isLoading: false,
           autoClose: 2000,
+          position: "top-left",
         });
         setTimeout(() => {
           if (user.isSeller) {
             navigate("/profile");
           } else {
-            navigate("/home");
+            navigate("/shop");
           }
         }, 2000);
       })
@@ -86,6 +97,7 @@ export default function Register() {
           type: "error",
           isLoading: false,
           autoClose: 2000,
+          position: "top-left",
         });
       });
   };
@@ -196,7 +208,7 @@ export default function Register() {
               </div>
             </div>
 
-            <div className="flex  flex-start  gap-5">
+            <div className="flex  flex-start  gap-5 max-[992px]:my-2.5">
               <FileInputButton
                 user={user}
                 setUser={setUser}
@@ -204,31 +216,36 @@ export default function Register() {
                 setPreviewImage={setPreviewImage}
               />
               {previewImage && (
-                <div className="relative">
+                <div className="relative ">
                   <p className="text-sm text-gray-600 mb-1">Image preview:</p>
                   <img
-                  src={previewImage}
-                  alt="Preview"
-                  className="max-w-[70px] object-cover object-center rounded-md border"
+                    src={previewImage}
+                    alt="Preview"
+                    className="max-w-[70px] object-cover object-center rounded-md border"
                   />
                   <button
-                  type="button"
-                  className="absolute cursor-pointer top-5 right-5 bg-white rounded-full p-1 shadow hover:bg-gray-100"
-                  onClick={() => {
-                    setPreviewImage(null);
-                    setUser({ ...user, imageProfile: null });
-                  }}
-                  aria-label="Remove image"
+                    type="button"
+                    className="absolute cursor-pointer top-5 right-5 bg-white rounded-full p-1 shadow hover:bg-gray-100"
+                    onClick={() => {
+                      setPreviewImage(null);
+                      setUser({ ...user, imageProfile: null });
+                    }}
+                    aria-label="Remove image"
                   >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-gray-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 text-gray-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
                   </button>
                 </div>
               )}

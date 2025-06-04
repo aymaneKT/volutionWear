@@ -110,6 +110,10 @@ export default function NotificationCard(props: NotificationCardType) {
         console.error("Error marking notification as read:", err);
       });
   };
+  useEffect(() => {
+    document.body.style.overflow = isNotificationOpen ? "hidden" : "visible";
+  }, [isNotificationOpen]);
+
   return (
     <div
       className="fixed inset-0 z-40 bg-black/30 transition-opacity duration-300"

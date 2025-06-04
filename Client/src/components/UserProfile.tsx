@@ -317,12 +317,10 @@ export default function UserProfile() {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  return !token ? (
-    <NotFoundPage />
-  ) : (
+  return (
     <>
       <ToastContainer />
-      <Loader isLoading={isLoading} />
+
       <Header />
       <div className="px-4 md:px-8 lg:px-11 pb-16 bg-gray-50 min-h-screen">
         {/* Header placeholder */}

@@ -99,7 +99,20 @@ export default function ProductPage() {
   const { cart, setCart } = context;
   const addProductToCart = () => {
     const token = localStorage.getItem("token");
-    if (!token || !productDetails) return;
+    if (!token) {
+      toast.error("You must be logged in to add products to the cart.", {
+        position: "bottom-left",
+        autoClose: 2000,
+      });
+      return;
+    }
+    if (!productDetails) {
+      toast.error("Product details are not available.", {
+        position: "bottom-left",
+        autoClose: 2000,
+      });
+      return;
+    }
 
     const config = {
       headers: {
@@ -124,8 +137,8 @@ export default function ProductPage() {
 
     if (totalAfterAdd > productDetails.stock) {
       toast.error("The quantity exceeds available stock.", {
-        position: "top-right",
-        autoClose: 3000,
+        position: "bottom-right",
+        autoClose: 2000,
       });
       return;
     }
@@ -197,16 +210,16 @@ export default function ProductPage() {
       )
       .then((res) => {
         toast.success(res.data.message, {
-          position: "top-right",
-          autoClose: 3000,
+          position: "bottom-right",
+          autoClose: 2000,
         });
       })
       .catch((err) => {
         toast.error(
           err.response?.data?.message || "Error adding product to cart",
           {
-            position: "top-right",
-            autoClose: 3000,
+            position: "bottom-right",
+            autoClose: 2000,
           }
         );
       });
@@ -375,7 +388,7 @@ export default function ProductPage() {
                       setQuantity(quantity + 1);
                     } else {
                       toast.warning("Stock limit reached", {
-                        position: "top-right",
+                        position: "bottom-left",
                         autoClose: 2000,
                       });
                     }
@@ -398,11 +411,6 @@ export default function ProductPage() {
                   </span>
                 )}
               </span> */}
-              {productDetails && productDetails?.stock > 0 && (
-                <span className="text-sm text-green-500">
-                  {productDetails?.stock} available
-                </span>
-              )}
             </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-2">

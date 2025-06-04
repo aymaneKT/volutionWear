@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 
 import Header from "./Header";
-import Footer from "./Footer";
+import HomeFooter from "./Footer";
 
-export default function VintageCategories() {
+export default function Categories() {
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -50,7 +50,6 @@ export default function VintageCategories() {
     category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-
   return (
     <div
       className={`min-h-screen ${darkMode ? "dark bg-gray-900" : "bg-gray-50"}`}
@@ -84,7 +83,7 @@ export default function VintageCategories() {
           ))}
         </div>
       </main>
-      <Footer />
+      <HomeFooter />
     </div>
   );
 }

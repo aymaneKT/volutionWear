@@ -15,7 +15,7 @@ export default function SideBar() {
     { name: "Dashboard", icon: <MdOutlineDashboard /> },
     { name: "Orders", icon: <FaShoppingCart /> },
     { name: "Products", icon: <LuPackage /> },
-    { name: "Offers", icon: <MdOutlineLocalOffer /> },
+    // { name: "Offers", icon: <MdOutlineLocalOffer /> },
   ];
 
   return (
@@ -49,7 +49,7 @@ export default function SideBar() {
         <li
           onClick={() => {
             toast.success("Log Out Successfully", {
-              position: "top-right",
+              position: "top-left",
               autoClose: 2000,
               hideProgressBar: false,
               closeOnClick: true,

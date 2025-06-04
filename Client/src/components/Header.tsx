@@ -4,7 +4,7 @@ import logo2 from "../VID-IMG/LOGO2.png";
 import Hamburger from "hamburger-react";
 import { useContext, useEffect, useState } from "react";
 import Cart from "./Cart";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { CartContext, Order } from "@/Contexts/CartContext";
 export default function Header() {
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -16,10 +16,11 @@ export default function Header() {
     location.pathname.toLocaleLowerCase().includes("product") ||
     location.pathname.toLocaleLowerCase().includes("profile") ||
     location.pathname.toLocaleLowerCase().includes("checkout") ||
-    location.pathname.toLocaleLowerCase().includes("categories");
+    location.pathname.toLocaleLowerCase().includes("categories") ||
+    location.pathname.toLocaleLowerCase().includes("about");
   const navLinks = [
-    { label: "Shop", href: "/shop" },
     { label: "Home", href: "/" },
+    { label: "Shop", href: "/shop" },
     { label: "Categories", href: "/categories" },
     { label: "About", href: "/about" },
   ];
@@ -30,13 +31,20 @@ export default function Header() {
     location.pathname.toLocaleLowerCase().includes("product") ||
     location.pathname.toLocaleLowerCase().includes("profile") ||
     location.pathname.toLocaleLowerCase().includes("checkout") ||
-    location.pathname.toLocaleLowerCase().includes("categories");
+    location.pathname.toLocaleLowerCase().includes("categories") ||
+    location.pathname.toLocaleLowerCase().includes("about");
 
   const logOut = () => {
     setOpen(false);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/");
+    toast.success("Logged out successfully!", {
+      position: "top-left",
+      autoClose: 2000,
+    });
+    setTimeout(() => {
+      navigate("/");
+    }, 2000);
   };
   const context = useContext(CartContext);
   if (!context) {

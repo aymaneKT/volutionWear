@@ -5,10 +5,17 @@ import { CiCreditCard1 } from "react-icons/ci";
 import { FiArrowLeft } from "react-icons/fi";
 import { TableDemo } from "./TableDemo";
 import { ISellerOrder } from "./SellerDashbord";
+import { useState } from "react";
+import StatusTag from "./StatusTag";
+import axios from "axios";
+import { toast } from "react-toastify";
 interface OrderModalProps {
   order: ISellerOrder;
   onClose: () => void;
+  setSelectedOrder: (order: ISellerOrder) => void;
+  handleOrderStatusChange: (orderId: number, newStatus: string) => void;
 }
+
 export type OrderInfoItemType = {
   sectionTitle: string;
   sectionIcon: React.ReactNode;
@@ -22,8 +29,10 @@ export type OrderInfoItemType = {
 export default function OrderDetails({
   order,
   onClose,
+  setSelectedOrder,
+  handleOrderStatusChange,
 }: OrderModalProps) {
-  // const [status, setStatus] = useState<string>("Completed");
+  const [status, setStatus] = useState<string>(order.status || "");
   const mapOrderItem: OrderInfoItemType[] = [
     {
       sectionTitle: "Customer",
@@ -56,6 +65,22 @@ export default function OrderDetails({
     },
   ];
 
+  const updateOrderStatusApi = (newStatus: string) => {
+    axios
+      .put(`http://localhost:3000/api/order`, {
+        orderId: order.order_id,
+        status: newStatus,
+      })
+      .then((response) => {
+        toast.success(
+          response.data.message || "Order status updated successfully"
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating order status:", error);
+      });
+  };
+
   return (
     <div className="w-[calc(100% - 180px)] font-[Poppins] px-6 ml-[180px] max-[900px]:w-[calc(100% - 90px)] max-[900px]:ml-[90px] ">
       <div className="flex justify-between py-4 items-center my-4 flex-wrap gap-y-3">
@@ -77,17 +102,18 @@ export default function OrderDetails({
                 year: "numeric",
               })}
             </p>
-            {/* <StatusTag status={status} /> */}
+            <StatusTag status={status} />
           </div>
         </div>
-        {/* <select
+        <select
           value={status}
           onChange={(e) => {
             const newStatus = e.target.value;
             setStatus(newStatus);
-            if (newStatus !== order.status && setSelectedOrder) {
-              setSelectedOrder({ ...order, status: newStatus });
-            }
+            setSelectedOrder({ ...order, status: newStatus });
+            handleOrderStatusChange(order.order_id, newStatus);
+
+            updateOrderStatusApi(newStatus);
           }}
           className="py-3 px-4 bg-[#F1F3F4] rounded-md text-sm text-gray-700 outline-none"
         >
@@ -95,18 +121,14 @@ export default function OrderDetails({
             Change Status
           </option>
           <option value="Completed">Completed</option>
-          <option value="Processing">Processing</option>
           <option value="Shipped">Shipped</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Canceled">Canceled</option>
-        </select> */}
+        </select>
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,auto))]  gap-3 my-4">
         {mapOrderItem.map((e: OrderInfoItemType, index: number) => (
           <OrderItemInfo {...e} key={index} />
         ))}
       </div>
-
 
       <h2 className="uppercase my-4 font-bold">Products:</h2>
       <TableDemo products={order.items} />

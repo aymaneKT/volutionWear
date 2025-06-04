@@ -33,8 +33,8 @@ export default function Login() {
           type: "success",
           isLoading: false,
           autoClose: 2000,
+          position: "top-left",
         });
-        console.log(res.data.user);
 
         setTimeout(() => {
           if (res.data.user.is_seller == 1) {
@@ -52,6 +52,7 @@ export default function Login() {
           type: "error",
           isLoading: false,
           autoClose: 2000,
+          position: "top-left",
         });
       });
   };
@@ -99,6 +100,12 @@ export default function Login() {
                   onChange={(e) =>
                     setUser({ ...user, password: e.target.value })
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      login();
+                    }
+                  }}
                   value={user.password}
                   type={isPasswordVisible ? "text" : "password"}
                   id="password"

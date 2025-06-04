@@ -92,7 +92,7 @@ const CheckoutPage = () => {
       !formData.cvv
     ) {
       toast.error("Please fill in all credit card details.", {
-        position: "top-right",
+        position: "top-left",
         autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: false,
@@ -131,7 +131,7 @@ const CheckoutPage = () => {
           );
         }
         toast.success(response.data.message, {
-          position: "top-right",
+          position: "top-left",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
@@ -146,7 +146,7 @@ const CheckoutPage = () => {
       .catch((error) => {
         console.error("Error during checkout:", error);
         toast.error(error.response.data.error, {
-          position: "top-right",
+          position: "top-left",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,

@@ -65,7 +65,7 @@ export default function Products() {
           })),
         }));
         setProducts(data);
-        console.log(res.data)
+        console.log(res.data);
       })
       .catch((err) => {
         console.error(err);
@@ -86,7 +86,6 @@ export default function Products() {
   }, []);
   return (
     <>
-      <Loader isLoading={isLoading} />
       <ProductItem
         isOpenProductInfo={isOpenProductInfo}
         setIsOpenMenuInfo={setIsOpenMenuInfo}
@@ -130,7 +129,7 @@ export default function Products() {
                 </td>
                 <td className="py-2 font-semibold px-3">Category</td>
                 <td className="py-2 font-semibold px-3">Stock</td>
-                <td className="py-2 font-semibold px-3">Sold</td>
+
                 <td className="py-2 font-semibold px-3">Price</td>
                 <td className="py-2 font-semibold px-3 rounded-tr-[10px] rounded-br-[10px]">
                   Status
@@ -159,7 +158,7 @@ export default function Products() {
                                 product.imgs.find(
                                   (img) =>
                                     img.is_main === true || img.is_main == "1"
-                                )?.image_url 
+                                )?.image_url
                               }`
                             : img
                         }
@@ -172,12 +171,10 @@ export default function Products() {
                     <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
                       {product.category}
                     </td>
-                    <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
+                    <td className="py-2 truncate border-[#f3f0f0] text-center border-t-3 border-b-3 px-3">
                       {product.stock}
                     </td>
-                    <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
-                      {product.stock - product.stock}
-                    </td>
+
                     <td className="py-2 truncate border-[#f3f0f0] border-t-3 border-b-3 px-3">
                       {product.price} €
                     </td>

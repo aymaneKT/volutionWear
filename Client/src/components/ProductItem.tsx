@@ -240,16 +240,15 @@ export default function ProductItem(props: ProductItemTypeProps) {
               <div className="flex flex-col gap-2.5">
                 {/* <span className="text-[#7F8292] font-medium">Other Images</span> */}
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(60px,auto))] gap-1.5 ">
-                  {props.productItem.productId != null &&
-                  product.imgs.length > 0
+                  {props.productItem.productId != null && product.imgs.length > 0
                     ? product.imgs
-                        .filter(
-                          (img) =>
-                            img.is_main !== "1" &&
-                            img.image_url !==
-                              product.imgs.find((img) => img.is_main === "1")
-                                ?.image_url
-                        )
+                        .filter((img) => {
+                          // Considera sia stringa che numero per is_main
+                          const mainImg = product.imgs.find(
+                            (i) => i.is_main == "1" 
+                          );
+                          return img.image_url !== mainImg?.image_url;
+                        })
                         .map((img, index) => (
                           <img
                             key={index}
@@ -433,7 +432,7 @@ export default function ProductItem(props: ProductItemTypeProps) {
               </select>
             </div>
 
-            <div className="flex items-center gap-2 pt-2">
+            {/* <div className="flex items-center gap-2 pt-2">
               <Checkbox product={product} setProduct={setProduct} />
               <label
                 htmlFor="active"
@@ -444,7 +443,7 @@ export default function ProductItem(props: ProductItemTypeProps) {
               >
                 Product Active
               </label>
-            </div>
+            </div> */}
 
             <div className="flex   justify-between my-4  flex-wrap-reverse gap-3">
               <button

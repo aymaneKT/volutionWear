@@ -83,18 +83,18 @@ export default function SellerDashbord() {
   const sectionHandler = () => {
     switch (section) {
       case "Dashboard":
-        return <Dashbord />;
+        return <Dashbord orders={orders} />;
       case "Orders":
-        return <Order orders={orders} />;
+        return <Order orders={orders} setOrders={setOrders} />;
       case "Products":
         return <Products />;
       case "Offers":
         return <Offers />;
       case "Profile":
         return <Profile />;
-        case "OrderDetails":
+      case "OrderDetails":
       default:
-        return <Dashbord />;
+        return <Dashbord orders={orders} />;
     }
   };
   useEffect(() => {
@@ -122,7 +122,6 @@ export default function SellerDashbord() {
   }, []);
   return (
     <>
-      <Loader isLoading={isLoading} />
       <SectionContext.Provider
         value={{ section: section, setSection: setSection }}
       >

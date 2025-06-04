@@ -67,7 +67,11 @@ export default function Cart(props: CartProps) {
       })
       .catch((error) => {
         console.error("Error updating item quantity:", error);
-        toast.error("Error updating item quantity");
+        toast.error("Error updating item quantity",{
+          position: "top-left",
+          autoClose: 2000,
+          theme: "light",
+        });
       });
   };
 

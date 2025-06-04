@@ -75,7 +75,7 @@ export default function HeadDashbord(props: PropsHeadDash) {
               {notificationLength}
             </div>
           </div>
-          <IoIosSearch className="cursor-pointer bg-[#e9e4e45d] rounded-[4px] h-[35px] w-[40px] p-[5px]" />
+          {/* <IoIosSearch className="cursor-pointer bg-[#e9e4e45d] rounded-[4px] h-[35px] w-[40px] p-[5px]" /> */}
           <img
             onClick={() => {
               setSection("Profile");
