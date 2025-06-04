@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ISellerOrder } from "./SellerDashbord";
 import OrderDetails from "./OrderDetails";
+import { SectionContext } from "@/Contexts/SectionContext";
 
 interface OrderProps {
   orders: ISellerOrder[];
@@ -11,7 +12,7 @@ export default function Order(props: OrderProps) {
   const [selectedOrder, setSelectedOrder] = useState<ISellerOrder | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-
+  const { section, setSection } = useContext(SectionContext);
   const { orders, setOrders } = props;
 
   const tableHeaders = [
@@ -104,7 +105,10 @@ export default function Order(props: OrderProps) {
             <tbody>
               {filteredOrders.map((order) => (
                 <tr
-                  onClick={() => setSelectedOrder(order)}
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setSection("OrderDetails");
+                  }}
                   key={order.order_id}
                   className="border-[10px] cursor-pointer hover:text-white hover:bg-[#cbc0e0] border-[#f3f0f0] mt-4"
                 >

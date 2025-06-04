@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 const isTokenExpired = (token: string): boolean => {
   try {
@@ -10,11 +11,15 @@ const isTokenExpired = (token: string): boolean => {
     return true;
   }
 };
-export default function checkTokenExpiration() {
+export const checkTokenExpiration = () => {
   const token = localStorage.getItem("token");
   if (token && isTokenExpired(token)) {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     console.log("Token expired and removed from localStorage");
+    toast.info("La sessione è scaduta. Effettua nuovamente il login.", {
+      position: "top-left",
+      autoClose: 3000,
+    });
   }
-}
+};

@@ -128,7 +128,7 @@ export default function Products() {
                   Product Name
                 </td>
                 <td className="py-2 font-semibold px-3">Category</td>
-                <td className="py-2 font-semibold px-3">Stock</td>
+                <td className="py-2 font-semibold text-center px-3">Stock</td>
 
                 <td className="py-2 font-semibold px-3">Price</td>
                 <td className="py-2 font-semibold px-3 rounded-tr-[10px] rounded-br-[10px]">

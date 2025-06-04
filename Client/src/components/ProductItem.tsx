@@ -67,6 +67,7 @@ export default function ProductItem(props: ProductItemTypeProps) {
         isActive: props.productItem.isActive,
         imgs: props.productItem.imgs,
       });
+      setImagePreview([]); // Reset imagePreview when editing an existing product
     } else {
       setProduct({
         name: "",
@@ -77,6 +78,7 @@ export default function ProductItem(props: ProductItemTypeProps) {
         isActive: false,
         imgs: [],
       });
+      setImagePreview([]); // Reset imagePreview when adding a new product
     }
   }, [isOpenProductInfo, props.productItem]);
 
@@ -158,9 +160,10 @@ export default function ProductItem(props: ProductItemTypeProps) {
           imgs: [],
         });
         props.getProducts(props.userId);
+        setImagePreview([]);
       })
       .catch((err) => {
-        toast.error(err.response.data.message, {
+        toast.error("This product already belongs to that category.", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -173,11 +176,11 @@ export default function ProductItem(props: ProductItemTypeProps) {
       .finally(() => {
         setImagePreview([]);
       });
+      setImagePreview([]);
   };
 
   return (
     <>
-      
       <DeleteProductModal
         isOpen={isOpenDeleteProduct}
         setIsOpen={setIsOpenDeleteProduct}
@@ -202,7 +205,7 @@ export default function ProductItem(props: ProductItemTypeProps) {
           setIsOpenMenuInfo(false);
           setImagePreview([]);
         }}
-        className="fixed items-center z-10 transition max-h-screen overflow-y-auto duration-200 max-[850px]:items-start  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
+        className="fixed items-center z-10 transition h-screen  overflow-y-auto duration-200 max-[850px]:items-start  top-0 bottom-0 right-0 left-0 font-[Poppins] max-[992px]:bottom-auto bg-[#ffffffdc] flex justify-center "
       >
         <div
           style={{
@@ -240,12 +243,13 @@ export default function ProductItem(props: ProductItemTypeProps) {
               <div className="flex flex-col gap-2.5">
                 {/* <span className="text-[#7F8292] font-medium">Other Images</span> */}
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(60px,auto))] gap-1.5 ">
-                  {props.productItem.productId != null && product.imgs.length > 0
+                  {props.productItem.productId != null &&
+                  product.imgs.length > 0
                     ? product.imgs
                         .filter((img) => {
                           // Considera sia stringa che numero per is_main
                           const mainImg = product.imgs.find(
-                            (i) => i.is_main == "1" 
+                            (i) => i.is_main == "1"
                           );
                           return img.image_url !== mainImg?.image_url;
                         })

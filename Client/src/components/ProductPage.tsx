@@ -248,9 +248,7 @@ export default function ProductPage() {
     return null;
   };
 
-  return isLoading ? (
-    <Loader isLoading={isLoading} />
-  ) : (
+  return (
     <>
       <DeleteConfirmationModal
         showDeleteModal={showDeleteModal}

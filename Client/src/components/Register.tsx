@@ -34,23 +34,19 @@ export default function Register() {
   const navigate = useNavigate();
   const register = () => {
     if (user.password.length < 8) {
-      toast.error("Password must be at least 8 characters long" , 
-        {
-          position: "top-left",
-          autoClose: 2000,
-        }
-      );
+      toast.error("Password must be at least 8 characters long", {
+        position: "top-left",
+        autoClose: 2000,
+      });
       return;
     }
     // how to check if the email is valid
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(user.email)) {
-      toast.error("Invalid email format" 
-        , {
-          position: "top-left",
-          autoClose: 2000,
-        }
-      );
+      toast.error("Invalid email format", {
+        position: "top-right",
+        autoClose: 2000,
+      });
       return;
     }
 
@@ -80,7 +76,7 @@ export default function Register() {
           type: "success",
           isLoading: false,
           autoClose: 2000,
-          position: "top-left",
+          position: "top-right",
         });
         setTimeout(() => {
           if (user.isSeller) {
@@ -97,7 +93,7 @@ export default function Register() {
           type: "error",
           isLoading: false,
           autoClose: 2000,
-          position: "top-left",
+          position: "top-right",
         });
       });
   };
@@ -192,6 +188,12 @@ export default function Register() {
                   onChange={(e) =>
                     setUser({ ...user, password: e.target.value })
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      register();
+                    }
+                  }}
                   value={user.password}
                   type={isPasswordVisible ? "text" : "password"}
                   id="password"
@@ -208,7 +210,7 @@ export default function Register() {
               </div>
             </div>
 
-            <div className="flex  flex-start  gap-5 max-[992px]:my-2.5">
+            <div className="flex  flex-start self-start   max-[992px]:my-2.5">
               <FileInputButton
                 user={user}
                 setUser={setUser}
@@ -216,7 +218,7 @@ export default function Register() {
                 setPreviewImage={setPreviewImage}
               />
               {previewImage && (
-                <div className="relative ">
+                <div className="relative ml-5">
                   <p className="text-sm text-gray-600 mb-1">Image preview:</p>
                   <img
                     src={previewImage}

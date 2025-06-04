@@ -132,7 +132,7 @@ export default function ReviewModal({
         >
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold">
-              {reviewToEdit ? "Edit Review" : "Write a Review"}
+              {!reviewToEdit ? "Edit Review" : "Write a Review"}
             </h3>
             <button
               onClick={() => setShowReviewModal(false)}

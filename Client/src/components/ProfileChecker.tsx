@@ -4,6 +4,7 @@ import { SectionContext } from "../Contexts/SectionContext";
 import { useNavigate } from "react-router-dom";
 import SellerDashbord from "./SellerDashbord";
 import UserProfile from "./UserProfile";
+import Loader from "./Loader";
 
 type DecodedToken = {
   is_seller: string | boolean;
@@ -11,7 +12,7 @@ type DecodedToken = {
 };
 
 export default function ProfileChecker() {
-  const [isSeller, setIsSeller] = useState<boolean | null>(null); 
+  const [isSeller, setIsSeller] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const { setSection } = useContext(SectionContext);
 
@@ -34,5 +35,11 @@ export default function ProfileChecker() {
     }
   }, [navigate, setSection]);
 
-  return isSeller ? <SellerDashbord /> : <UserProfile />;
+  return isSeller === null ? (
+    <Loader />
+  ) : isSeller ? (
+    <SellerDashbord />
+  ) : (
+    <UserProfile />
+  );
 }

@@ -93,6 +93,24 @@ export default function SellerDashbord() {
       case "Profile":
         return <Profile />;
       case "OrderDetails":
+        // Pass the first order as a placeholder, or handle selection logic as needed
+        return (
+          <OrderDetails
+            order={orders[0]}
+            onClose={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+            setSelectedOrder={function (order: ISellerOrder): void {
+              throw new Error("Function not implemented.");
+            }}
+            handleOrderStatusChange={function (
+              orderId: number,
+              newStatus: string
+            ): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
+        );
       default:
         return <Dashbord orders={orders} />;
     }

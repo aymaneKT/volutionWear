@@ -7,7 +7,7 @@ import Shop from "./components/Shop";
 import ProductPage from "./components/ProductPage";
 import NotFoundPage from "./components/NotFoundPage";
 import { useEffect } from "react";
-import checkTokenExpiration from "./MidFunction";
+import { checkTokenExpiration } from "./MidFunction";
 import ProfileChecker from "./components/ProfileChecker";
 import CheckoutPage from "./components/CheckoutPage";
 import AboutPage from "./components/AboutPage";
@@ -16,6 +16,10 @@ import Categories from "./components/Categories";
 function App() {
   useEffect(() => {
     checkTokenExpiration();
+    const interval = setInterval(() => {
+      checkTokenExpiration();
+    }, 60 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
   return (
     <>

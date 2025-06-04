@@ -29,11 +29,11 @@ export default function Login() {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         toast.update(id, {
-          render: "Signin successful!",
+          render: "Login successful!",
           type: "success",
           isLoading: false,
           autoClose: 2000,
-          position: "top-left",
+          position: "top-right",
         });
 
         setTimeout(() => {
@@ -52,7 +52,7 @@ export default function Login() {
           type: "error",
           isLoading: false,
           autoClose: 2000,
-          position: "top-left",
+          position: "top-right",
         });
       });
   };
