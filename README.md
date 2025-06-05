@@ -58,7 +58,7 @@ In the server folder, create a `.env` file with:
 user=your_db_user <br/>
 password=your_db_password <br/>
 database=volution_wear<br/>
-KEY=gLXAqTgTfljZl7Dg5MP95dkB4RlYOq<br/>
+KEY=yourkey<br/>
 port=8080<br/>
 host=localhost<br/>
 GOOGLE_APP_PASSWORD=your_google_app_password<br/>
