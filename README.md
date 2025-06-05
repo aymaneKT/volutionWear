@@ -41,13 +41,6 @@ Backend (server):
 - Nodemailer
 - JWT
 
-# 📂 Project Structure
-/
-├── client/    # Frontend source code
-├── server/    # Backend source code
-├── README.md
-└── ...
-
 # 🛠️ Getting Started
 
 1. Clone the repository:
@@ -62,13 +55,13 @@ npm install
 
 3. Set up environment variables:
 In the server folder, create a `.env` file with:
-user=your_db_user
-password=your_db_password
-database=volution_wear
-KEY=gLXAqTgTfljZl7Dg5MP95dkB4RlYOq
-port=8080
-host=localhost
-GOOGLE_APP_PASSWORD=your_google_app_password
+user=your_db_user <br/>
+password=your_db_password <br/>
+database=volution_wear<br/>
+KEY=gLXAqTgTfljZl7Dg5MP95dkB4RlYOq<br/>
+port=8080<br/>
+host=localhost<br/>
+GOOGLE_APP_PASSWORD=your_google_app_password<br/>
 
 4. Run the backend:
 cd server
