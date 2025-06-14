@@ -1,6 +1,6 @@
 # Volution Wear
 
-🚀 Volution Wear is an innovative, fully responsive e-commerce platform for buying and selling clothes, accessible from any device—desktop, tablet, or smartphone.
+🚀 Volution Wear is an innovative, fully responsive e-commerce platform for buying and selling clothes, accessible from any device esktop, tablet, or smartphone.
 
 Volution Wear allows users to register as either buyers or sellers, providing tailored experiences for each:
 - Sellers: Manage orders, products, and sales with an intuitive, role-specific dashboard.
@@ -43,36 +43,36 @@ Backend (server):
 
 # 🛠️ Getting Started
 
-1. Clone the repository:
+# Clone the repository
 git clone https://github.com/aymaneKT/volutionWear.git
-cd volution-wear
+cd volutionWear
 
-2. Install dependencies for both client and server:
+# Install client dependencies
 cd client
 npm install
+
+# Install server dependencies
 cd ../server
 npm install
 
-3. Set up environment variables:
-In the server folder, create a `.env` file with:
-user=your_db_user <br/>
-password=your_db_password <br/>
-database=volution_wear<br/>
-KEY=yourkey<br/>
-port=8080<br/>
-host=localhost<br/>
-GOOGLE_APP_PASSWORD=your_google_app_password<br/>
+# Create .env file with your environment variables
+cat <<EOL > .env
+user=your_db_user
+password=your_db_password
+database=volution_wear
+KEY=yourkey
+port=8080
+host=localhost
+GOOGLE_APP_PASSWORD=your_google_app_password
+EOL
 
-4. Run the backend:
-cd server
-npm run dev
+# Start the backend
+npm run dev &
 
-5. Run the frontend:
+# Start the frontend
 cd ../client
 npm run dev
 
-6. Open the app at:
-http://localhost:5173
 
 # 🎯 Future Improvements
 - Refactor the project and integrate Redux for better state management
