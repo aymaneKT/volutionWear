@@ -44,19 +44,26 @@ Backend (server):
 # 🛠️ Getting Started
 
 # Clone the repository
+```bash
 git clone https://github.com/aymaneKT/volutionWear.git
 cd volutionWear
-
+```
 # Install client dependencies
+```bash
 cd client
 npm install
+```
+
 
 # Install server dependencies
+```bash
 cd ../server
 npm install
+```
+
 
 # Create .env file with your environment variables
-cat <<EOL > .env
+```bash
 user=your_db_user
 password=your_db_password
 database=volution_wear
@@ -64,14 +71,21 @@ KEY=yourkey
 port=8080
 host=localhost
 GOOGLE_APP_PASSWORD=your_google_app_password
-EOL
+```
+
+
 
 # Start the backend
-npm run dev &
+```bash
+npm run dev 
+```
 
 # Start the frontend
+```bash
 cd ../client
 npm run dev
+```
+
 
 
 # 🎯 Future Improvements
